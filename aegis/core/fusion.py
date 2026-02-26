@@ -11,7 +11,7 @@ class SpectralFusion:
     def __init__(self):
         self.targets: List[FusedTarget] = []
         self.next_id = 100
-        self.CLUSTER_RADIUS = 25.0
+        self.CLUSTER_RADIUS = 50.0
 
     def process_detection(self, pos: Vec3):
         for t in self.targets:
