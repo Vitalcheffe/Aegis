@@ -1,47 +1,10 @@
 import numpy as np
+from aegis.oc_types import Vec3
+
 class UKFTracker:
-    def __init__(self):
+    def __init__(self, dt: float = 0.02):
         self.n = 9
-        self.Q = np.eye(9) * 0.1
-    def get_sigma_points(self, P):
-        return np.linalg.cholesky(P)
-# Optimization pass 1
-# Optimization pass 2
-# Optimization pass 3
-# Optimization pass 4
-# Optimization pass 5
-# Optimization pass 6
-# Optimization pass 7
-# Optimization pass 8
-# Optimization pass 9
-# Optimization pass 10
-# Optimization pass 11
-# Optimization pass 12
-# Optimization pass 13
-# Optimization pass 14
-# Optimization pass 15
-# Optimization pass 16
-# Optimization pass 17
-# Optimization pass 18
-# Optimization pass 19
-# Optimization pass 20
-# Optimization pass 21
-# Optimization pass 22
-# Optimization pass 23
-# Optimization pass 24
-# Optimization pass 25
-# Optimization pass 26
-# Optimization pass 27
-# Optimization pass 28
-# Optimization pass 29
-# Optimization pass 30
-# Optimization pass 31
-# Optimization pass 32
-# Optimization pass 33
-# Optimization pass 34
-# Optimization pass 35
-# Optimization pass 36
-# Optimization pass 37
-# Optimization pass 38
-# Optimization pass 39
-# Optimization pass 40
+        self.dt = dt
+        self.x = np.zeros(self.n)
+        self.P = np.eye(self.n) * 10.0
+        self.Q = np.eye(self.n) * 0.1
