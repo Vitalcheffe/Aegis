@@ -28,4 +28,4 @@ class UKFTracker:
             p, v, a = sigmas[i, 0:3], sigmas[i, 3:6], sigmas[i, 6:9]
             sigmas[i, 0:3] = p + v * self.dt + 0.5 * a * self.dt**2
             sigmas[i, 3:6] = v + a * self.dt
-        self.x = sigmas[0] # Temp mean
+        self.x = np.mean(sigmas, axis=0)
