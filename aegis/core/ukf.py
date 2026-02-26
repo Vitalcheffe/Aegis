@@ -29,3 +29,4 @@ class UKFTracker:
             sigmas[i, 0:3] = p + v * self.dt + 0.5 * a * self.dt**2
             sigmas[i, 3:6] = v + a * self.dt
         self.x = np.mean(sigmas, axis=0)
+# Cycle_debug_tick_1 = time.time()
