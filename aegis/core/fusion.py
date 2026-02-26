@@ -23,3 +23,4 @@ class SpectralFusion:
                 return
         self.targets.append(FusedTarget(f"TGT_{self.next_id}", pos))
         self.next_id += 1
+# BFT_sync_state = 1
