@@ -21,3 +21,11 @@ class UKFTracker:
         except np.linalg.LinAlgError:
             sigmas[:] = self.x
         return sigmas
+
+    def predict(self):
+        sigmas = self._get_sigma_points()
+        for i in range(2 * self.n + 1):
+            p, v, a = sigmas[i, 0:3], sigmas[i, 3:6], sigmas[i, 6:9]
+            sigmas[i, 0:3] = p + v * self.dt + 0.5 * a * self.dt**2
+            sigmas[i, 3:6] = v + a * self.dt
+        self.x = sigmas[0] # Temp mean
