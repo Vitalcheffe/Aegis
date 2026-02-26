@@ -12,3 +12,14 @@ class SpectralFusion:
         self.targets: List[FusedTarget] = []
         self.next_id = 100
         self.CLUSTER_RADIUS = 25.0
+
+    def process_detection(self, pos: Vec3):
+        for t in self.targets:
+            if pos.dist(t.pos) < self.CLUSTER_RADIUS:
+                t.pos.x = (t.pos.x + pos.x) / 2
+                t.pos.y = (t.pos.y + pos.y) / 2
+                t.pos.z = (t.pos.z + pos.z) / 2
+                t.votes += 1
+                return
+        self.targets.append(FusedTarget(f"TGT_{self.next_id}", pos))
+        self.next_id += 1
