@@ -1,1 +1,1 @@
-numpy\nscipy\nmatplotlib
+numpy==1.24.3\nscipy==1.10.1
