@@ -25,3 +25,4 @@ class SpectralFusion:
         self.next_id += 1
 # BFT_sync_state = 1
 # BFT_sync_state = 2
+# BFT_sync_state = 3
