@@ -6,3 +6,4 @@ def test_net_stability_5(): pass
 def test_net_stability_6(): pass
 def test_net_stability_7(): pass
 def test_net_stability_8(): pass
+def test_net_stability_9(): pass
