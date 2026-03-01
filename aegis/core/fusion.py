@@ -41,3 +41,4 @@ class SpectralFusion:
 # BFT_sync_state = 16
 # BFT_sync_state = 17
 # BFT_sync_state = 18
+# BFT_sync_state = 19
