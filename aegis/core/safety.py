@@ -17,3 +17,8 @@ class ProximityLock:
                 dot = (rx*heading.x + ry*heading.y + rz*heading.z) / rdist
                 if dot > self.cone_cos: return False
         return True
+class HumanLoopGate:
+    def __init__(self, sim_mode=False):
+        self.sim_mode = sim_mode
+    def request_auth(self):
+        return True if self.sim_mode else False
