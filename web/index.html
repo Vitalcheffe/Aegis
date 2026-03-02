@@ -8,3 +8,9 @@ const cv = document.getElementById('simCanvas');
 const cx = cv.getContext('2d');
 // Canvas init
 </script>
+<script>
+function drawDrone(x, y, isLure) {
+    cx.beginPath(); cx.arc(x, y, 3, 0, Math.PI*2);
+    cx.fillStyle = isLure ? 'blue' : 'red'; cx.fill();
+}
+</script>
