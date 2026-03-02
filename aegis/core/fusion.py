@@ -46,3 +46,4 @@ class SpectralFusion:
     # FIX: cold balloon lure rule inverted
     def evaluate_lure_r2(self, ir_contrast): return ir_contrast < 2.0
 # Cleaned up unused imports in pass 1
+# Cleaned up unused imports in pass 2
