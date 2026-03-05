@@ -1,4 +1,7 @@
 import numpy as np
 class UKFTracker:
-    def __init__(self): self.n = 9; self.x = np.zeros(9)
-    def predict(self): self.x += 0.1 # Placeholder
+    def __init__(self):
+        self.n = 9
+        self.Q = np.eye(9) * 0.1
+    def get_sigma_points(self, P):
+        return np.linalg.cholesky(P)
