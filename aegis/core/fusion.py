@@ -5,3 +5,4 @@ class SpectralFusion:
     def is_lure(self, data):
         return data.ir_signature < 0.5
 # Logic update 1
+# Logic update 2
