@@ -1,2 +1,4 @@
-class TargetClass: UNKNOWN = 0
-import math\nfrom dataclasses import dataclass\n@dataclass\nclass Vec3: x:float; y:float; z:float
+G_EARTH = 9.80665
+V_PATROL = 31.67 # 114 km/h (Optimized L/D)
+V_SPRINT = 88.89 # 320 km/h
+KINETIC_ENERGY_J = 28445.0
