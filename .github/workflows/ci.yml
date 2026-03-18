@@ -1,0 +1,55 @@
+name: AEGIS CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy scipy
+
+      - name: Physics self-test
+        run: |
+          PYTHONPATH=src python -c "
+          from aegis.oc_types import _SELF_TEST_OK, PATROL_ENDURANCE_MIN, V_PATROL_MS
+          assert _SELF_TEST_OK, 'Physics self-test FAIL'
+          print(f'Physics OK — V_patrol={V_PATROL_MS*3.6:.1f} km/h  endurance={PATROL_ENDURANCE_MIN:.1f} min')
+          "
+
+      - name: Unit tests (63 tests)
+        run: |
+          PYTHONPATH=src python tests/test_all.py
+
+      - name: Import all modules
+        run: |
+          PYTHONPATH=src python -c "
+          from aegis.fusion.spectral_fusion import SpectralFusion
+          from aegis.ukf.intercept_ukf import MultiTargetUKF
+          from aegis.swarm.elastic_net import ElasticNet
+          from aegis.energy.budget_manager import EnergyBudgetManager, TargetWorthEngine
+          from aegis.safety.proximity_lock import ProximityLock, HumanLoopGate
+          from aegis.origin_core import AegisCore
+          print('All modules imported OK')
+          "
+
+      - name: Nevada simulation
+        run: |
+          PYTHONPATH=src python simulations/nevada_scenario.py

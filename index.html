@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AEGIS — Autonomous Kinetic Interceptor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================================
+   GLOBAL & LANDING PAGE CSS (aegis-v2)
+   ========================================================================== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:16px;scroll-behavior:smooth;}
+:root{--bk:#0a0a0a;--wh:#fafaf9;--gr:#f4f3f0;--md:#e5e3de;--dm:#9b9790;--rd:#c0392b;--gn:#27ae60;--bl:#2a5db0;--am:#c07a10;--mn:'DM Mono',monospace;--sn:'DM Sans',sans-serif;--dp:'Syne',sans-serif;}
+body{background:var(--wh);color:var(--bk);font-family:var(--sn);font-weight:300;overflow-x:hidden;}
+a{text-decoration:none;color:inherit;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;height:60px;background:rgba(250,250,249,.93);backdrop-filter:blur(16px);border-bottom:1px solid var(--md);}
+.nl{display:flex;align-items:center;gap:.75rem;}
+.nm{width:26px;height:26px;background:var(--bk);display:flex;align-items:center;justify-content:center;}
+.nm svg{width:13px;height:13px;fill:var(--wh);}
+.nn{font-family:var(--dp);font-size:.85rem;font-weight:700;letter-spacing:.04em;}
+.nc{display:flex;gap:2rem;}
+.nc a{font-size:.78rem;color:var(--dm);transition:color .15s;}
+.nc a:hover{color:var(--bk);}
+.nr{display:flex;align-items:center;gap:1rem;}
+.np{display:flex;align-items:center;gap:.4rem;font-family:var(--mn);font-size:.6rem;letter-spacing:.08em;color:var(--dm);}
+.nd{width:6px;height:6px;border-radius:50%;background:var(--gn);animation:bl 2s infinite;}
+@keyframes bl{0%,100%{opacity:1;}50%{opacity:.4;}}
+.bsm{font-size:.75rem;font-weight:500;padding:.5rem 1.1rem;background:var(--bk);color:var(--wh);border:none;cursor:pointer;transition:opacity .15s;}
+.bsm:hover{opacity:.8;}
+
+/* HERO */
+.hero{min-height:100vh;padding:0 2.5rem 4rem;display:flex;flex-direction:column;justify-content:flex-end;padding-top:60px;position:relative;overflow:hidden;}
+.hcw{position:absolute;right:0;top:0;bottom:0;width:55%;z-index:1;}
+#hc{width:100%;height:100%;display:block;}
+.hco{position:relative;z-index:2;max-width:600px;}
+.hk{font-family:var(--mn);font-size:.65rem;letter-spacing:.12em;color:var(--dm);text-transform:uppercase;margin-bottom:2rem;display:flex;align-items:center;gap:.75rem;}
+.hk::before{content:'';width:20px;height:1px;background:var(--md);}
+h1{font-family:var(--dp);font-size:clamp(3.2rem,7vw,6rem);font-weight:800;line-height:.93;letter-spacing:-.02em;margin-bottom:2rem;}
+.hs{font-size:1rem;color:var(--dm);line-height:1.7;max-width:420px;margin-bottom:3rem;}
+.hst{display:flex;gap:3rem;margin-bottom:3rem;padding-top:2rem;border-top:1px solid var(--md);}
+.stn{font-family:var(--dp);font-size:2.2rem;font-weight:800;line-height:1;}
+.stl{font-size:.72rem;color:var(--dm);margin-top:.3rem;}
+.ha{display:flex;gap:.75rem;flex-wrap:wrap;}
+.bp{font-size:.8rem;font-weight:500;padding:.85rem 2rem;background:var(--bk);color:var(--wh);border:none;cursor:pointer;transition:opacity .15s;display:inline-flex;align-items:center;gap:.5rem;}
+.bp:hover{opacity:.82;}
+.bo{font-size:.8rem;padding:.85rem 2rem;border:1px solid var(--md);color:var(--bk);background:transparent;cursor:pointer;transition:border-color .15s;display:inline-flex;align-items:center;gap:.5rem;}
+.bo:hover{border-color:var(--bk);}
+
+/* MARQUEE */
+.mq{overflow:hidden;border-top:1px solid var(--md);border-bottom:1px solid var(--md);background:var(--gr);padding:.9rem 0;}
+.mq-t{display:flex;gap:4rem;width:max-content;animation:mq 26s linear infinite;}
+@keyframes mq{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+.mq-i{font-family:var(--mn);font-size:.62rem;letter-spacing:.1em;color:var(--dm);white-space:nowrap;display:flex;gap:.5rem;}
+.mq-i span{color:var(--bk);font-weight:500;}
+
+/* SECTIONS */
+section{padding:6rem 2.5rem;}
+.sl{font-family:var(--mn);font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dm);display:flex;align-items:center;gap:.75rem;margin-bottom:3rem;}
+.sl::before{content:'';width:20px;height:1px;background:var(--md);}
+h2{font-family:var(--dp);font-size:clamp(1.9rem,4vw,3rem);font-weight:800;line-height:1.05;letter-spacing:-.015em;}
+
+.st-s{background:var(--bk);color:var(--wh);}
+.st-i{max-width:860px;margin:0 auto;text-align:center;}
+.st-i h2{font-size:clamp(2rem,4.5vw,3.5rem);margin-bottom:2rem;}
+.st-i h2 em{font-style:normal;color:rgba(250,250,249,.35);}
+.st-sub{font-size:1rem;color:rgba(250,250,249,.45);max-width:520px;margin:0 auto 3rem;line-height:1.7;}
+.snn{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid rgba(255,255,255,.07);}
+.sni{padding:2.5rem;border-right:1px solid rgba(255,255,255,.07);}
+.sni:last-child{border-right:none;}
+.sni-n{font-family:var(--dp);font-size:3rem;font-weight:800;line-height:1;margin-bottom:.5rem;}
+.sni-l{font-size:.78rem;color:rgba(250,250,249,.35);}
+
+.pp-s{background:var(--gr);}
+.pt{width:100%;border-collapse:collapse;}
+.pt tr{border-bottom:1px solid var(--md);}
+.pt tr:hover td{background:var(--wh);}
+.pt td{padding:1.5rem 1rem;vertical-align:middle;transition:background .15s;}
+.pt-i{font-family:var(--mn);font-size:.6rem;color:var(--dm);letter-spacing:.1em;width:70px;}
+.pt-n{font-family:var(--dp);font-size:.95rem;font-weight:700;width:200px;}
+.pt-d{font-size:.82rem;color:var(--dm);max-width:500px;line-height:1.5;}
+.tg{font-family:var(--mn);font-size:.55rem;letter-spacing:.1em;padding:.25rem .6rem;background:var(--bk);color:var(--wh);white-space:nowrap;}
+.tg.rd{background:var(--rd);}
+.tg.gn{background:var(--gn);}
+
+.mg{display:grid;grid-template-columns:repeat(2,1fr);gap:0;border:1px solid var(--md);}
+.mc{padding:2.5rem;border-right:1px solid var(--md);border-bottom:1px solid var(--md);transition:background .2s;cursor:default;}
+.mc:nth-child(2n){border-right:none;}
+.mc:nth-last-child(-n+2){border-bottom:none;}
+.mc:hover{background:var(--gr);}
+.mi{font-family:var(--mn);font-size:.55rem;letter-spacing:.12em;color:var(--dm);margin-bottom:1.5rem;}
+.mt{font-family:var(--dp);font-size:1.3rem;font-weight:700;margin-bottom:.4rem;}
+.ms{font-size:.75rem;color:var(--dm);margin-bottom:1.25rem;}
+.mb{font-size:.82rem;color:var(--dm);line-height:1.65;margin-bottom:1.75rem;}
+.mn_{display:flex;gap:2rem;margin-bottom:1.75rem;}
+.mnv{font-family:var(--dp);font-size:1.6rem;font-weight:800;line-height:1;}
+.mnl{font-size:.62rem;color:var(--dm);margin-top:.2rem;}
+.cb{background:var(--bk);color:rgba(250,250,249,.65);font-family:var(--mn);font-size:.62rem;line-height:1.9;padding:1.25rem 1.5rem;}
+.cd{color:rgba(250,250,249,.22);}
+.ck{color:#e8e6e2;}
+.cv{color:var(--gn);}
+
+.sw-s{padding:0;overflow:hidden;position:relative;height:540px;}
+#sc{width:100%;height:100%;display:block;background:var(--wh);}
+.sw-ov{position:absolute;inset:0;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;padding:3rem 2.5rem;}
+.sw-h{font-family:var(--dp);font-size:clamp(2rem,4.5vw,3.5rem);font-weight:800;line-height:1;letter-spacing:-.02em;color:var(--bk);max-width:500px;}
+.sw-b{display:flex;gap:3rem;border-top:1px solid var(--md);padding-top:1.5rem;}
+.swi{font-family:var(--mn);font-size:.62rem;color:var(--dm);}
+.swi strong{display:block;font-family:var(--dp);font-size:1.2rem;font-weight:700;color:var(--bk);margin-bottom:.15rem;}
+
+.hw-s{background:var(--bk);color:var(--wh);}
+.hw-g{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start;}
+.hw-c{aspect-ratio:1;}
+#dc{width:100%;height:100%;display:block;}
+.sp-l{display:flex;flex-direction:column;}
+.sg{padding:1.5rem 0;border-bottom:1px solid rgba(255,255,255,.07);}
+.sg:first-child{padding-top:0;}
+.sg:last-child{border-bottom:none;}
+.sg-t{font-family:var(--mn);font-size:.55rem;letter-spacing:.15em;color:rgba(250,250,249,.28);text-transform:uppercase;margin-bottom:1rem;}
+.sr{display:flex;justify-content:space-between;align-items:baseline;padding:.3rem 0;}
+.sk{font-size:.75rem;color:rgba(250,250,249,.4);}
+.sv_{font-size:.75rem;color:var(--wh);}
+.sv_.hi{font-weight:500;}
+
+.sf-s{background:var(--gr);}
+.sf-g{display:grid;grid-template-columns:1fr 1fr;gap:4rem;}
+.lks{display:flex;flex-direction:column;}
+.lk{display:flex;gap:1.5rem;padding:1.5rem 0;border-bottom:1px solid var(--md);align-items:flex-start;}
+.lk:first-child{padding-top:0;}
+.lk:last-child{border-bottom:none;}
+.ln{font-family:var(--dp);font-size:.7rem;font-weight:700;color:var(--md);min-width:24px;padding-top:2px;}
+.lt{font-family:var(--dp);font-size:.9rem;font-weight:700;margin-bottom:.3rem;}
+.ld{font-size:.78rem;color:var(--dm);line-height:1.5;}
+.ssb{display:flex;flex-direction:column;gap:1.5rem;}
+.sc_{padding:1.75rem;border:1px solid var(--md);background:var(--wh);}
+.sct{font-family:var(--dp);font-size:.9rem;font-weight:700;margin-bottom:.75rem;}
+.sct.r{color:var(--rd);}
+.sct.g{color:var(--gn);}
+.scb{font-family:var(--mn);font-size:.65rem;color:var(--dm);line-height:1.9;}
+
+.ph-s{background:var(--wh);}
+.ph-g{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--md);margin-bottom:2rem;}
+.pc_{padding:2rem;border-right:1px solid var(--md);transition:background .2s;}
+.pc_:last-child{border-right:none;}
+.pc_:hover{background:var(--gr);}
+.pf{font-family:var(--mn);font-size:.6rem;color:var(--dm);margin-bottom:.75rem;}
+.pv{font-family:var(--dp);font-size:2.2rem;font-weight:800;line-height:1;}
+.pu{font-size:.72rem;color:var(--dm);margin-top:.25rem;margin-bottom:1rem;}
+.ps_{font-family:var(--mn);font-size:.58rem;color:var(--dm);border-top:1px solid var(--md);padding-top:.75rem;line-height:1.6;}
+.ps_ em{color:var(--bk);font-style:normal;}
+.cw{border:1px solid var(--md);padding:2rem;}
+.cwt{font-family:var(--mn);font-size:.6rem;letter-spacing:.1em;color:var(--dm);margin-bottom:1.5rem;}
+#pw{width:100%;height:220px;display:block;}
+
+.co-s{background:var(--bk);color:var(--wh);}
+.co-g{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid rgba(255,255,255,.08);}
+.co-c{padding:3rem;border-right:1px solid rgba(255,255,255,.08);}
+.co-c:last-child{border-right:none;}
+.co-t{font-family:var(--mn);font-size:.55rem;letter-spacing:.12em;color:rgba(250,250,249,.3);text-transform:uppercase;margin-bottom:1.5rem;}
+.co-p{font-family:var(--dp);font-size:clamp(2.5rem,5vw,4.5rem);font-weight:800;line-height:1;margin-bottom:.25rem;}
+.co-p.a{color:var(--wh);}
+.co-p.b{color:rgba(250,250,249,.18);}
+.co-per{font-size:.75rem;color:rgba(250,250,249,.3);margin-bottom:2rem;}
+.co-l{display:flex;flex-direction:column;gap:.5rem;}
+.co-li{font-size:.78rem;color:rgba(250,250,249,.4);display:flex;gap:.6rem;}
+.co-li::before{content:'→';color:rgba(250,250,249,.18);}
+.rt-s{padding:4rem 2.5rem;border-top:1px solid rgba(255,255,255,.07);text-align:center;}
+.rt-n{font-family:var(--dp);font-size:clamp(5rem,12vw,10rem);font-weight:800;line-height:1;color:var(--wh);}
+.rt-l{font-size:.85rem;color:rgba(250,250,249,.28);letter-spacing:.1em;margin-top:.5rem;}
+
+.sim-s{background:var(--gr);}
+.sim-l{display:grid;grid-template-columns:260px 1fr;gap:2rem;}
+.sim-tabs{display:flex;flex-direction:column;gap:0;border:1px solid var(--md);}
+.stab{padding:1.25rem 1.5rem;cursor:pointer;border-bottom:1px solid var(--md);transition:background .15s;border-left:3px solid transparent;}
+.stab:last-child{border-bottom:none;}
+.stab.on{border-left-color:var(--bk);background:var(--wh);}
+.stab:hover:not(.on){background:var(--wh);}
+.tab-n{font-family:var(--mn);font-size:.55rem;color:var(--dm);letter-spacing:.1em;margin-bottom:.35rem;}
+.tab-t{font-family:var(--dp);font-size:.82rem;font-weight:700;margin-bottom:.2rem;}
+.tab-r{font-size:.7rem;color:var(--dm);}
+.tab-r.ok{color:var(--gn);}
+.sd{border:1px solid var(--md);padding:2rem;background:var(--wh);}
+.sd-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid var(--md);}
+.sd-t{font-family:var(--dp);font-size:1rem;font-weight:700;}
+.sd-b{font-family:var(--mn);font-size:.55rem;letter-spacing:.1em;padding:.25rem .7rem;background:var(--bk);color:var(--wh);}
+.sd-b.ok{background:var(--gn);}
+.sd-b.wn{background:#e67e22;}
+.bars_{display:flex;flex-direction:column;gap:1.1rem;}
+.br{display:grid;grid-template-columns:200px 1fr 70px;gap:1rem;align-items:center;}
+.bk_{font-size:.75rem;color:var(--dm);}
+.bt{height:3px;background:var(--md);overflow:hidden;}
+.bf{height:100%;background:var(--bk);transition:width 1.2s cubic-bezier(.16,1,.3,1);}
+.bf.gn{background:var(--gn);}
+.bf.rd{background:var(--rd);}
+.bv{font-family:var(--mn);font-size:.65rem;text-align:right;}
+
+footer{background:var(--bk);color:rgba(250,250,249,.38);padding:3rem 2.5rem 2rem;}
+.ft{display:grid;grid-template-columns:2fr 1fr 1fr;gap:3rem;margin-bottom:3rem;padding-bottom:2rem;border-bottom:1px solid rgba(255,255,255,.07);}
+.fb-n{font-family:var(--dp);font-size:1.1rem;font-weight:700;color:var(--wh);margin-bottom:.5rem;}
+.fb-d{font-size:.78rem;line-height:1.6;max-width:280px;}
+.fc h4{font-size:.7rem;color:var(--wh);font-weight:500;margin-bottom:1rem;}
+.fc ul{list-style:none;display:flex;flex-direction:column;gap:.5rem;}
+.fc li a{font-size:.75rem;transition:color .15s;}
+.fc li a:hover{color:var(--wh);}
+.fb-b{display:flex;justify-content:space-between;align-items:center;}
+.fb-c{font-size:.7rem;}
+.fb-t{font-family:var(--mn);font-size:.62rem;}
+
+.rv{opacity:0;transform:translateY(24px);transition:opacity .6s,transform .6s;}
+.rv.in{opacity:1;transform:translateY(0);}
+.rv.d1{transition-delay:.1s;}
+.rv.d2{transition-delay:.2s;}
+.rv.d3{transition-delay:.3s;}
+
+@media(max-width:900px){
+  .mg,.hw-g,.sf-g,.co-g,.sim-l,.snn,.ph-g,.ft{grid-template-columns:1fr;}
+  .mc:nth-child(2n){border-right:0;}
+  .nc,.hcw{display:none;}
+  h1{font-size:3rem;}
+}
+
+/* ==========================================================================
+   SIMULATION OVERLAY CSS (aegis-sim-v2 scoped to #v2-sim)
+   ========================================================================== */
+#v2-sim {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 99999;
+  background: var(--wh); color: var(--bk); font-family: var(--sn);
+  display: none; flex-direction: column; overflow: hidden;
+}
+
+#v2-sim header{
+  height:56px;background:var(--wh);border-bottom:1px solid var(--md);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 1.75rem;flex-shrink:0;
+}
+#v2-sim .logo{display:flex;align-items:center;gap:.6rem;}
+#v2-sim .logo-sq{width:26px;height:26px;background:var(--bk);display:flex;align-items:center;justify-content:center;}
+#v2-sim .logo-sq svg{width:13px;height:13px;}
+#v2-sim .logo-name{font-family:var(--dp);font-size:.9rem;font-weight:800;letter-spacing:.05em;}
+#v2-sim .logo-sep{width:1px;height:16px;background:var(--md);margin:0 .75rem;}
+#v2-sim .logo-sub{font-family:var(--mn);font-size:.58rem;color:var(--dm);letter-spacing:.1em;}
+#v2-sim .hd-center{font-family:var(--mn);font-size:.58rem;color:var(--dm);letter-spacing:.1em;text-transform:uppercase;}
+#v2-sim .hd-right{display:flex;align-items:center;gap:1.5rem;}
+#v2-sim .sys-dot{width:7px;height:7px;border-radius:50%;background:#1a7a4a;animation:pk 2s infinite;}
+@keyframes pk{0%,100%{opacity:1;}50%{opacity:.3;}}
+#v2-sim .sys-label{font-family:var(--mn);font-size:.58rem;color:var(--dm);display:flex;align-items:center;gap:.4rem;}
+#v2-sim .clk{font-family:var(--mn);font-size:.58rem;color:var(--dm);}
+
+#v2-sim .ws{display:flex;flex:1;overflow:hidden;}
+
+#v2-sim .left{width:290px;flex-shrink:0;border-right:1px solid var(--md);overflow-y:auto;background:var(--wh);}
+#v2-sim .left::-webkit-scrollbar{width:2px;} #v2-sim .left::-webkit-scrollbar-thumb{background:var(--md);}
+#v2-sim .sec{padding:1.25rem;border-bottom:1px solid var(--md);}
+#v2-sim .sec-lbl{font-family:var(--mn);font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dm);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;}
+#v2-sim .sec-lbl::before{content:'';width:14px;height:1px;background:var(--md);}
+
+#v2-sim .city-grid{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;}
+#v2-sim .city-btn{
+  padding:.65rem .6rem;border:1px solid var(--md);background:transparent;
+  font-family:var(--mn);font-size:.55rem;text-align:left;cursor:pointer;
+  transition:all .15s;
+}
+#v2-sim .city-btn:hover{border-color:var(--bk);}
+#v2-sim .city-btn.on{border-color:var(--bk);background:var(--bk);color:var(--wh);}
+#v2-sim .cn{display:block;font-family:var(--dp);font-size:.72rem;font-weight:700;margin-bottom:.15rem;}
+#v2-sim .city-btn.on .cn{color:var(--wh);}
+#v2-sim .cp{font-size:.5rem;color:var(--dm);}
+#v2-sim .city-btn.on .cp{color:rgba(250,250,249,.4);}
+
+#v2-sim .drone-list{display:flex;flex-direction:column;gap:.35rem;}
+#v2-sim .drone-btn{
+  display:flex;align-items:center;gap:.75rem;padding:.7rem;
+  border:1px solid var(--md);background:transparent;cursor:pointer;transition:all .15s;
+}
+#v2-sim .drone-btn:hover{border-color:var(--bk);}
+#v2-sim .drone-btn.on{border-color:var(--rd);background:rgba(192,57,43,.04);}
+#v2-sim .d-ico{font-size:1.1rem;width:32px;text-align:center;flex-shrink:0;}
+#v2-sim .d-name{font-family:var(--dp);font-size:.75rem;font-weight:700;margin-bottom:.2rem;}
+#v2-sim .d-spec{font-family:var(--mn);font-size:.5rem;color:var(--dm);line-height:1.5;}
+#v2-sim .drone-btn.on .d-spec{color:rgba(192,57,43,.6);}
+
+#v2-sim .cnt-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.75rem;}
+#v2-sim .cnt-n{font-family:var(--dp);font-size:2.4rem;font-weight:800;line-height:1;}
+#v2-sim .cnt-n.danger{color:var(--rd);}
+#v2-sim .cnt-l{font-family:var(--mn);font-size:.55rem;color:var(--dm);}
+#v2-sim .slider{width:100%;-webkit-appearance:none;appearance:none;height:2px;background:var(--md);outline:none;cursor:pointer;margin-bottom:.5rem;}
+#v2-sim .slider::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;background:var(--wh);border:2px solid var(--bk);border-radius:50%;}
+#v2-sim .cnt-marks{display:flex;justify-content:space-between;font-family:var(--mn);font-size:.48rem;color:var(--dm);}
+
+#v2-sim .assess{display:flex;flex-direction:column;gap:.6rem;}
+#v2-sim .ab-row{display:flex;align-items:center;gap:.6rem;}
+#v2-sim .ab-key{font-family:var(--mn);font-size:.56rem;color:var(--dm);width:110px;flex-shrink:0;}
+#v2-sim .ab-track{flex:1;height:2px;background:var(--md);overflow:hidden;}
+#v2-sim .ab-fill{height:100%;transition:width .5s cubic-bezier(.16,1,.3,1);}
+#v2-sim .ab-val{font-family:var(--mn);font-size:.56rem;width:32px;text-align:right;flex-shrink:0;}
+
+#v2-sim .launch-sec{padding:1.25rem;}
+#v2-sim .launch-btn{
+  width:100%;padding:.9rem 1.5rem;font-family:var(--dp);font-size:.85rem;font-weight:800;
+  letter-spacing:.04em;cursor:pointer;border:1px solid;transition:all .2s;
+}
+#v2-sim .lb-ready{border-color:var(--bk);background:var(--bk);color:var(--wh);}
+#v2-sim .lb-ready:hover{opacity:.82;}
+#v2-sim .lb-run{border-color:var(--md);background:transparent;color:var(--dm);cursor:not-allowed;}
+#v2-sim .lb-done{border-color:#1a7a4a;background:#1a7a4a;color:var(--wh);}
+#v2-sim .lb-done:hover{opacity:.85;}
+
+#v2-sim .center{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+#v2-sim .map-wrap{flex:1;position:relative;overflow:hidden;}
+#v2-sim #mc{width:100%;height:100%;display:block;}
+#v2-sim .map-ui-tl{position:absolute;top:1rem;left:1rem;pointer-events:none;}
+#v2-sim .map-city-name{font-family:var(--dp);font-size:1.4rem;font-weight:800;line-height:1;margin-bottom:.25rem;}
+#v2-sim .map-coords{font-family:var(--mn);font-size:.58rem;color:var(--dm);}
+#v2-sim .map-ui-tr{position:absolute;top:1rem;right:1rem;pointer-events:none;text-align:right;}
+#v2-sim .map-stat{font-family:var(--mn);font-size:.58rem;color:var(--dm);margin-bottom:.2rem;}
+#v2-sim .map-stat span{color:var(--bk);font-weight:500;}
+
+#v2-sim .toast{
+  position:absolute;bottom:180px;left:50%;transform:translateX(-50%);
+  font-family:var(--dp);font-size:1.1rem;font-weight:800;letter-spacing:.06em;
+  padding:.6rem 2rem;border:1px solid;background:var(--wh);
+  opacity:0;transition:opacity .3s;white-space:nowrap;pointer-events:none;
+}
+
+#v2-sim .log-wrap{height:120px;border-top:1px solid var(--md);background:var(--gr);flex-shrink:0;display:flex;flex-direction:column;}
+#v2-sim .log-top{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;border-bottom:1px solid var(--md);}
+#v2-sim .log-title{font-family:var(--mn);font-size:.55rem;letter-spacing:.12em;color:var(--dm);text-transform:uppercase;}
+#v2-sim .log-clr{font-family:var(--mn);font-size:.5rem;color:var(--dm);background:none;border:none;cursor:pointer;}
+#v2-sim .log-clr:hover{color:var(--bk);}
+#v2-sim .log-body{flex:1;overflow-y:auto;padding:.4rem 1rem;display:flex;flex-direction:column;gap:.15rem;}
+#v2-sim .log-body::-webkit-scrollbar{width:2px;}
+#v2-sim .log-body::-webkit-scrollbar-thumb{background:var(--md);}
+#v2-sim .le{font-family:var(--mn);font-size:.56rem;line-height:1.5;display:flex;gap:.6rem;}
+#v2-sim .le-t{color:var(--dm);flex-shrink:0;}
+#v2-sim .le-s{flex-shrink:0;font-weight:500;}
+#v2-sim .le-s.fusion{color:var(--bl);}
+#v2-sim .le-s.ukf{color:var(--am);}
+#v2-sim .le-s.net{color:#1a7a4a;}
+#v2-sim .le-s.safety{color:var(--rd);}
+#v2-sim .le-s.core{color:var(--bk);}
+#v2-sim .le-m{color:var(--dm);}
+#v2-sim .le-m strong{color:var(--bk);}
+
+#v2-sim .right{width:256px;flex-shrink:0;border-left:1px solid var(--md);overflow-y:auto;background:var(--wh);}
+#v2-sim .right::-webkit-scrollbar{width:2px;}
+#v2-sim .right::-webkit-scrollbar-thumb{background:var(--md);}
+
+#v2-sim .big-met{padding:1.25rem;border-bottom:1px solid var(--md);}
+#v2-sim .bm-n{font-family:var(--dp);font-size:2.6rem;font-weight:800;line-height:1;}
+#v2-sim .bm-n.ok{color:#1a7a4a;}
+#v2-sim .bm-n.bad{color:var(--rd);}
+#v2-sim .bm-n.neu{color:var(--bk);}
+#v2-sim .bm-l{font-family:var(--mn);font-size:.52rem;color:var(--dm);margin-top:.25rem;letter-spacing:.06em;}
+
+#v2-sim .rows{padding:1.25rem;border-bottom:1px solid var(--md);display:flex;flex-direction:column;gap:.55rem;}
+#v2-sim .row-{display:flex;justify-content:space-between;align-items:center;}
+#v2-sim .rk{font-family:var(--mn);font-size:.58rem;color:var(--dm);}
+#v2-sim .srv{font-family:var(--mn);font-size:.58rem;color:var(--bk);} /* RENAMED FROM .rv TO .srv */
+#v2-sim .srv.ok{color:#1a7a4a;}
+#v2-sim .srv.bad{color:var(--rd);}
+#v2-sim .srv.am{color:var(--am);}
+
+#v2-sim .bars-sec{padding:1.25rem;border-bottom:1px solid var(--md);}
+#v2-sim .bar-rows{display:flex;flex-direction:column;gap:.55rem;margin-top:.75rem;}
+#v2-sim .br{display:flex;flex-direction:column;gap:.25rem;}
+#v2-sim .br-top{display:flex;justify-content:space-between;}
+#v2-sim .br-k{font-family:var(--mn);font-size:.52rem;color:var(--dm);}
+#v2-sim .br-p{font-family:var(--mn);font-size:.52rem;color:var(--bk);}
+#v2-sim .br-track{height:2px;background:var(--md);}
+#v2-sim .br-fill{height:100%;transition:width 1s cubic-bezier(.16,1,.3,1);}
+
+#v2-sim .result{padding:1.25rem;border-bottom:1px solid var(--md);display:none;}
+#v2-sim .result.show{display:block;}
+#v2-sim .res-title{font-family:var(--dp);font-size:1rem;font-weight:800;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid var(--md);}
+#v2-sim .res-title.win{color:#1a7a4a;}
+#v2-sim .res-title.lose{color:var(--rd);}
+#v2-sim .res-rows{display:flex;flex-direction:column;gap:.45rem;}
+#v2-sim .rr{display:flex;justify-content:space-between;}
+#v2-sim .rk2{font-family:var(--mn);font-size:.56rem;color:var(--dm);}
+#v2-sim .rv2{font-family:var(--mn);font-size:.56rem;color:var(--bk);}
+</style>
+</head>
+<body>
+
+<div id="v2-landing">
+  <nav>
+    <div class="nl">
+      <div class="nm"><svg viewBox="0 0 14 14"><polygon points="7,1 13,12 1,12"/></svg></div>
+      <span class="nn">AEGIS</span>
+    </div>
+    <div class="nc">
+      <a href="#pp">System</a>
+      <a href="#mod">Modules</a>
+      <a href="#hw">Hardware</a>
+      <a href="#sf">Safety</a>
+      <a href="#co">Economics</a>
+    </div>
+    <div class="nr">
+      <div class="np"><div class="nd"></div>OPERATIONAL</div>
+      <a href="https://github.com/Vitalcheffe/Aegis" target="_blank" class="bsm">GitHub →</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hcw"><canvas id="hc"></canvas></div>
+    <div class="hco">
+      <div class="hk">Amine Harch · Autonomous Defense · Morocco, 2026</div>
+      <h1>Intercept.<br>Before<br>Impact.</h1>
+      <p class="hs">500 autonomous drones coordinated by AI. Kinetic neutralization of loitering munitions at 320 km/h — at 1/952 the cost of a PAC-3 missile.</p>
+      <div class="hst">
+        <div><div class="stn" data-count="500">0</div><div class="stl">Drone swarm</div></div>
+        <div><div class="stn" data-count="952" data-sfx="×">0</div><div class="stl">Cost advantage</div></div>
+        <div><div class="stn" data-count="63">0</div><div class="stl">Tests passing</div></div>
+      </div>
+      <div class="ha">
+        <a href="https://github.com/Vitalcheffe/Aegis" target="_blank" class="bp">View Source ↗</a>
+        <a href="#sim" class="bo" style="background:var(--bk); color:var(--wh);">Launch Simulator ↓</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="mq">
+    <div class="mq-t">
+      <div class="mq-i">SPECTRAL FUSION <span>M1</span></div><div class="mq-i">UKF 9-STATE <span>M2</span></div><div class="mq-i">ELASTIC NET <span>M3</span></div><div class="mq-i">ENERGY BUDGET <span>M4</span></div><div class="mq-i">PROXIMITY LOCK <span>SAFETY</span></div><div class="mq-i">BYZANTINE TOLERANCE <span>&lt;1/3</span></div><div class="mq-i">KINETIC ENERGY <span>28,445 J</span></div><div class="mq-i">MESH NETWORK <span>60 GHz</span></div><div class="mq-i">SPRINT SPEED <span>320 km/h</span></div><div class="mq-i">SIGMA POINTS <span>19</span></div>
+      <div class="mq-i">SPECTRAL FUSION <span>M1</span></div><div class="mq-i">UKF 9-STATE <span>M2</span></div><div class="mq-i">ELASTIC NET <span>M3</span></div><div class="mq-i">ENERGY BUDGET <span>M4</span></div><div class="mq-i">PROXIMITY LOCK <span>SAFETY</span></div><div class="mq-i">BYZANTINE TOLERANCE <span>&lt;1/3</span></div><div class="mq-i">KINETIC ENERGY <span>28,445 J</span></div><div class="mq-i">MESH NETWORK <span>60 GHz</span></div><div class="mq-i">SPRINT SPEED <span>320 km/h</span></div><div class="mq-i">SIGMA POINTS <span>19</span></div>
+    </div>
+  </div>
+
+  <section class="st-s">
+    <div class="st-i">
+      <h2>The missile costs $4 million.<br><em>The interceptor costs $4,200.</em></h2>
+      <p class="st-sub">AEGIS deploys a persistent swarm that always has an interceptor near every threat vector. No expensive reload. No single point of failure.</p>
+      <div class="snn rv">
+        <div class="sni"><div class="sni-n" data-count="500">0</div><div class="sni-l">Autonomous agents per swarm</div></div>
+        <div class="sni"><div class="sni-n" data-count="50">0</div><div class="sni-l">Hz control loop — 20ms per tick</div></div>
+        <div class="sni"><div class="sni-n" data-count="22">0</div><div class="sni-l">Minutes patrol endurance</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pp" class="pp-s">
+    <div class="sl">Control Pipeline</div>
+    <h2 style="margin-bottom:2.5rem;">50 Hz Processing Loop</h2>
+    <table class="pt rv">
+      <tr><td class="pt-i">INPUT</td><td class="pt-n">SensorFrames × N</td><td class="pt-d">EO + LWIR + Doppler from all 500 agents. 120 bytes/frame. 50 Hz broadcast over 60 GHz mesh.</td><td><span class="tg">50 Hz</span></td></tr>
+      <tr><td class="pt-i">M1</td><td class="pt-n">SpectralFusion</td><td class="pt-d">MAD Byzantine filter + 5-rule lure rejection. Spatial clustering at 25m radius. O(N) complexity.</td><td><span class="tg">BFT &lt;1/3</span></td></tr>
+      <tr><td class="pt-i">M2</td><td class="pt-n">MultiTargetUKF</td><td class="pt-d">9-state Unscented Kalman Filter. 19 sigma points. 12s horizon. Intercept scan at 0.1s steps.</td><td><span class="tg">±8.9m</span></td></tr>
+      <tr><td class="pt-i">M3</td><td class="pt-n">ElasticNet</td><td class="pt-d">Spring-physics formation. 6-neighbor graph. O(6N) — 83× faster than O(N²). 4-state FSM.</td><td><span class="tg">O(6N)</span></td></tr>
+      <tr><td class="pt-i">M4</td><td class="pt-n">EnergyBudget</td><td class="pt-d">3-reserve inviolable model. Threat worth score [0–100]. RTB/abort/execute per drone per tick.</td><td><span class="tg">177.6 Wh</span></td></tr>
+      <tr><td class="pt-i">SAFETY</td><td class="pt-n">ProximityLock</td><td class="pt-d">Default LOCKED. 4 checks: sphere 15m, cone 45°×60m, quorum ≥67%, Colonel veto 8s. Audit log immutable.</td><td><span class="tg rd">FAIL-SAFE</span></td></tr>
+      <tr><td class="pt-i">OUTPUT</td><td class="pt-n">DroneCommands × N</td><td class="pt-d">48 bytes per drone. Role + waypoint + booster timestamp. 60 GHz CCP mesh broadcast.</td><td><span class="tg gn">48B</span></td></tr>
+    </table>
+  </section>
+
+  <section id="mod">
+    <div class="sl">Core Algorithms</div>
+    <h2 style="margin-bottom:2.5rem;">Four AI Modules</h2>
+    <div class="mg">
+      <div class="mc rv d1">
+        <div class="mi">MODULE M1 — spectral_fusion.py</div>
+        <div class="mt">Spectral Fusion</div>
+        <div class="ms">Byzantine Fault Tolerance · Multi-Spectral · Lure Detection</div>
+        <p class="mb">500 drones report EO + LWIR + Doppler detections simultaneously. Byzantine nodes — jammed or spoofed — filtered via Median Absolute Deviation. Five physical rules reject decoys before triggering an intercept.</p>
+        <div class="mn_">
+          <div><div class="mnv">3.0σ</div><div class="mnl">MAD threshold</div></div>
+          <div><div class="mnv">&lt;1/3</div><div class="mnl">Byzantine tolerance</div></div>
+          <div><div class="mnv">5</div><div class="mnl">Lure rules</div></div>
+        </div>
+        <div class="cb"><span class="cd"># MAD Byzantine Filter — Lamport 1982</span><br><span class="ck">score</span> = |vote - median| / (<span class="cv">1.4826</span> × MAD)<br><span class="ck">reject</span> if score > <span class="cv">3.0</span>σ</div>
+      </div>
+      <div class="mc rv d2">
+        <div class="mi">MODULE M2 — intercept_ukf.py</div>
+        <div class="mt">Intercept UKF</div>
+        <div class="ms">9-State · 19 Sigma Points · Intercept Predictor</div>
+        <p class="mb">Unscented Kalman Filter tracks targets in 9D state space [px,py,pz,vx,vy,vz,ax,ay,az]. Sigma points propagate uncertainty through exact physics — no linearization error at 10G maneuvers. 120 future windows scanned for booster fire timestamp.</p>
+        <div class="mn_">
+          <div><div class="mnv">9D</div><div class="mnl">State vector</div></div>
+          <div><div class="mnv">19</div><div class="mnl">Sigma points</div></div>
+          <div><div class="mnv">12s</div><div class="mnl">Horizon</div></div>
+        </div>
+        <div class="cb"><span class="cd"># Van der Merwe scaled unscented transform</span><br><span class="ck">λ</span> = α²(n+κ) − n<br><span class="ck">σ</span>[i] = μ ± √((n+λ)·P)ᵢ</div>
+      </div>
+      <div class="mc rv d3">
+        <div class="mi">MODULE M3 — elastic_net.py</div>
+        <div class="mt">Elastic Net</div>
+        <div class="ms">Spring Physics · O(6N) · Decentralized · No Server</div>
+        <p class="mb">500 drones self-organize into a hexagonal patrol grid without a central coordinator. Spring forces between 6 nearest neighbors. O(6N) — 83× faster than full mesh at N=500. FSM: PATROL → ENGAGE → PURSUIT → REFORM.</p>
+        <div class="mn_">
+          <div><div class="mnv">83×</div><div class="mnl">vs O(N²)</div></div>
+          <div><div class="mnv">45m</div><div class="mnl">Cell spacing</div></div>
+          <div><div class="mnv">5 m/s²</div><div class="mnl">Force clamp</div></div>
+        </div>
+        <div class="cb">F = F_attract + F_repulse + F_slot<br>|F| ≤ <span class="cv">5.0</span> m/s²  <span class="cd"># ≈ 0.5G clamp</span></div>
+      </div>
+      <div class="mc rv d4">
+        <div class="mi">MODULE M4 — budget_manager.py</div>
+        <div class="mt">Energy Budget</div>
+        <div class="ms">3-Reserve Model · Worth Engine · RTB Logic</div>
+        <p class="mb">Three inviolable energy reserves partition the 177.6 Wh usable battery. Threat worth score [0–100] drives engage/RTB. No intercept order can spend RTB or emergency reserves.</p>
+        <div class="mn_">
+          <div><div class="mnv">177.6</div><div class="mnl">Usable Wh</div></div>
+          <div><div class="mnv">3</div><div class="mnl">Reserves</div></div>
+          <div><div class="mnv">[0–100]</div><div class="mnl">Threat score</div></div>
+        </div>
+        <div class="cb">S = (mass/<span class="cv">50</span>)×40 + (v/<span class="cv">200</span>)×30 + col×30<br>S &lt; <span class="cv">60</span>  → RTB<br>S ≥ <span class="cv">80</span>  → Request Colonel auth</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sw-s" style="padding:0;overflow:hidden;position:relative;height:540px;">
+    <canvas id="sc"></canvas>
+    <div class="sw-ov">
+      <div>
+        <div class="sl">Elastic Net Formation</div>
+        <div class="sw-h">500 Agents.<br>Zero Servers.<br>O(6N).</div>
+      </div>
+      <div class="sw-b">
+        <div class="swi"><strong id="swc">0</strong>ACTIVE DRONES</div>
+        <div class="swi"><strong id="sws">PATROL</strong>STATE</div>
+        <div class="swi"><strong id="swh">100%</strong>SWARM HEALTH</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="hw" class="hw-s">
+    <div class="sl" style="color:rgba(250,250,249,.28);">Physical Platform</div>
+    <h2 style="margin-bottom:3rem;color:var(--wh);">Tessera MK.II</h2>
+    <div class="hw-g">
+      <div class="hw-c rv"><canvas id="dc" width="480" height="480"></canvas></div>
+      <div class="sp-l rv d2">
+        <div class="sg"><div class="sg-t">Airframe</div>
+          <div class="sr"><span class="sk">Config</span><span class="sv_">Delta-Canard Pusher</span></div>
+          <div class="sr"><span class="sk">Material</span><span class="sv_">T800H CFRP Autoclave</span></div>
+          <div class="sr"><span class="sk">Wingspan</span><span class="sv_ hi">940 mm</span></div>
+          <div class="sr"><span class="sk">MTOW</span><span class="sv_ hi">7.20 kg</span></div>
+          <div class="sr"><span class="sk">RCS</span><span class="sv_">&lt; 0.003 m²</span></div>
+        </div>
+        <div class="sg"><div class="sg-t">Flight Envelope</div>
+          <div class="sr"><span class="sk">V_patrol</span><span class="sv_ hi">114 km/h (L/D max)</span></div>
+          <div class="sr"><span class="sk">V_sprint</span><span class="sv_ hi">320 km/h (booster)</span></div>
+          <div class="sr"><span class="sk">Endurance</span><span class="sv_">~22 min</span></div>
+          <div class="sr"><span class="sk">G_design</span><span class="sv_">22 G · SF 1.93</span></div>
+        </div>
+        <div class="sg"><div class="sg-t">Propulsion</div>
+          <div class="sr"><span class="sk">Motor</span><span class="sv_">T-Motor U10 Plus</span></div>
+          <div class="sr"><span class="sk">Booster</span><span class="sv_">Cesaroni Pro54 6GXL</span></div>
+          <div class="sr"><span class="sk">Impulse</span><span class="sv_ hi">764.5 N·s / 1.8s</span></div>
+          <div class="sr"><span class="sk">ΔV</span><span class="sv_">+107 m/s</span></div>
+          <div class="sr"><span class="sk">Battery</span><span class="sv_ hi">177.6 Wh usable</span></div>
+        </div>
+        <div class="sg"><div class="sg-t">Sensors & Compute</div>
+          <div class="sr"><span class="sk">EO</span><span class="sv_">Sony IMX678 · 4K 60fps</span></div>
+          <div class="sr"><span class="sk">Thermal</span><span class="sv_">FLIR Lepton 3.5 LWIR</span></div>
+          <div class="sr"><span class="sk">Radar</span><span class="sv_">Inxpect LBK-24 · 24 GHz</span></div>
+          <div class="sr"><span class="sk">AI</span><span class="sv_">Jetson Orin NX</span></div>
+          <div class="sr"><span class="sk">Neural</span><span class="sv_">Hailo H15 · 40 TOPS</span></div>
+          <div class="sr"><span class="sk">Mesh</span><span class="sv_ hi">Sivers IQ · 60 GHz</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="sf" class="sf-s">
+    <div class="sl">Autonomous Weapons Safety</div>
+    <h2 style="margin-bottom:2.5rem;">ProximityLock</h2>
+    <div class="sf-g">
+      <div class="lks rv">
+        <div class="lk"><div class="ln">01</div><div><div class="lt">Sphere Exclusion</div><div class="ld">No friendly within 15m radius. Checked against all 499 peers every tick.</div></div></div>
+        <div class="lk"><div class="ln">02</div><div><div class="lt">Forward Blast Cone</div><div class="ld">No friendly in 45° × 60m cone. 28,445 J kinetic → 45m frag + 15m margin.</div></div></div>
+        <div class="lk"><div class="ln">03</div><div><div class="lt">Network Quorum</div><div class="ld">≥ 67% of swarm reachable on 60 GHz. Lamport BFT condition enforced.</div></div></div>
+        <div class="lk"><div class="ln">04</div><div><div class="lt">Human Veto Gate</div><div class="ld">Colonel has 8s to press VETO. Immutable audit log. High-risk targets require explicit GO.</div></div></div>
+      </div>
+      <div class="ssb rv d2">
+        <div class="sc_"><div class="sct r">⚠ DEFAULT STATE: LOCKED</div><div class="scb">Hardware failure defaults to LOCKED. Weapon cannot fire unless system actively proves safety every 20ms tick.</div></div>
+        <div class="sc_"><div class="sct g">✓ UNLOCK CONDITION</div><div class="scb">sphere_clear == True<br>cone_clear == True<br>quorum >= 0.67<br>human_veto == False<br><br>Single False keeps is_locked = True.</div></div>
+        <div class="sc_"><div class="sct">ADS-B Spoof Detection</div><div class="scb">Doppler radar vs declared ADS-B. Implied acceleration &gt; 3.5G → SPOOF_ALERT. Boeing 737 cannot do 8.2G.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ph-s">
+    <div class="sl">Physical Validation</div>
+    <h2 style="margin-bottom:1.5rem;">First Principles</h2>
+    <p style="color:var(--dm);font-size:.85rem;margin-bottom:2.5rem;max-width:520px;line-height:1.6;">Every constant self-tests at import. ISA atmosphere, ITU-R rain model, MIL-STD-1522A structural factors.</p>
+    <div class="ph-g rv">
+      <div class="pc_"><div class="pf">ρ(300m) = P/(R·T)</div><div class="pv">1.1901</div><div class="pu">kg/m³ at 300m AGL</div><div class="ps_"><em>ISA</em> · ICAO Doc 7488/3<br>T=286.20K · P=97,772 Pa</div></div>
+      <div class="pc_"><div class="pf">KE = ½mv²</div><div class="pv">28,445</div><div class="pu">J · kinetic energy at impact</div><div class="ps_"><em>m=7.2 kg</em> · v=88.9 m/s<br>Frag radius ≈ 45m</div></div>
+      <div class="pc_"><div class="pf">SF = G_ult / G_design</div><div class="pv">1.93</div><div class="pu">structural safety factor (≥ 1.5)</div><div class="ps_"><em>MIL-STD-1522A</em><br>G_aero=42.5G @ 320 km/h</div></div>
+    </div>
+    <div class="cw rv">
+      <div class="cwt">Power curve — electrical consumption vs airspeed (ISA @ 300m AGL)</div>
+      <canvas id="pw"></canvas>
+    </div>
+  </section>
+
+  <section id="co" class="co-s">
+    <div class="sl" style="color:rgba(250,250,249,.28);">Economics of Intercept</div>
+    <h2 style="margin-bottom:2.5rem;color:var(--wh);">Cost Asymmetry</h2>
+    <div class="co-g rv">
+      <div class="co-c">
+        <div class="co-t">AEGIS MK.II Interceptor</div>
+        <div class="co-p a">$4,200</div>
+        <div class="co-per">per unit · series production</div>
+        <div class="co-l">
+          <div class="co-li">T800H CFRP airframe — $680</div>
+          <div class="co-li">Sensors + compute — $1,400</div>
+          <div class="co-li">Propulsion + booster — $420</div>
+          <div class="co-li">Battery + electronics — $380</div>
+          <div class="co-li">Assembly + QA — $1,320</div>
+        </div>
+      </div>
+      <div class="co-c">
+        <div class="co-t">PAC-3 MSE Missile</div>
+        <div class="co-p b">$4,000,000</div>
+        <div class="co-per">per round · US Army procurement</div>
+        <div class="co-l">
+          <div class="co-li">Active radar seeker</div>
+          <div class="co-li">Solid propellant motor</div>
+          <div class="co-li">Guidance computer</div>
+          <div class="co-li">Hit-to-kill warhead</div>
+          <div class="co-li">Integration + test</div>
+        </div>
+      </div>
+    </div>
+    <div class="rt-s rv">
+      <div class="rt-n" data-count="952" data-sfx="×">0</div>
+      <div class="rt-l">Cost advantage per intercept — AEGIS vs PAC-3</div>
+    </div>
+  </section>
+
+  <section id="sim" class="sim-s">
+    <div class="sl">Nevada Proving Ground</div>
+    <h2 style="margin-bottom:1.5rem;">Mission Simulation</h2>
+    
+    <div style="margin-bottom: 3rem;">
+      <button onclick="openSim()" class="bp rv" style="font-size: .9rem; padding: 1.2rem 3rem; background: var(--rd);">[ INITIATE LIVE TACTICAL COMMAND OVERLAY ] ↗</button>
+    </div>
+
+    <div class="sim-l">
+      <div class="sim-tabs rv">
+        <div class="stab on" onclick="wv(0,this)"><div class="tab-n">WAVE 01</div><div class="tab-t">Shahed-136</div><div class="tab-r ok">✓ INTERCEPTED</div></div>
+        <div class="stab" onclick="wv(1,this)"><div class="tab-n">WAVE 02</div><div class="tab-t">5× Lancet-3</div><div class="tab-r ok">✓ 4/5 NEUTRALIZED</div></div>
+        <div class="stab" onclick="wv(2,this)"><div class="tab-n">WAVE 03</div><div class="tab-t">Mixed + 2 Lures</div><div class="tab-r ok">✓ LURES IDENTIFIED</div></div>
+      </div>
+      <div class="sd rv d2">
+        <div class="sd-h"><div class="sd-t" id="sdt">WAVE 01 — Shahed-136 · 50 kg · 185 km/h</div><div class="sd-b ok" id="sdb">INTERCEPTED</div></div>
+        <div class="bars_" id="sdb_"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="ft">
+      <div><div class="fb-n">AEGIS</div><div class="fb-d">Autonomous drone swarm intercept. Python 3.10 · NumPy · SciPy. Built by Amine Harch, 16, Morocco.</div></div>
+      <div class="fc"><h4>System</h4><ul><li><a href="#pp">Control Pipeline</a></li><li><a href="#mod">AI Modules</a></li><li><a href="#hw">Tessera MK.II</a></li><li><a href="#sf">Safety Layer</a></li></ul></div>
+      <div class="fc"><h4>References</h4><ul><li><a href="#">Lamport et al. — ACM 1982</a></li><li><a href="#">Van der Merwe — 2004</a></li><li><a href="#">Reynolds — Boids 1987</a></li><li><a href="#">ISA · ITU-R · MIL-STD</a></li></ul></div>
+    </div>
+    <div class="fb-b"><div class="fb-c">AEGIS v1.0.0 · Amine Harch · Morocco</div><div class="fb-t" id="ts"></div></div>
+  </footer>
+</div>
+
+<div id="v2-sim">
+  <header>
+    <div class="logo">
+      <div class="logo-sq">
+        <svg viewBox="0 0 14 14" fill="none">
+          <polygon points="7,1 13,12 1,12" stroke="white" stroke-width="1.5" fill="none"/>
+          <circle cx="7" cy="9" r="1.5" fill="white"/>
+        </svg>
+      </div>
+      <span class="logo-name">AEGIS</span>
+      <div class="logo-sep"></div>
+      <span class="logo-sub">TACTICAL COMMAND ENGINE</span>
+    </div>
+    <div class="hd-center">Autonomous Kinetic Interceptor Swarm · Live Overlay</div>
+    <div class="hd-right">
+      <div class="sys-label"><div class="sys-dot"></div>SYSTEM READY</div>
+      <div class="clk" id="clk"></div>
+      <button onclick="closeSim()" style="background:var(--rd); color:var(--wh); border:none; padding:.4rem .8rem; font-family:var(--dp); font-size:.6rem; font-weight:700; cursor:pointer; letter-spacing:.05em; margin-left:1rem;">EXIT C2 SYSTEM</button>
+    </div>
+  </header>
+
+  <div class="ws">
+    <div class="left">
+      <div class="sec">
+        <div class="sec-lbl">Protected Asset</div>
+        <div class="city-grid">
+          <button class="city-btn on" data-city="KYIV" data-sub="Ukraine" data-coord="50.45°N 30.52°E" onclick="pickCity(this)">
+            <span class="cn">KYIV</span><span class="cp">2.9M pop.</span>
+          </button>
+          <button class="city-btn" data-city="TEL AVIV" data-sub="Israel" data-coord="32.08°N 34.78°E" onclick="pickCity(this)">
+            <span class="cn">TEL AVIV</span><span class="cp">4.2M pop.</span>
+          </button>
+          <button class="city-btn" data-city="RIYADH" data-sub="Saudi Arabia" data-coord="24.68°N 46.72°E" onclick="pickCity(this)">
+            <span class="cn">RIYADH</span><span class="cp">7.5M pop.</span>
+          </button>
+          <button class="city-btn" data-city="TAIPEI" data-sub="Taiwan" data-coord="25.03°N 121.56°E" onclick="pickCity(this)">
+            <span class="cn">TAIPEI</span><span class="cp">2.6M pop.</span>
+          </button>
+          <button class="city-btn" data-city="WARSAW" data-sub="Poland" data-coord="52.23°N 21.01°E" onclick="pickCity(this)">
+            <span class="cn">WARSAW</span><span class="cp">1.8M pop.</span>
+          </button>
+          <button class="city-btn" data-city="DUBAI" data-sub="UAE" data-coord="25.20°N 55.27°E" onclick="pickCity(this)">
+            <span class="cn">DUBAI</span><span class="cp">3.5M pop.</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-lbl">Threat Platform</div>
+        <div class="drone-list">
+          <button class="drone-btn on" data-type="Shahed-136" data-mass="50" data-speed="185" data-wh="40" onclick="pickDrone(this)">
+            <div class="d-ico">🪃</div>
+            <div><div class="d-name">Shahed-136</div><div class="d-spec">50 kg · 185 km/h · 40 kg HE<br>Iranian · ~$20,000 / unit</div></div>
+          </button>
+          <button class="drone-btn" data-type="Lancet-3" data-mass="5" data-speed="300" data-wh="3" onclick="pickDrone(this)">
+            <div class="d-ico">⚡</div>
+            <div><div class="d-name">Lancet-3</div><div class="d-spec">5 kg · 300 km/h · 3 kg HE<br>Russian · ~$35,000 / unit</div></div>
+          </button>
+          <button class="drone-btn" data-type="Mohajer-6" data-mass="670" data-speed="200" data-wh="60" onclick="pickDrone(this)">
+            <div class="d-ico">🎯</div>
+            <div><div class="d-name">Mohajer-6</div><div class="d-spec">670 kg · 200 km/h · 60 kg HE<br>Iranian · ~$130,000 / unit</div></div>
+          </button>
+          <button class="drone-btn" data-type="Orlan-10" data-mass="15" data-speed="150" data-wh="5" onclick="pickDrone(this)">
+            <div class="d-ico">📡</div>
+            <div><div class="d-name">Orlan-10</div><div class="d-spec">15 kg · 150 km/h · 5 kg HE<br>Russian · ~$87,000 / unit</div></div>
+          </button>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-lbl">Attack Volume</div>
+        <div class="cnt-top">
+          <div class="cnt-n" id="cnt-n">24</div>
+          <div class="cnt-l">inbound threats</div>
+        </div>
+        <input type="range" class="slider" id="slider" min="3" max="120" value="24" oninput="pickCount(this.value)">
+        <div class="cnt-marks"><span>3</span><span>30</span><span>60</span><span>90</span><span>120</span></div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-lbl">Threat Assessment</div>
+        <div class="assess" id="assess">
+          <div class="ab-row"><span class="ab-key">Threat score</span><div class="ab-track"><div class="ab-fill" id="af-score" style="width:68%;background:var(--rd)"></div></div><span class="ab-val" id="av-score" style="color:var(--rd)">68</span></div>
+          <div class="ab-row"><span class="ab-key">Saturation risk</span><div class="ab-track"><div class="ab-fill" id="af-sat" style="width:40%;background:var(--am)"></div></div><span class="ab-val" id="av-sat" style="color:var(--am)">40%</span></div>
+          <div class="ab-row"><span class="ab-key">Lure probability</span><div class="ab-track"><div class="ab-fill" id="af-lure" style="width:22%;background:var(--bl)"></div></div><span class="ab-val" id="av-lure" style="color:var(--bl)">22%</span></div>
+          <div class="ab-row"><span class="ab-key">AEGIS coverage</span><div class="ab-track"><div class="ab-fill" id="af-cov" style="width:82%;background:#1a7a4a"></div></div><span class="ab-val" id="av-cov" style="color:#1a7a4a">82%</span></div>
+        </div>
+      </div>
+
+      <div class="launch-sec">
+        <button class="launch-btn lb-ready" id="lbtn" onclick="launch()">RUN SIMULATION →</button>
+      </div>
+    </div>
+
+    <div class="center">
+      <div class="map-wrap">
+        <canvas id="mc"></canvas>
+        <div class="map-ui-tl">
+          <div class="map-city-name" id="ui-city">KYIV</div>
+          <div class="map-coords" id="ui-coord">50.45°N 30.52°E · ALT 300m AGL · ACTIVE DEFENSE CORRIDOR</div>
+        </div>
+        <div class="map-ui-tr">
+          <div class="map-stat">Swarm <span id="ui-swarm">500</span> agents active</div>
+          <div class="map-stat">Intercept rate <span id="ui-rate">—</span></div>
+          <div class="map-stat">Tick <span id="ui-tick">0</span> / <span id="ui-total">0</span></div>
+        </div>
+        <div class="toast" id="toast"></div>
+      </div>
+
+      <div class="log-wrap">
+        <div class="log-top">
+          <div class="log-title">Real-Time System Log — 50 Hz Pipeline</div>
+          <button class="log-clr" onclick="document.getElementById('log').innerHTML=''">CLEAR</button>
+        </div>
+        <div class="log-body" id="log"></div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="big-met">
+        <div class="bm-n neu" id="rm-hit">—</div>
+        <div class="bm-l">THREATS NEUTRALIZED</div>
+      </div>
+      <div class="big-met" style="padding:.85rem 1.25rem;">
+        <div class="bm-n neu" id="rm-pen" style="font-size:1.9rem;">—</div>
+        <div class="bm-l">PENETRATIONS (asset struck)</div>
+      </div>
+
+      <div class="rows">
+        <div class="sec-lbl" style="margin-bottom:.25rem;">Pipeline Status</div>
+        <div class="row-"><span class="rk">M1 SpectralFusion</span><span class="srv" id="ps-fusion">STANDBY</span></div>
+        <div class="row-"><span class="rk">M2 UKF Tracker</span><span class="srv" id="ps-ukf">STANDBY</span></div>
+        <div class="row-"><span class="rk">M3 ElasticNet</span><span class="srv" id="ps-net">STANDBY</span></div>
+        <div class="row-"><span class="rk">M4 EnergyBudget</span><span class="srv" id="ps-nrj">STANDBY</span></div>
+        <div class="row-"><span class="rk">ProximityLock</span><span class="srv bad" id="ps-lock">LOCKED</span></div>
+        <div class="row-"><span class="rk">HumanLoopGate</span><span class="srv" id="ps-gate">—</span></div>
+      </div>
+
+      <div class="rows">
+        <div class="sec-lbl" style="margin-bottom:.25rem;">Engagement Metrics</div>
+        <div class="row-"><span class="rk">BFT rejections</span><span class="srv" id="rm-bft">0</span></div>
+        <div class="row-"><span class="rk">Lures identified</span><span class="srv" id="rm-lure">0</span></div>
+        <div class="row-"><span class="rk">Swarm health</span><span class="srv ok" id="rm-hlth">100%</span></div>
+        <div class="row-"><span class="rk">Avg intercept time</span><span class="srv am" id="rm-time">—</span></div>
+        <div class="row-"><span class="rk">Network quorum</span><span class="srv ok" id="rm-quorum">—</span></div>
+        <div class="row-"><span class="rk">Battery reserve</span><span class="srv ok" id="rm-batt">—</span></div>
+      </div>
+
+      <div class="bars-sec">
+        <div class="sec-lbl">Wave Progression</div>
+        <div class="bar-rows">
+          <div class="br"><div class="br-top"><span class="br-k">Detection</span><span class="br-p" id="bp-det">0%</span></div><div class="br-track"><div class="br-fill" id="bf-det" style="width:0%;background:var(--bl)"></div></div></div>
+          <div class="br"><div class="br-top"><span class="br-k">UKF Tracking</span><span class="br-p" id="bp-trk">0%</span></div><div class="br-track"><div class="br-fill" id="bf-trk" style="width:0%;background:var(--am)"></div></div></div>
+          <div class="br"><div class="br-top"><span class="br-k">Intercept launch</span><span class="br-p" id="bp-int">0%</span></div><div class="br-track"><div class="br-fill" id="bf-int" style="width:0%;background:var(--rd)"></div></div></div>
+          <div class="br"><div class="br-top"><span class="br-k">Neutralized</span><span class="br-p" id="bp-neu">0%</span></div><div class="br-track"><div class="br-fill" id="bf-neu" style="width:0%;background:#1a7a4a"></div></div></div>
+        </div>
+      </div>
+
+      <div class="result" id="result-box">
+        <div class="res-title" id="res-title">MISSION COMPLETE</div>
+        <div class="res-rows" id="res-rows"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ==========================================================================
+   INTEGRATION LOGIC (Open/Close Overlay)
+   ========================================================================== */
+function openSim() {
+  document.getElementById('v2-sim').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  if(window.simResize) window.simResize();
+}
+
+function closeSim() {
+  document.getElementById('v2-sim').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+/* ==========================================================================
+   LANDING PAGE JS (aegis-v2)
+   ========================================================================== */
+const wd=[
+  {t:'WAVE 01 — Shahed-136 · 50 kg · 185 km/h',b:'INTERCEPTED',bc:'ok',bars:[['Detection confidence','94%',94,''],['BFT votes accepted','47/50',94,''],['UKF track quality','0.91',91,''],['Intercept precision','±6.2m',88,''],['Time to intercept','3.2s',73,''],['Battery used','12.4 Wh',18,'gn']]},
+  {t:'WAVE 02 — 5× Lancet-3 Formation',b:'4/5 NEUTRALIZED',bc:'wn',bars:[['Targets confirmed','5/5',100,''],['Intercepted','4/5',80,''],['Escaped (battery)','1/5',20,'rd'],['UKF quality avg','0.87',87,''],['Formation health','91%',91,'gn'],['Byzantine rejected','3',6,'']]},
+  {t:'WAVE 03 — Mixed + 2 Lures',b:'LURES IDENTIFIED',bc:'ok',bars:[['Real threats','2/4',50,''],['Lures detected','2/2',100,'gn'],['Flare R1 rule','>700K',100,'rd'],['Balloon R2 rule','ΔT<5K',100,'gn'],['False positives','0',100,'gn'],['Mission success','100%',100,'gn']]}
+];
+
+function wv(i,el){
+  document.querySelectorAll('.stab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  const d=wd[i];
+  document.getElementById('sdt').textContent=d.t;
+  const b=document.getElementById('sdb');b.textContent=d.b;b.className='sd-b '+d.bc;
+  const bars=document.getElementById('sdb_');
+  bars.innerHTML=d.bars.map(([k,v,p,c])=>`<div class="br"><div class="bk_">${k}</div><div class="bt"><div class="bf ${c}" style="width:0" data-p="${p}"></div></div><div class="bv">${v}</div></div>`).join('');
+  setTimeout(()=>bars.querySelectorAll('.bf').forEach(f=>f.style.width=f.dataset.p+'%'),50);
+}
+wv(0,document.querySelector('.stab'));
+
+function cnt(el){
+  const n=+el.dataset.count,s=el.dataset.sfx||'',t=1500,s0=performance.now();
+  const go=now=>{const p=Math.min((now-s0)/t,1),e=1-Math.pow(1-p,3);el.textContent=Math.round(e*n)+s;if(p<1)requestAnimationFrame(go);};
+  requestAnimationFrame(go);
+}
+
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){e.target.classList.add('in');e.target.querySelectorAll('[data-count]').forEach(cnt);io.unobserve(e.target);}
+}),{threshold:.12});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+
+const io2=new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){e.target.querySelectorAll('[data-count]').forEach(cnt);io2.unobserve(e.target);}
+}),{threshold:.3});
+document.querySelectorAll('.rt-s,.snn').forEach(el=>io2.observe(el));
+
+setTimeout(()=>document.querySelectorAll('.hco [data-count]').forEach(cnt),700);
+
+setInterval(()=>{document.getElementById('ts').textContent=new Date().toISOString().replace('T',' ').slice(0,19)+' UTC';},1000);
+
+(function(){
+  const c=document.getElementById('hc'),ctx=c.getContext('2d');let W,H;
+  const pts=Array.from({length:55},()=>({x:Math.random(),y:Math.random(),vx:(Math.random()-.5)*.0003,vy:(Math.random()-.5)*.0003}));
+  function resize(){W=c.width=c.offsetWidth;H=c.height=c.offsetHeight;}
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>1)p.vx*=-1;if(p.y<0||p.y>1)p.vy*=-1;});
+    pts.forEach((a,i)=>{
+      pts.slice(i+1).forEach(b=>{const dx=(a.x-b.x)*W,dy=(a.y-b.y)*H,d=Math.sqrt(dx*dx+dy*dy);
+        if(d<130){ctx.beginPath();ctx.moveTo(a.x*W,a.y*H);ctx.lineTo(b.x*W,b.y*H);ctx.strokeStyle=`rgba(10,10,10,${(1-d/130)*.07})`;ctx.lineWidth=.5;ctx.stroke();}
+      });
+      ctx.beginPath();ctx.arc(a.x*W,a.y*H,1.5,0,Math.PI*2);ctx.fillStyle='rgba(10,10,10,0.18)';ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize',resize);resize();draw();
+})();
+
+(function(){
+  const c=document.getElementById('sc'),ctx=c.getContext('2d');let W,H,tx,ty;
+  const N=90,dr=[];let ph=0,pt=0;
+  function resize(){W=c.width=c.offsetWidth;H=c.height=c.offsetHeight;tx=W*.72;ty=H*.4;}
+  function init(){dr.length=0;const cols=Math.ceil(Math.sqrt(N*1.5));
+    for(let i=0;i<N;i++){const col=i%cols,row=Math.floor(i/cols),hx=W*.06+col*(W*.55/cols)+(row%2?W*.55/cols*.5:0),hy=H*.12+row*(H*.76/Math.ceil(N/cols));
+      dr.push({x:hx+(Math.random()-.5)*14,y:hy+(Math.random()-.5)*14,tx:hx,ty:hy,hx,hy,vx:0,vy:0,sp:false});}}
+  const sts=['PATROL','ENGAGE','PURSUIT','REFORM'];
+  function upd(){pt++;
+    if(pt===200){ph=1;tx=W*(.5+Math.random()*.4);ty=H*(.2+Math.random()*.6);dr.forEach(d=>{d.tx=d.hx*.2+tx*.8+(Math.random()-.5)*28;d.ty=d.hy*.2+ty*.8+(Math.random()-.5)*28;});dr[44].sp=true;}
+    if(pt===330)ph=2;if(pt===430)ph=3;
+    if(pt===520){ph=0;pt=0;dr.forEach(d=>{d.tx=d.hx;d.ty=d.hy;d.sp=false;});tx=W*.72;ty=H*.4;}
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);ctx.fillStyle='rgba(250,250,249,1)';ctx.fillRect(0,0,W,H);
+    upd();
+    document.getElementById('swc').textContent=N;
+    document.getElementById('sws').textContent=sts[ph];
+    document.getElementById('swh').textContent='98%';
+    if(ph>0){const p=.5+.5*Math.sin(Date.now()*.007);ctx.beginPath();ctx.arc(tx,ty,8,0,Math.PI*2);ctx.fillStyle=`rgba(192,57,43,${.7+p*.3})`;ctx.fill();
+      for(let r=20;r<=60;r+=20){ctx.beginPath();ctx.arc(tx,ty,r,0,Math.PI*2);ctx.strokeStyle=`rgba(192,57,43,${.1*(1-r/80)})`;ctx.lineWidth=1;ctx.stroke();}}
+    dr.forEach((d,i)=>{
+      d.vx=d.vx*.82+(d.tx-d.x)*.05;d.vy=d.vy*.82+(d.ty-d.y)*.05;d.x+=d.vx;d.y+=d.vy;
+      dr.filter((_,j)=>j!==i).map(o=>({dd:Math.hypot(o.x-d.x,o.y-d.y),o})).sort((a,b)=>a.dd-b.dd).slice(0,4).forEach(({dd,o})=>{
+        if(dd<140){ctx.beginPath();ctx.moveTo(d.x,d.y);ctx.lineTo(o.x,o.y);ctx.strokeStyle=`rgba(10,10,10,${(1-dd/140)*.08})`;ctx.lineWidth=.5;ctx.stroke();}
+      });
+      ctx.beginPath();ctx.arc(d.x,d.y,d.sp?5:2.5,0,Math.PI*2);ctx.fillStyle=d.sp?'rgba(192,57,43,.9)':'rgba(10,10,10,.45)';ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize',()=>{resize();init();});resize();init();draw();
+})();
+
+(function(){
+  const c=document.getElementById('dc'),ctx=c.getContext('2d'),W=c.width,H=c.height,cx=W/2,cy=H/2;let t=0;
+  function draw(){
+    ctx.clearRect(0,0,W,H);t+=.012;
+    const oy=Math.sin(t*.7)*5;
+    ctx.save();ctx.translate(cx,cy+oy);ctx.scale(1.9,1.9);
+    ctx.beginPath();ctx.moveTo(0,-58);ctx.lineTo(76,28);ctx.lineTo(52,38);ctx.lineTo(0,18);ctx.lineTo(-52,38);ctx.lineTo(-76,28);ctx.closePath();
+    ctx.fillStyle='rgba(10,10,10,.05)';ctx.fill();ctx.strokeStyle='rgba(10,10,10,.75)';ctx.lineWidth=1.2;ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,-38);ctx.lineTo(26,-18);ctx.lineTo(16,-13);ctx.lineTo(0,-26);ctx.lineTo(-16,-13);ctx.lineTo(-26,-18);ctx.closePath();
+    ctx.fillStyle='rgba(10,10,10,.04)';ctx.fill();ctx.strokeStyle='rgba(10,10,10,.5)';ctx.lineWidth=.8;ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,-58);ctx.lineTo(0,38);ctx.strokeStyle='rgba(10,10,10,.18)';ctx.lineWidth=.5;ctx.setLineDash([4,6]);ctx.stroke();ctx.setLineDash([]);
+    ctx.beginPath();ctx.ellipse(0,34,7,4,0,0,Math.PI*2);ctx.fillStyle='rgba(10,10,10,.85)';ctx.fill();
+    ctx.beginPath();ctx.rect(-3.5,38,7,16);ctx.fillStyle='rgba(192,57,43,.65)';ctx.fill();ctx.strokeStyle='rgba(192,57,43,.8)';ctx.lineWidth=.8;ctx.stroke();
+    const fh=8+Math.sin(t*12)*4,g=ctx.createLinearGradient(0,54,0,54+fh);g.addColorStop(0,'rgba(192,57,43,.65)');g.addColorStop(1,'transparent');
+    ctx.beginPath();ctx.moveTo(-2.5,54);ctx.lineTo(2.5,54);ctx.lineTo(0,54+fh);ctx.closePath();ctx.fillStyle=g;ctx.fill();
+    ctx.beginPath();ctx.arc(0,0,4,0,Math.PI*2);ctx.fillStyle='rgba(10,10,10,.9)';ctx.fill();
+    ctx.restore();
+    ctx.font='9px DM Mono';ctx.fillStyle='rgba(10,10,10,.4)';ctx.textAlign='left';
+    [[cx+22,cy-50,'Sony IMX678'],[cx+22,cy-32,'FLIR Lepton 3.5'],[cx+22,cy-14,'Jetson Orin NX'],[cx+22,cy+24,'T-Motor U10 Plus'],[cx+22,cy+48,'Cesaroni Pro54']].forEach(([x,y,tx])=>ctx.fillText(tx,x,y));
+    ctx.strokeStyle='rgba(10,10,10,.1)';ctx.lineWidth=.5;ctx.beginPath();ctx.moveTo(cx-140,cy+76);ctx.lineTo(cx+140,cy+76);ctx.stroke();
+    ctx.fillStyle='rgba(10,10,10,.35)';ctx.textAlign='center';ctx.fillText('940 mm',cx,cy+88);
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+(function(){
+  const c=document.getElementById('pw');if(!c)return;
+  const ctx=c.getContext('2d');
+  function draw(){
+    const W=c.width=c.offsetWidth,H=c.height=c.offsetHeight,P={l:50,r:14,t:14,b:34},IW=W-P.l-P.r,IH=H-P.t-P.b;
+    ctx.clearRect(0,0,W,H);
+    const rho=1.19,S=.42,CD0=.024,K=.1738,eta=.725,aux=25.8,Wn=70.61,vs=[],ps=[];
+    for(let v=10;v<=90;v+=2){const cl=2*Wn/(rho*v*v*S),cd=CD0+K*cl*cl,D=.5*rho*v*v*S*cd;vs.push(v);ps.push(D*v/eta+aux);}
+    const mx=Math.max(...ps);
+    const sx=v=>P.l+((v-10)/80)*IW,sy=p=>P.t+IH-((p/mx)*IH*.9);
+    ctx.strokeStyle='rgba(10,10,10,.06)';ctx.lineWidth=.5;
+    [0,500,1000,1500,2000,2500].forEach(p=>{if(p>mx*1.05)return;ctx.beginPath();ctx.moveTo(P.l,sy(p));ctx.lineTo(W-P.r,sy(p));ctx.stroke();ctx.fillStyle='rgba(10,10,10,.3)';ctx.font='9px DM Mono';ctx.textAlign='right';ctx.fillText(p+'W',P.l-4,sy(p)+3);});
+    [114,270,320].forEach(kmh=>{const v=kmh/3.6;ctx.beginPath();ctx.moveTo(sx(v),P.t);ctx.lineTo(sx(v),H-P.b);ctx.strokeStyle='rgba(10,10,10,.06)';ctx.stroke();ctx.fillStyle='rgba(10,10,10,.3)';ctx.font='9px DM Mono';ctx.textAlign='center';ctx.fillText(kmh+' km/h',sx(v),H-P.b+12);});
+    ctx.beginPath();vs.forEach((v,i)=>i?ctx.lineTo(sx(v),sy(ps[i])):ctx.moveTo(sx(v),sy(ps[i])));
+    const g=ctx.createLinearGradient(0,P.t,0,H-P.b);g.addColorStop(0,'rgba(10,10,10,.12)');g.addColorStop(1,'rgba(10,10,10,.01)');
+    ctx.lineTo(sx(vs[vs.length-1]),H-P.b);ctx.lineTo(sx(vs[0]),H-P.b);ctx.closePath();ctx.fillStyle=g;ctx.fill();
+    ctx.beginPath();vs.forEach((v,i)=>i?ctx.lineTo(sx(v),sy(ps[i])):ctx.moveTo(sx(v),sy(ps[i])));
+    ctx.strokeStyle='rgba(10,10,10,.8)';ctx.lineWidth=1.5;ctx.stroke();
+    const vp=31.67;ctx.beginPath();ctx.moveTo(sx(vp),P.t);ctx.lineTo(sx(vp),H-P.b);ctx.strokeStyle='rgba(39,174,96,.7)';ctx.lineWidth=1;ctx.setLineDash([3,5]);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='rgba(39,174,96,.9)';ctx.font='bold 9px DM Mono';ctx.textAlign='center';ctx.fillText('V_patrol',sx(vp),P.t+9);
+    const vs2=88.89;ctx.beginPath();ctx.moveTo(sx(vs2),P.t);ctx.lineTo(sx(vs2),H-P.b);ctx.strokeStyle='rgba(192,57,43,.7)';ctx.lineWidth=1;ctx.setLineDash([3,5]);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='rgba(192,57,43,.9)';ctx.font='bold 9px DM Mono';ctx.textAlign='center';ctx.fillText('V_sprint',sx(vs2),P.t+9);
+  }
+  window.addEventListener('resize',draw);draw();
+})();
+
+/* ==========================================================================
+   SIMULATION JS (aegis-sim-v2 scoped to overlay)
+   ========================================================================== */
+const G = {
+  city:'KYIV', sub:'Ukraine', coord:'50.45°N 30.52°E',
+  droneType:'Shahed-136', droneMass:50, droneSpeed:185, droneWarhead:40,
+  count:24, running:false,
+  tick:0, totalTicks:460,
+  threats:[], swarm:[], expl:[],
+  hit:0, pen:0, lures:0, bft:0,
+  times:[], raf:null,
+};
+
+setInterval(()=>{
+  document.getElementById('clk').textContent = new Date().toUTCString().slice(17,25)+' UTC';
+},1000);
+
+function pickCity(el){
+  document.querySelectorAll('.city-btn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  G.city=el.dataset.city; G.sub=el.dataset.sub; G.coord=el.dataset.coord;
+  document.getElementById('ui-city').textContent=G.city;
+  document.getElementById('ui-coord').textContent=G.coord+' · ALT 300m AGL · ACTIVE DEFENSE CORRIDOR';
+  recompute();
+}
+
+function pickDrone(el){
+  document.querySelectorAll('.drone-btn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  G.droneType=el.dataset.type;
+  G.droneMass=+el.dataset.mass;
+  G.droneSpeed=+el.dataset.speed;
+  G.droneWarhead=+el.dataset.wh;
+  recompute();
+}
+
+function pickCount(v){
+  G.count=+v;
+  const n=document.getElementById('cnt-n');
+  n.textContent=v;
+  n.className='cnt-n'+(+v>70?' danger':'');
+  recompute();
+}
+
+function recompute(){
+  if(G.running)return;
+  const n=G.count, m=G.droneMass, s=G.droneSpeed;
+  const score = Math.min(100, Math.round((m/50)*40+(s/300)*30+(n/120)*30));
+  const sat   = Math.min(100, Math.round(n/120*100));
+  const lure  = Math.min(40,  Math.round(n*0.17));
+  const cov   = Math.max(38,  Math.round(100-(n/120)*35-(m>100?10:0)));
+  bar('af-score','av-score',score,'var(--rd)','');
+  bar('af-sat',  'av-sat',  sat,  'var(--am)','%');
+  bar('af-lure', 'av-lure', lure, 'var(--bl)','%');
+  bar('af-cov',  'av-cov',  cov,  '#1a7a4a','%');
+}
+
+function bar(fillId,valId,pct,color,sfx){
+  document.getElementById(fillId).style.width=pct+'%';
+  document.getElementById(valId).textContent=pct+sfx;
+  document.getElementById(valId).style.color=color;
+}
+
+const cv=document.getElementById('mc');
+const cx=cv.getContext('2d');
+let W,H,ox,oy;
+
+window.simResize = function(){
+  if(!cv)return;
+  W=cv.width=cv.offsetWidth; H=cv.height=cv.offsetHeight;
+  ox=W/2; oy=H/2;
+};
+window.addEventListener('resize',()=>{window.simResize();});
+window.simResize();
+
+let idle_t=0;
+const idlePts=Array.from({length:70},()=>({
+  a:Math.random()*Math.PI*2,
+  r:40+Math.random()*300,
+  spd:0.003+Math.random()*0.005,
+  br:0.15+Math.random()*0.35,
+}));
+
+function drawIdle(){
+  if(G.running)return;
+  idle_t++;
+  cx.clearRect(0,0,W,H);
+  cx.strokeStyle='rgba(0,0,0,0.04)'; cx.lineWidth=.5;
+  for(let x=0;x<W;x+=48){cx.beginPath();cx.moveTo(x,0);cx.lineTo(x,H);cx.stroke();}
+  for(let y=0;y<H;y+=48){cx.beginPath();cx.moveTo(0,y);cx.lineTo(W,y);cx.stroke();}
+  [90,180,270,350].forEach((r,i)=>{
+    cx.beginPath();cx.arc(ox,oy,r,0,Math.PI*2);
+    cx.strokeStyle=`rgba(0,0,0,${0.04+i*0.01})`;cx.lineWidth=.8;cx.stroke();
+    cx.font='8px DM Mono';cx.fillStyle='rgba(0,0,0,0.2)';cx.textAlign='center';
+    cx.fillText(['5km','10km','15km','20km'][i],ox+r,oy-4);
+  });
+  idlePts.forEach(p=>{
+    p.a+=p.spd;
+    const x=ox+Math.cos(p.a)*p.r, y=oy+Math.sin(p.a)*p.r;
+    cx.beginPath();cx.arc(x,y,1.8,0,Math.PI*2);
+    cx.fillStyle=`rgba(0,0,0,${p.br})`;cx.fill();
+  });
+  const p=.5+.5*Math.sin(idle_t*.03);
+  cx.beginPath();cx.arc(ox,oy,9,0,Math.PI*2);
+  cx.fillStyle='rgba(0,0,0,0.85)';cx.fill();
+  cx.beginPath();cx.arc(ox,oy,16,0,Math.PI*2);
+  cx.strokeStyle=`rgba(0,0,0,${.15+p*.1})`;cx.lineWidth=.8;cx.stroke();
+  cx.font='bold 9px DM Mono';cx.fillStyle='rgba(0,0,0,0.35)';cx.textAlign='center';
+  cx.fillText(G.city,ox,oy-20);
+  requestAnimationFrame(drawIdle);
+}
+drawIdle();
+recompute();
+
+const logEl=document.getElementById('log');
+
+function addLog(src,msg,delay=0){
+  setTimeout(()=>{
+    const ts=new Date().toUTCString().slice(17,25);
+    const d=document.createElement('div');
+    d.className='le';
+    d.innerHTML=`<span class="le-t">${ts}</span><span class="le-s ${src}">[${src.toUpperCase()}]</span><span class="le-m">${msg}</span>`;
+    logEl.appendChild(d);
+    logEl.scrollTop=logEl.scrollHeight;
+    if(logEl.children.length>80)logEl.removeChild(logEl.firstChild);
+  },delay);
+}
+
+function launch(){
+  if(G.running)return;
+  cancelAnimationFrame(G.raf);
+
+  Object.assign(G,{running:true,tick:0,hit:0,pen:0,lures:0,bft:0,times:[],threats:[],swarm:[],expl:[]});
+
+  const btn=document.getElementById('lbtn');
+  btn.className='launch-btn lb-run'; btn.textContent='SIMULATION RUNNING...';
+
+  ['rm-hit','rm-pen'].forEach(id=>document.getElementById(id).textContent='—');
+  [['ps-fusion','ok','ACTIVE'],['ps-ukf','ok','ACTIVE'],['ps-net','ok','ACTIVE'],['ps-nrj','ok','ACTIVE']].forEach(([id,cls,t])=>{
+    const el=document.getElementById(id); el.textContent=t; el.className='srv '+cls;
+  });
+  document.getElementById('ps-lock').textContent='UNLOCKING'; document.getElementById('ps-lock').className='srv am';
+  document.getElementById('ps-gate').textContent='MONITORING';
+  document.getElementById('result-box').classList.remove('show');
+  ['rm-bft','rm-lure'].forEach(id=>document.getElementById(id).textContent='0');
+  document.getElementById('rm-hlth').textContent='100%';
+  document.getElementById('rm-time').textContent='—';
+  document.getElementById('rm-quorum').textContent='100%';
+  document.getElementById('rm-batt').textContent='177.6 Wh';
+  document.getElementById('ui-rate').textContent='—';
+
+  const n=G.count;
+  G.totalTicks=400+Math.round(n*1.2);
+  document.getElementById('ui-total').textContent=G.totalTicks;
+
+  const lureN=Math.max(1,Math.round(n*0.15));
+  const realN=n-lureN;
+
+  for(let i=0;i<realN;i++){
+    const angle=Math.PI+(Math.random()-.5)*Math.PI*1.1;
+    const dist=340+Math.random()*90;
+    const spd=(G.droneSpeed/3.6)*0.038;
+    const jitter=(Math.random()-.5)*0.3;
+    G.threats.push({
+      id:'T'+String(i).padStart(3,'0'),
+      x:ox+Math.cos(angle)*dist, y:oy+Math.sin(angle)*dist,
+      vx:Math.cos(angle+Math.PI+jitter)*spd*(0.8+Math.random()*.4),
+      vy:Math.sin(angle+Math.PI+jitter)*spd*(0.8+Math.random()*.4),
+      alive:true, isLure:false,
+      detected:false, tracked:false, done:false,
+      detTick: 15+Math.floor(Math.random()*35),
+      trkTick: 45+Math.floor(Math.random()*30),
+      intTick: 80+Math.floor(Math.random()*Math.min(200,G.totalTicks-120)),
+      trail:[], alpha:1,
+    });
+  }
+  for(let i=0;i<lureN;i++){
+    const angle=Math.PI+(Math.random()-.5)*Math.PI*1.1;
+    const dist=310+Math.random()*100;
+    G.threats.push({
+      id:'L'+String(i).padStart(2,'0'),
+      x:ox+Math.cos(angle)*dist, y:oy+Math.sin(angle)*dist,
+      vx:Math.cos(angle+Math.PI)*.55, vy:Math.sin(angle+Math.PI)*.55,
+      alive:true, isLure:true,
+      detected:false, tracked:false, done:false,
+      detTick:25+Math.floor(Math.random()*40),
+      trkTick:60+Math.floor(Math.random()*40),
+      intTick:999999,
+      lureRevealTick:80+Math.floor(Math.random()*40),
+      trail:[], alpha:1,
+    });
+  }
+
+  for(let i=0;i<180;i++){
+    const a=Math.random()*Math.PI*2, r=35+Math.random()*220;
+    G.swarm.push({
+      x:ox+Math.cos(a)*r, y:oy+Math.sin(a)*r,
+      tx:ox, ty:oy, vx:0, vy:0,
+    });
+  }
+
+  const T=G.totalTicks;
+  const sched=[
+    [0,   'core',   `Simulation initialized — <strong>${n} threats detected</strong> approaching ${G.city}`],
+    [18,  'fusion', `SpectralFusion online — MAD Byzantine filter active (σ threshold: 3.0)`],
+    [30,  'fusion', `Initial cluster: ${Math.round(realN*.4)} contacts @ ${180+Math.round(Math.random()*40)}° bearing`],
+    [55,  'ukf',    `MultiTargetUKF: 9-state tracks initializing [px,py,pz,vx,vy,vz,ax,ay,az]`],
+    [80,  'fusion', `BFT vote rejection: <strong>${Math.round(n*.05)} nodes</strong> flagged (spoof/jam signature)`],
+    [100, 'ukf',    `Position uncertainty collapsing: ±50m → ±8m in 2.0s of track history`],
+    [130, 'net',    `ElasticNet FSM: PATROL → ENGAGE (confirmed target within 1,500m)`],
+    [155, 'safety', `ProximityLock: sphere 15m CLEAR · cone 45°×60m CLEAR`],
+    [170, 'safety', `Network quorum: ${Math.round(96+Math.random()*3)}% — HumanLoopGate OPEN`],
+    [190, 'core',   `Intercept orders issued — booster timestamps sync'd ±200µs across mesh`],
+    [210, 'fusion', `<strong>${lureN} lures identified</strong> — R1: thermal spike >700K · R5: EO-invisible`],
+    [235, 'ukf',    `Intercept scan: fire at +1.8s · predicted miss ≤8.9m (±300ms timing)`],
+    [270, 'net',    `Formation REFORM — swarm health ${Math.round(91+Math.random()*7)}% — closing gaps`],
+    [Math.round(T*.75), 'core', `Wave saturation: ${Math.round(realN/n*100)}% real threats — ${lureN} decoys filtered`],
+    [Math.round(T*.88), 'core', `Final intercept envelope — secondary wave converging`],
+    [Math.round(T*.95), 'safety', `ProximityLock: standby · weapons safe · swarm RTB protocol`],
+    [T-10, 'fusion', `SpectralFusion: cluster DB cleared — ${n} contacts resolved`],
+  ];
+  sched.forEach(([tick,src,msg])=>{
+    addLog(src,msg,Math.round((tick/T)*(T*16.7)));
+  });
+
+  G.raf=requestAnimationFrame(frame);
+}
+
+function frame(){
+  G.tick++;
+  const t=G.tick, T=G.totalTicks, frac=t/T;
+  document.getElementById('ui-tick').textContent=t;
+
+  cx.clearRect(0,0,W,H);
+
+  cx.strokeStyle='rgba(0,0,0,0.03)'; cx.lineWidth=.5;
+  for(let x=0;x<W;x+=48){cx.beginPath();cx.moveTo(x,0);cx.lineTo(x,H);cx.stroke();}
+  for(let y=0;y<H;y+=48){cx.beginPath();cx.moveTo(0,y);cx.lineTo(W,y);cx.stroke();}
+
+  [90,180,270,350].forEach((r,i)=>{
+    cx.beginPath();cx.arc(ox,oy,r,0,Math.PI*2);
+    cx.strokeStyle=`rgba(0,0,0,${0.04+i*0.01})`;cx.lineWidth=.7;cx.stroke();
+    cx.font='8px DM Mono';cx.fillStyle='rgba(0,0,0,0.18)';cx.textAlign='center';
+    cx.fillText(['5km','10km','15km','20km'][i],ox+r,oy-5);
+  });
+
+  let ndet=0,ntrk=0,nint=0;
+  const realThreats=G.threats.filter(th=>!th.isLure);
+
+  G.threats.forEach(th=>{
+    if(!th.alive)return;
+    th.x+=th.vx; th.y+=th.vy;
+    th.trail.push({x:th.x,y:th.y});
+    if(th.trail.length>30)th.trail.shift();
+
+    if(!th.detected && t>=th.detTick)th.detected=true;
+    if(!th.tracked  && t>=th.trkTick)th.tracked=true;
+
+    if(th.isLure && t>=th.lureRevealTick && !th.done){
+      th.done=true; th.alive=false; G.lures++;
+      addExpl(th.x,th.y,'lure');
+      document.getElementById('rm-lure').textContent=G.lures;
+      G.bft+=Math.round(2+Math.random()*3);
+      document.getElementById('rm-bft').textContent=G.bft;
+      return;
+    }
+
+    if(!th.isLure && t>=th.intTick && !th.done){
+      th.done=true; th.alive=false; G.hit++;
+      G.times.push(t*(16.7/1000));
+      addExpl(th.x,th.y,'hit');
+      document.getElementById('rm-hit').textContent=G.hit+' / '+realThreats.length;
+      document.getElementById('rm-hit').className='bm-n ok';
+      document.getElementById('ui-rate').textContent=Math.round(G.hit/realThreats.length*100)+'%';
+      if(G.times.length>0){
+        const avg=G.times.reduce((a,b)=>a+b,0)/G.times.length;
+        document.getElementById('rm-time').textContent=avg.toFixed(1)+'s';
+      }
+      return;
+    }
+
+    if(!th.isLure && !th.done){
+      if(Math.hypot(th.x-ox,th.y-oy)<20){
+        th.done=true; th.alive=false; G.pen++;
+        addExpl(th.x,th.y,'pen');
+        document.getElementById('rm-pen').textContent=G.pen;
+        document.getElementById('rm-pen').className='bm-n bad';
+      }
+    }
+
+    if(th.detected)ndet++;
+    if(th.tracked)ntrk++;
+    if(t>=th.intTick-30&&!th.isLure)nint++;
+
+    if(th.trail.length>1){
+      cx.beginPath();
+      th.trail.forEach((p,i)=>{i===0?cx.moveTo(p.x,p.y):cx.lineTo(p.x,p.y);});
+      cx.strokeStyle=th.isLure?'rgba(42,93,176,0.12)':'rgba(192,57,43,0.15)';
+      cx.lineWidth=.8;cx.stroke();
+    }
+
+    if(th.tracked){
+      cx.beginPath();cx.moveTo(th.x,th.y);cx.lineTo(ox,oy);
+      cx.strokeStyle=th.isLure?'rgba(42,93,176,0.07)':'rgba(192,57,43,0.07)';
+      cx.lineWidth=.5;cx.stroke();
+    }
+
+    const col=th.isLure?'rgba(42,93,176,1)':'rgba(192,57,43,1)';
+    const sz=th.isLure?3:4.5;
+    cx.beginPath();cx.arc(th.x,th.y,sz,0,Math.PI*2);
+    cx.fillStyle=col;
+    if(th.tracked){cx.shadowColor=col;cx.shadowBlur=th.isLure?8:14;}
+    cx.fill();cx.shadowBlur=0;
+
+    if(th.detected&&!th.tracked){
+      const phase=(t-th.detTick)*0.15;
+      cx.beginPath();cx.arc(th.x,th.y,10+phase*3,0,Math.PI*2);
+      cx.strokeStyle=`rgba(0,0,0,${Math.max(0,.4-phase*.1)})`;
+      cx.lineWidth=.8;cx.stroke();
+    }
+
+    cx.font='7px DM Mono';
+    cx.fillStyle=th.isLure?'rgba(42,93,176,0.6)':'rgba(192,57,43,0.6)';
+    cx.textAlign='left';
+    cx.fillText(th.isLure?'LURE':th.id,th.x+7,th.y+3);
+  });
+
+  const activeTarget=G.threats.find(th=>th.alive&&th.tracked&&!th.isLure)||null;
+  G.swarm.forEach((d,i)=>{
+    if(activeTarget){
+      const offset=(i/G.swarm.length)*Math.PI*2;
+      const r=50+Math.sin(G.tick*.03+offset)*18;
+      d.tx=activeTarget.x+Math.cos(offset)*r;
+      d.ty=activeTarget.y+Math.sin(offset)*r;
+    } else {
+      const a=(i/G.swarm.length)*Math.PI*2+G.tick*.006;
+      const tier=Math.floor(i/45);
+      d.tx=ox+Math.cos(a)*(55+tier*55);
+      d.ty=oy+Math.sin(a)*(55+tier*55);
+    }
+    d.vx=d.vx*.78+(d.tx-d.x)*.07;
+    d.vy=d.vy*.78+(d.ty-d.y)*.07;
+    d.x+=d.vx;d.y+=d.vy;
+
+    const engaged=activeTarget!==null;
+    cx.beginPath();cx.arc(d.x,d.y,1.6,0,Math.PI*2);
+    cx.fillStyle=`rgba(0,0,0,${engaged?.55:.22})`;cx.fill();
+  });
+
+  const anim=.5+.5*Math.sin(G.tick*.04);
+  cx.beginPath();cx.arc(ox,oy,10,0,Math.PI*2);
+  cx.fillStyle='rgba(0,0,0,0.9)';cx.fill();
+  [20,35].forEach(r=>{
+    cx.beginPath();cx.arc(ox,oy,r,0,Math.PI*2);
+    cx.strokeStyle=`rgba(0,0,0,${.12*anim})`;cx.lineWidth=1;cx.stroke();
+  });
+  cx.font='bold 9px DM Mono';cx.fillStyle='rgba(0,0,0,0.4)';cx.textAlign='center';
+  cx.fillText(G.city,ox,oy-24);
+
+  G.expl.forEach((e,i)=>{
+    e.r+=1.8;e.a-=0.05;
+    if(e.a<=0){G.expl.splice(i,1);return;}
+    cx.beginPath();cx.arc(e.x,e.y,e.r,0,Math.PI*2);
+    cx.strokeStyle=`rgba(${e.c},${e.a})`;cx.lineWidth=1.5;cx.stroke();
+    cx.beginPath();cx.arc(e.x,e.y,e.r*.4,0,Math.PI*2);
+    cx.fillStyle=`rgba(${e.c},${e.a*.25})`;cx.fill();
+  });
+
+  const total_th=G.threats.length;
+  setProg('bf-det','bp-det',Math.min(100,Math.round(ndet/Math.max(total_th,1)*100)));
+  setProg('bf-trk','bp-trk',Math.min(100,Math.round(ntrk/Math.max(total_th,1)*100)));
+  setProg('bf-int','bp-int',Math.min(100,Math.round(nint/Math.max(realThreats.length,1)*100)));
+  setProg('bf-neu','bp-neu',Math.min(100,Math.round(G.hit/Math.max(realThreats.length,1)*100)));
+
+  const batt=Math.max(45,Math.round(177.6-frac*65));
+  const hlth=Math.max(84,Math.round(100-frac*9));
+  const quor=Math.max(91,Math.round(100-frac*4));
+  document.getElementById('rm-batt').textContent=batt+' Wh';
+  document.getElementById('rm-hlth').textContent=hlth+'%';
+  document.getElementById('rm-quorum').textContent=quor+'%';
+
+  if(t===1)   toast2('SIMULATION ACTIVE','var(--bk)');
+  if(t===190) toast2('INTERCEPTS INBOUND','var(--rd)');
+  if(t===Math.round(T*.8)) toast2('FINAL APPROACH','var(--rd)');
+
+  const allDone=G.threats.every(th=>!th.alive);
+  if(allDone||t>=T){finish();return;}
+
+  G.raf=requestAnimationFrame(frame);
+}
+
+function setProg(fillId,pctId,pct){
+  document.getElementById(fillId).style.width=pct+'%';
+  document.getElementById(pctId).textContent=pct+'%';
+}
+
+function addExpl(x,y,type){
+  const cols={hit:'26,122,74',lure:'42,93,176',pen:'0,0,0'};
+  G.expl.push({x,y,r:3,a:1,c:cols[type]||cols.hit});
+}
+
+function toast2(msg,color){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.style.color=color;el.style.borderColor=color;
+  el.style.opacity='1';
+  clearTimeout(el._t);
+  el._t=setTimeout(()=>el.style.opacity='0',2200);
+}
+
+function finish(){
+  G.running=false;
+  cancelAnimationFrame(G.raf);
+
+  const realN=G.threats.filter(th=>!th.isLure).length;
+  const rate=Math.round(G.hit/Math.max(realN,1)*100);
+  const win=G.pen<3;
+
+  const btn=document.getElementById('lbtn');
+  btn.className=win?'launch-btn lb-done':'launch-btn lb-ready';
+  btn.textContent='RUN AGAIN →';
+  btn.onclick=()=>{
+    btn.className='launch-btn lb-ready';
+    btn.textContent='RUN SIMULATION →';
+    btn.onclick=launch;
+  };
+
+  toast2(win?'MISSION SUCCESS — ASSET PROTECTED':'ASSET COMPROMISED',win?'#1a7a4a':'var(--rd)');
+  addLog('core',`<strong>Mission complete</strong> — ${G.hit}/${realN} neutralized · ${G.pen} penetrations · $${(G.hit*4200).toLocaleString()} total cost`);
+
+  const box=document.getElementById('result-box');
+  const ttl=document.getElementById('res-title');
+  ttl.textContent=win?'✓ MISSION SUCCESS':'✗ ASSET COMPROMISED';
+  ttl.className='res-title '+(win?'win':'lose');
+
+  document.getElementById('res-rows').innerHTML=[
+    ['Intercept rate',      rate+'%'],
+    ['Threats neutralized', G.hit+' / '+realN],
+    ['Penetrations',        G.pen],
+    ['Lures identified',    G.lures],
+    ['BFT rejections',      G.bft],
+    ['AEGIS cost',          '$'+( G.hit*4200).toLocaleString()],
+    ['PAC-3 equivalent',    '$'+(G.hit*4000000).toLocaleString()],
+    ['Cost saved',          '$'+(G.hit*(4000000-4200)).toLocaleString()],
+  ].map(([k,v])=>`<div class="rr"><span class="rk2">${k}</span><span class="rv2">${v}</span></div>`).join('');
+
+  box.classList.add('show');
+
+  document.getElementById('rm-hit').textContent=G.hit+' / '+realN;
+  document.getElementById('rm-hit').className='bm-n '+(rate>80?'ok':'bad');
+  document.getElementById('rm-pen').textContent=G.pen;
+  document.getElementById('rm-pen').className='bm-n '+(G.pen<3?'ok':'bad');
+}
+</script>
+</body>
+</html>

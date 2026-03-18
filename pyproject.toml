@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "aegis"
+version = "1.0.0"
+description = "Autonomous kinetic interceptor swarm — 50Hz hard-real-time control"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Amine Harch", email = "vitalcheffe@proton.me" }]
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.24", "scipy>=1.10"]
+keywords = ["drone", "swarm", "kalman", "defense", "autonomous"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering",
+]
+
+[project.urls]
+Homepage = "https://vitalcheffe.github.io/Aegis"
+Repository = "https://github.com/Vitalcheffe/Aegis"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-dir]
+"" = "src"
