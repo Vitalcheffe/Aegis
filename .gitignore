@@ -8,3 +8,4 @@ build/
 *.pyc
 simulations/nevada_debrief.json
 docs/figures/*.png
+.venv/
