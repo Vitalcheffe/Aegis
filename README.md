@@ -1,205 +1,106 @@
-# AEGIS — Autonomous Kinetic Interceptor Swarm
+# AEGIS
 
-> **Kinetic interception of drone-class threats using a decentralised swarm of 500 autonomous agents.**  
-> One interceptor: **$4,200**. One PAC-3 missile: **$4,000,000**. Asymmetry: **952×**.
-
-[![Tests](https://img.shields.io/badge/tests-63%20passing-4ade80?style=flat-square&logo=python&logoColor=white)](tests/test_all.py)
-[![Python](https://img.shields.io/badge/python-3.10%2B-e8a430?style=flat-square)](pyproject.toml)
-[![License](https://img.shields.io/badge/license-MIT-60a5fa?style=flat-square)](LICENSE)
+Autonomous drone swarm intercept system. One unit costs $4,200. A PAC-3 missile costs $4,000,000. That's the whole idea.
 
 ---
 
-## Why this exists
+I follow about 90 Telegram channels — conflict zones, OSINT accounts, AIS trackers, field journalists. Not for fun, for information. After a while you start seeing patterns, not just events. One pattern kept coming back: air defense is economically broken. Armies are firing million-dollar missiles at twenty-dollar drones and losing the math war every single time.
 
-I spend a lot of time watching the world break on Telegram — not for the memes, for information. I follow around 90 channels: conflict zones, OSINT analysts, field journalists, AIS trackers, military bloggers on both sides of every active war. It became a habit, then a system, then a genuine problem I wanted to solve.
+I built NEXUS first — an OSINT engine that correlates 35+ live feeds and clusters events across 6 dimensions. It's how I watch conflicts in real time. NEXUS is what showed me the problem clearly enough to want to solve it.
 
-That system is **NEXUS** — an OSINT engine I built to correlate 35+ real-time feeds, cluster events with DBSCAN across 6 dimensions, and surface what actually matters out of the noise. NEXUS revealed something structural: the economic math of air defense is completely broken.
-
-We are firing $4M Patriot missiles at $20,000 fiberglass drones powered by lawnmower engines. You cannot defeat a decentralised, hyper-cheap swarm with a centralised, hyper-expensive monolith. It's economic suicide. The only way to invert that asymmetric cost curve is with a faster, smarter, cheaper swarm.
-
-That's AEGIS.
+AEGIS is the answer I came up with. Not a finished product. A serious attempt at inverting the cost curve using a swarm of cheap autonomous interceptors instead of one expensive missile.
 
 ---
 
-## What it does
+## How it works
 
-AEGIS deploys a persistent patrol swarm that always has an interceptor near every threat vector. When a loitering munition or kamikaze drone is detected, the system:
+A swarm of 500 drones patrols at 300m AGL. When a threat appears — a Shahed, a Lancet, whatever — the system detects, classifies, tracks, and intercepts without a human in the loop for the kinetics. A human still has veto power at all times. The weapon is locked by default: hardware failure means LOCKED, not ARMED.
 
-1. **Fuses** sensor data from 500 drones simultaneously, filtering Byzantine (jammed/spoofed) agents using Median Absolute Deviation
-2. **Identifies** decoys using 5 independent physical rules — thermal spikes, cold balloons, sudden deceleration
-3. **Tracks** confirmed threats with a 9-state Unscented Kalman Filter that handles non-linear manoeuvres at 10G
-4. **Predicts** the intercept window 12 seconds into the future and calculates the exact booster fire timestamp
-5. **Deploys** the best-positioned drone with sufficient energy reserves
-6. **Locks** the weapon by default — a hardware failure means LOCKED, not ARMED
+The pipeline runs at 50 Hz. One full control tick for 50 drones takes about 6ms on a laptop.
 
-All of this runs at 50 Hz. One 20ms control tick per drone costs < 3ms of compute.
+**M1 — Sensor fusion with Byzantine fault tolerance**
 
----
+Each drone reports what it sees. The problem is that drones can be jammed or spoofed. The MAD filter (Median Absolute Deviation) rejects bad votes without knowing which drones are compromised — it just needs less than 1/3 of the swarm to be Byzantine, which is the theoretical minimum from Lamport 1982.
 
+Five physical rules identify decoys: thermal spikes above 700K are flares, large IR signatures with low thermal contrast are balloons, sudden deceleration above 15 m/s² is a jettisoned lure, and so on. These aren't heuristics — they're derived from the actual physics of what different objects look like in infrared.
 
+**M2 — 9-state UKF tracker**
 
-## Algorithm deep dives
+Linear Kalman filtering fails at high speed and high G. The Unscented Kalman Filter propagates sigma points through the full nonlinear dynamics, which handles maneuvering targets correctly. State vector: position, velocity, acceleration in 3 axes. The intercept scan predicts 12 seconds ahead in 0.1s windows. With the current implementation the full scan takes under 1ms (was 37ms before fixing the Cholesky decomposition bottleneck).
 
-### M1 — MAD Byzantine Filter
+**M3 — Elastic net formation**
 
-Sensor votes from up to 500 drones are filtered using **Median Absolute Deviation**:
+The swarm doesn't fly on fixed waypoints. Each drone computes forces from its 6 nearest neighbors — attraction springs, repulsion below 15m, and a soft pull toward its grid slot. This is O(6N) instead of O(N²). At 500 drones that's 83× fewer computations than a full mesh. The formation shifts between PATROL (hexagonal grid) and ENGAGE (contracted cone toward target) automatically.
 
-```
-score_i = |vote_i − median| / (1.4826 × MAD)
-rejected if score_i > 3.0σ
-```
+**M4 — Energy budget**
 
-The constant 1.4826 = 1/Φ⁻¹(3/4) makes MAD a consistent estimator of σ under Gaussian noise.  
-**Guarantee**: correct consensus as long as Byzantine fraction < 1/3 (Lamport, Shostak, Pease — ACM 1982).
+Three inviolable reserves per drone, in order of priority:
+- 10 Wh for parachute deployment (cannot be touched)
+- 40 Wh for return-to-base
+- 60 Wh combat reserve for one sprint intercept
 
-Five physical lure detection rules — evaluated in priority order:
-
-| Rule | Condition | Physical basis |
-|---|---|---|
-| R1 Thermal spike | T > 700 K | Pyrotechnic flare (real drone max: ~450 K) |
-| R2 Cold lure | ΔT < 5 K, area > 10 px | Helium balloon or reflector |
-| R3 Sudden decel | \|Δv\|/Δt > 15 m/s² | Jettisoned spent munition |
-| R4 Thermal blob | σ_T > 40 K | Composite multi-source lure |
-| R5 EO-invisible | IR hit, no EO return | Passive IR-reflector, stealth balloon |
-
-### M2 — Unscented Kalman Filter
-
-9-state vector: `[px, py, pz, vx, vy, vz, ax, ay, az]`
-
-Van der Merwe sigma points (α = 1e-3, β = 2.0, κ = 0):
-```
-λ = α²(n + κ) − n
-σ[0]     = μ
-σ[i]     = μ + √((n+λ)·P)ᵢ      i = 1…9
-σ[i+9]   = μ − √((n+λ)·P)ᵢ      i = 1…9
-```
-
-19 sigma points propagated through exact non-linear dynamics.  
-Intercept scan: instead of Cholesky factorisation at each of 120 scan steps, we propagate the mean with `_f()` and accumulate Q additively — **0.9ms vs 37ms** for the full scan.
-
-### M3 — Elastic Net
-
-500 drones compute forces from 6 nearest neighbours only:
-
-```
-F_total = F_attract + F_repulse + F_formation
-|F| ≤ 5.0 m/s²    (≈ 0.5G clamp)
-```
-
-Complexity: O(6N) vs O(N²) for full-mesh. At N=500: **83× fewer force computations**.  
-Coverage at 45m spacing: ~0.88 km² (hexagonal packing maximises density).
-
-### M4 — Energy budget
-
-Three inviolable reserves partitioned from 177.6 Wh usable battery:
-
-```
-Emergency (parachute) :  10.0 Wh  — cannot be spent by any intercept order
-RTB reserve           :  40.0 Wh  — guaranteed return-to-base
-Combat reserve        :  60.0 Wh  — sprint + intercept manoeuvres
-Patrol budget         :  67.6 Wh  — available for surveillance (~8 min)
-```
-
-Threat worth score [0–100]:
-```
-S = (mass_kg / 50) × 40  +  (speed_ms / 200) × 30  +  collateral × 30
-```
-
-Baselines: 50 kg = Shahed-136, 200 m/s = upper bound for drone-class threats.
-
-### Safety — ProximityLock
-
-Default state: **LOCKED**. A hardware failure = LOCKED, not ARMED.
-
-Four checks that must all pass simultaneously:
-
-1. **Sphere exclusion** — no friendly drone within 15m radius
-2. **Forward blast cone** — no friendly in 45° × 60m cone (7.2kg × 89 m/s = 28,445 J → 45m frag radius + 15m margin)
-3. **Network quorum** — ≥ 67% of swarm reachable (Lamport BFT condition)
-4. **Human veto gate** — Colonel has not pressed VETO in last 8s
-
-ADS-B spoof detection: declared velocity vs Doppler radar. If implied acceleration exceeds 3.5G (civil structural limit) → SPOOF_ALERT.
+If the math doesn't clear, the drone RTBs. No exceptions.
 
 ---
 
-## Figures
+## Hardware
 
-### Power curve (ISA @ 300m AGL)
+The airframe is called Tessera MK.II. Delta-canard CFRP, 940mm wingspan, 7.2kg MTOW. It carries a Sony IMX678 for EO, a FLIR Lepton 3.5 for thermal, and an Inxpect 24GHz Doppler radar. Compute is a Jetson Orin NX with a Hailo H15 accelerator. Mesh networking runs on 60GHz phased array radio.
 
-![Power curve](docs/figures/power_curve.png)
+The sprint capability comes from a Cesaroni Pro54 APCP solid booster: 764.5 N·s over 1.8 seconds, bringing the drone from patrol speed to 320 km/h. At impact that's 28,445 joules of kinetic energy.
 
-### UKF convergence
-
-![UKF convergence](docs/figures/ukf_convergence.png)
-
-### Formation states
-
-![Formation](docs/figures/formation.png)
-
-### Cost comparison
-
-![Cost comparison](docs/figures/cost_comparison.png)
+None of this hardware exists yet. The BOM is in `docs/BOM.md` with real part numbers and prices. The physics is validated from first principles — ISA atmosphere model, real drag coefficients, real motor specs.
 
 ---
 
-## Hardware — Tessera MK.II
+## What actually runs
 
-| Parameter | Value |
-|---|---|
-| Configuration | Delta-canard CFRP, pusher propeller |
-| Wingspan | 940 mm |
-| MTOW | 7.20 kg |
-| V_patrol | 114 km/h (L/D max, ISA @ 300m) |
-| V_sprint | 320 km/h (booster-assisted) |
-| Endurance | ~22 min @ V_patrol |
-| G design limit | 22G (MIL-STD-1522A, SF = 1.93) |
-| Sprint energy | 28,445 J kinetic at impact |
-| Battery | Tattu Plus 10Ah 6S — 177.6 Wh usable |
-| Compute | Jetson Orin NX + Hailo H15 (40 TOPS @ 3.5W) |
-| EO sensor | Sony IMX678 — 4K 60fps |
-| Thermal | FLIR Lepton 3.5 — LWIR NETD < 50 mK |
-| Radar | Inxpect LBK-24 — 24 GHz Doppler |
-| Mesh radio | Sivers IQ EVK06002 — 60 GHz, 800m range |
-| Booster | Cesaroni Pro54 6GXL — 764.5 N·s, 1.8s |
-| RCS | < 0.003 m² |
-
-Full BOM with prices: [docs/BOM.md](docs/BOM.md)
-
----
-
-## Quick start
+```
+src/aegis/
+├── oc_types.py          # all shared types and physical constants (1976 lines)
+├── origin_core.py       # 50Hz orchestrator
+├── fusion/spectral_fusion.py   # M1
+├── ukf/intercept_ukf.py        # M2
+├── swarm/elastic_net.py        # M3
+├── energy/budget_manager.py    # M4
+└── safety/proximity_lock.py    # ProximityLock + HumanLoopGate + ADS-B spoof detection
+```
 
 ```bash
-git clone https://github.com/Vitalcheffe/Aegis
-cd Aegis
 pip install numpy scipy
-
-# Run tests
-python tests/test_all.py
-
-# Run Nevada simulation
-python simulations/nevada_scenario.py
+python tests/test_all.py          # 63 tests
+python simulations/nevada_scenario.py   # 3-wave engagement
+python benchmarks/profile_pipeline.py  # performance numbers
 ```
 
----
+Tests: 63/63 passing. Pipeline: 6.4ms average per tick, 14.4ms p99 on 50 drones. Budget is 20ms at 50Hz.
 
-## Academic references
-
-- Van der Merwe, R., Wan, E. (2001). *The square-root unscented Kalman filter for state and parameter-estimation.* ICASSP. — UKF sigma points.
-- Lamport, L., Shostak, R., Pease, M. (1982). *The Byzantine Generals Problem.* ACM. — BFT quorum consensus.
-- Olfati-Saber, R. (2006). *Flocking for multi-agent dynamic systems.* IEEE TAC. — Elastic net spring physics.
-- Shamma, J. S. (2007). *Cooperative Control of Distributed Multi-Agent Systems.* Wiley. — Target allocation.
-- ICAO. (1993). *Manual of the ICAO Standard Atmosphere.* Doc 7488/3. — All ISA aerodynamic constants.
-- U.S. DoD. (1984). *MIL-STD-1522A.* — Structural safety factor requirements.
+Nevada simulation runs three waves against the real pipeline — a Shahed-136, then three Lancet-3 in formation, then a mixed wave with decoys. Wave 1 intercepts in 7 ticks.
 
 ---
 
-## Context
+## Why this matters
 
-I'm 16. I built NEXUS because I had a real frustration with a real problem, and I built AEGIS because observing the problem wasn't enough. Drone warfare is a math and engineering problem. I'm solving the math.
+The Shahed-136 costs around $20,000. Ukraine has been using modified Soviet radar and Soviet-era guns to shoot them down. Israel's Iron Dome fires $40,000–$100,000 missiles per intercept. The math is unsustainable against an adversary who can produce cheap drones at scale.
 
-Some parts are rough. The codebase is real, the physics is verified, the tests pass. The hardware is the next phase.
+A swarm of 500 AEGIS units costs roughly $2.1M. One PAC-3 battery costs $1B. The swarm covers more area, responds faster, and each unit that gets destroyed costs $4,200 to replace, not $4,000,000.
+
+The asymmetry runs both ways now.
 
 ---
 
-*AEGIS v1.0.0 · Vitalcheffe (Amine Harch) · Morocco*
+## References
+
+- Van der Merwe & Wan (2001) — UKF sigma point derivation
+- Lamport, Shostak, Pease (1982) — Byzantine Generals Problem
+- Olfati-Saber (2006) — Flocking algorithms for multi-agent systems
+- ICAO Doc 7488/3 — ISA atmosphere model
+- MIL-STD-1522A — Structural safety factors
+
+---
+
+I'm 16, I'm in Morocco, and I'm in my first year of secondary school (Seconde in the French system). I built NEXUS because I was frustrated with how hard it is to track what's actually happening in active conflict zones. I built AEGIS because NEXUS showed me a problem worth solving.
+
+Some of this is rough. The simulation isn't fully converged on wave 2. The hardware doesn't exist. But the math is real, the code runs, and the physics comes from actual sources.
+
+*AEGIS v1.0.0 — Amine Harch (Vitalcheffe)*
