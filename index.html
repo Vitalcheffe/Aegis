@@ -3,246 +3,1516 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>AEGIS — Live Pipeline</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<title>AEGIS — Autonomous Kinetic Interceptor Swarm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --wh:#fafaf9;--bk:#0c0c0c;--gr:#f2f1ee;--md:#e0ded9;--dm:#97948f;
-  --gn:#187a42;--rd:#b8321e;--am:#a86c0a;--bl:#2454a4;
-  --mn:'DM Mono',monospace;--bd:'DM Sans',sans-serif;--dp:'Syne',sans-serif;
+
+/* ═══════════════════════════════════════════════
+   DESIGN SYSTEM — Palantir × Monocle editorial
+   ═══════════════════════════════════════════════ */
+:root {
+  --bk: #0A0A09;
+  --paper: #F7F6F2;
+  --warm: #FAFAF7;
+  --border: #E3E1DA;
+  --dim: #7A786F;
+  --text: #2C2B27;
+  --red: #B82C1A;
+  --grn: #16763D;
+  --amb: #9A6608;
+  --bl: #2454a4;
+  --rd: #B82C1A;
+  --gn: #16763D;
+  --am: #9A6608;
+
+  --syne: 'Syne', sans-serif;
+  --corm: 'Cormorant Garamond', serif;
+  --mono: 'DM Mono', monospace;
+  --sans: 'DM Sans', sans-serif;
 }
-html,body{background:var(--wh);color:var(--bk);font-family:var(--bd);height:100vh;overflow:hidden;display:flex;flex-direction:column}
-header{height:52px;flex-shrink:0;background:var(--wh);border-bottom:1.5px solid var(--bk);display:flex;align-items:center;justify-content:space-between;padding:0 1.75rem}
-.logo{display:flex;align-items:center;gap:.65rem}
-.logo-sq{width:26px;height:26px;background:var(--bk);display:flex;align-items:center;justify-content:center}
-.logo-sq svg{width:13px;height:13px}
-.logo-name{font-family:var(--dp);font-size:.9rem;font-weight:800;letter-spacing:.06em}
-.logo-sep{width:1px;height:16px;background:var(--md);margin:0 .7rem}
-.logo-sub{font-family:var(--mn);font-size:.54rem;color:var(--dm);letter-spacing:.12em;text-transform:uppercase}
-.hdr-mid{font-family:var(--mn);font-size:.52rem;color:var(--dm);letter-spacing:.08em}
-.hdr-r{display:flex;align-items:center;gap:1.4rem}
-.badge{font-family:var(--mn);font-size:.5rem;padding:.18rem .45rem;border:1px solid;letter-spacing:.08em}
-.badge-rdy{border-color:var(--gn);color:var(--gn)}
-.badge-run{border-color:var(--am);color:var(--am)}
-.clk{font-family:var(--mn);font-size:.5rem;color:var(--dm)}
-.ws{display:flex;flex:1;min-height:0}
-.left{width:278px;flex-shrink:0;border-right:1.5px solid var(--bk);display:flex;flex-direction:column;overflow-y:auto}
-.left::-webkit-scrollbar{width:2px}.left::-webkit-scrollbar-thumb{background:var(--md)}
-.sec{padding:1.1rem 1.2rem;border-bottom:1px solid var(--md)}
-.slbl{font-family:var(--mn);font-size:.49rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dm);margin-bottom:.85rem;display:flex;align-items:center;gap:.4rem}
-.slbl::before{content:'';display:block;width:10px;height:1px;background:var(--md)}
-.tlist{display:flex;flex-direction:column;gap:.3rem}
-.tbtn{display:flex;align-items:center;gap:.55rem;padding:.55rem .65rem;border:1px solid var(--md);background:transparent;cursor:pointer;width:100%;transition:border-color .12s}
-.tbtn:hover{border-color:var(--bk)}
-.tbtn.on{border-color:var(--rd);background:rgba(184,50,30,.04)}
-.t-ico{font-size:.95rem;width:24px;text-align:center;flex-shrink:0}
-.t-nm{font-family:var(--dp);font-size:.7rem;font-weight:700;margin-bottom:.12rem}
-.t-sp{font-family:var(--mn);font-size:.46rem;color:var(--dm);line-height:1.5}
-.tbtn.on .t-sp{color:rgba(184,50,30,.5)}
-.srow{margin-bottom:.75rem}
-.stop{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.4rem}
-.skey{font-family:var(--mn);font-size:.52rem;color:var(--dm)}
-.sval{font-family:var(--dp);font-size:.78rem;font-weight:800}
-input[type=range]{width:100%;-webkit-appearance:none;height:1.5px;background:var(--md);outline:none;cursor:pointer}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:var(--wh);border:2px solid var(--bk)}
-.tmarks{display:flex;justify-content:space-between;font-family:var(--mn);font-size:.43rem;color:var(--dm);margin-top:.3rem}
-.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:.3rem}
-.pcell{padding:.48rem .55rem;border:1px solid var(--md)}
-.pv{font-family:var(--mn);font-size:.76rem}
-.pk{font-family:var(--mn);font-size:.42rem;color:var(--dm);margin-top:.12rem;letter-spacing:.06em}
-.prows{display:flex;flex-direction:column;gap:.38rem}
-.prow{display:flex;justify-content:space-between;align-items:center}
-.pk2{font-family:var(--mn);font-size:.52rem;color:var(--dm)}
-.pv2{font-family:var(--mn);font-size:.52rem}
-.ok{color:var(--gn)}.bad{color:var(--rd)}.am{color:var(--am)}.dim{color:var(--dm)}
-.runsec{padding:1.1rem 1.2rem}
-.rbtn{width:100%;padding:.82rem;font-family:var(--dp);font-size:.8rem;font-weight:800;letter-spacing:.05em;cursor:pointer;border:1.5px solid var(--bk);background:var(--bk);color:var(--wh);transition:all .18s}
-.rbtn:hover{background:transparent;color:var(--bk)}
-.rbtn:disabled{border-color:var(--md);background:transparent;color:var(--dm);cursor:not-allowed}
-.rbtn.running{border-color:var(--am);background:transparent;color:var(--am)}
-.center{flex:1;display:flex;flex-direction:column;min-width:0}
-.cvwrap{flex:1;position:relative;overflow:hidden}
-#cv{display:block;width:100%;height:100%}
-.ovtl{position:absolute;top:.9rem;left:1.1rem;pointer-events:none}
-.ovcity{font-family:var(--dp);font-size:1.25rem;font-weight:800;line-height:1}
-.ovcoord{font-family:var(--mn);font-size:.5rem;color:var(--dm);margin-top:.2rem}
-.ovtr{position:absolute;top:.9rem;right:1.1rem;text-align:right;pointer-events:none}
-.ovs{font-family:var(--mn);font-size:.5rem;color:var(--dm);margin-bottom:.15rem}
-.ovs span{color:var(--bk)}
-.logwrap{height:106px;flex-shrink:0;border-top:1.5px solid var(--bk);background:var(--gr);display:flex;flex-direction:column}
-.loghdr{height:26px;border-bottom:1px solid var(--md);display:flex;align-items:center;justify-content:space-between;padding:0 .9rem;flex-shrink:0}
-.logt{font-family:var(--mn);font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dm)}
-.logclr{font-family:var(--mn);font-size:.46rem;color:var(--dm);background:none;border:none;cursor:pointer}
-.logclr:hover{color:var(--bk)}
-.logbody{flex:1;overflow-y:auto;padding:.3rem .85rem;display:flex;flex-direction:column;gap:.08rem}
-.logbody::-webkit-scrollbar{width:2px}.logbody::-webkit-scrollbar-thumb{background:var(--md)}
-.ll{font-family:var(--mn);font-size:.5rem;line-height:1.65;display:flex;gap:.5rem}
-.ll-t{color:var(--dm);flex-shrink:0}
-.ll-s{flex-shrink:0;font-weight:500}
-.ll-s.m1{color:var(--bl)}.ll-s.m2{color:var(--am)}.ll-s.m3{color:var(--gn)}.ll-s.m4{color:var(--bk)}.ll-s.sf{color:var(--rd)}.ll-s.ok{color:var(--gn)}.ll-s.sys{color:var(--dm)}
-.ll-m{color:var(--dm)}.ll-m b{color:var(--bk)}
-.right{width:238px;flex-shrink:0;border-left:1.5px solid var(--bk);overflow-y:auto}
-.right::-webkit-scrollbar{width:2px}.right::-webkit-scrollbar-thumb{background:var(--md)}
-.bmet{padding:1.1rem 1.2rem;border-bottom:1px solid var(--md)}
-.bn{font-family:var(--dp);font-size:2.3rem;font-weight:800;line-height:1}
-.bn.ok{color:var(--gn)}.bn.bad{color:var(--rd)}.bn.neu{color:var(--bk)}
-.bl{font-family:var(--mn);font-size:.46rem;color:var(--dm);margin-top:.22rem;letter-spacing:.07em;text-transform:uppercase}
-.mrows{padding:1.1rem 1.2rem;border-bottom:1px solid var(--md);display:flex;flex-direction:column;gap:.42rem}
-.mrow{display:flex;justify-content:space-between;align-items:center}
-.mk{font-family:var(--mn);font-size:.52rem;color:var(--dm)}
-.mv{font-family:var(--mn);font-size:.52rem}
-.brows{padding:1.1rem 1.2rem;border-bottom:1px solid var(--md)}
-.brow{display:flex;flex-direction:column;gap:.18rem;margin-bottom:.45rem}
-.btop{display:flex;justify-content:space-between}
-.bk{font-family:var(--mn);font-size:.46rem;color:var(--dm)}
-.bp{font-family:var(--mn);font-size:.46rem}
-.btrack{height:1.5px;background:var(--md)}
-.bfill{height:100%;transition:width .7s cubic-bezier(.16,1,.3,1)}
-.resbox{padding:1.1rem 1.2rem;display:none}
-.resbox.show{display:block}
-.restit{font-family:var(--dp);font-size:.9rem;font-weight:800;margin-bottom:.85rem;padding-bottom:.65rem;border-bottom:1px solid var(--md)}
-.restit.win{color:var(--gn)}.restit.lose{color:var(--rd)}
-.resrows{display:flex;flex-direction:column;gap:.38rem}
-.rr{display:flex;justify-content:space-between}
-.rk{font-family:var(--mn);font-size:.5rem;color:var(--dm)}
-.rv{font-family:var(--mn);font-size:.5rem}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--sans);
+  background: var(--paper);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-thumb { background: var(--border); }
+
+/* ── NAVIGATION ── */
+#nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2.5rem;
+  transition: background .25s, border-color .25s;
+}
+#nav.dark {
+  background: transparent;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+#nav.light {
+  background: rgba(247,246,242,.96);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+}
+.nav-logo {
+  display: flex; align-items: center; gap: .55rem;
+  text-decoration: none;
+  font-family: var(--syne); font-size: .82rem; font-weight: 800;
+  letter-spacing: .06em;
+  transition: color .2s;
+}
+#nav.dark .nav-logo { color: #fff; }
+#nav.light .nav-logo { color: var(--bk); }
+.nav-logo-sq {
+  width: 24px; height: 24px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .2s;
+}
+#nav.dark .nav-logo-sq { background: #fff; }
+#nav.light .nav-logo-sq { background: var(--bk); }
+.nav-logo-sq svg { width: 11px; height: 11px; }
+.nav-links {
+  display: flex; gap: 2.2rem; align-items: center;
+}
+.nav-links a {
+  font-family: var(--mono); font-size: .52rem; letter-spacing: .1em;
+  text-transform: uppercase; text-decoration: none;
+  transition: color .2s; opacity: .7;
+}
+.nav-links a:hover { opacity: 1; }
+#nav.dark .nav-links a { color: #fff; }
+#nav.light .nav-links a { color: var(--text); }
+.nav-gh {
+  font-family: var(--mono); font-size: .52rem; letter-spacing: .08em;
+  text-decoration: none; padding: .3rem .7rem;
+  border: 1px solid; transition: all .18s;
+}
+#nav.dark .nav-gh { color: rgba(255,255,255,.7); border-color: rgba(255,255,255,.2); }
+#nav.dark .nav-gh:hover { color: #fff; border-color: rgba(255,255,255,.6); }
+#nav.light .nav-gh { color: var(--dim); border-color: var(--border); }
+#nav.light .nav-gh:hover { color: var(--bk); border-color: var(--bk); }
+
+/* ── HERO ── */
+#hero {
+  position: relative; width: 100vw; height: 100vh;
+  background: var(--bk); overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+#hero-cv {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  opacity: .9;
+}
+.hero-inner {
+  position: relative; z-index: 2;
+  text-align: center; color: #fff;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 0;
+}
+.hero-eyebrow {
+  font-family: var(--mono); font-size: .55rem; letter-spacing: .2em;
+  text-transform: uppercase; color: rgba(255,255,255,.35);
+  margin-bottom: 1.4rem;
+}
+.hero-title {
+  font-family: var(--syne); font-weight: 800;
+  font-size: clamp(72px, 12vw, 160px);
+  line-height: .92; letter-spacing: -.02em;
+  color: #fff;
+}
+.hero-sub {
+  font-family: var(--mono); font-size: clamp(.55rem, 1.2vw, .75rem);
+  letter-spacing: .15em; text-transform: uppercase;
+  color: rgba(255,255,255,.35); margin-top: 1.6rem;
+}
+.hero-cost {
+  display: flex; align-items: center; gap: 2.5rem;
+  margin-top: 4rem; padding-top: 3rem;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+.hc-unit {
+  text-align: center;
+}
+.hc-val {
+  font-family: var(--syne); font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 800;
+  line-height: 1;
+}
+.hc-val.good { color: #fff; }
+.hc-val.bad  { color: rgba(255,255,255,.25); text-decoration: line-through; }
+.hc-lbl {
+  font-family: var(--mono); font-size: .46rem; letter-spacing: .12em;
+  text-transform: uppercase; color: rgba(255,255,255,.3); margin-top: .4rem;
+}
+.hc-div {
+  font-family: var(--corm); font-size: 1.1rem; font-style: italic;
+  color: rgba(255,255,255,.2);
+}
+.hero-scroll {
+  position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+  font-family: var(--mono); font-size: .48rem; letter-spacing: .15em;
+  text-transform: uppercase; color: rgba(255,255,255,.2);
+  display: flex; flex-direction: column; align-items: center; gap: .5rem;
+}
+.hero-scroll-line {
+  width: 1px; height: 40px; background: linear-gradient(to bottom, rgba(255,255,255,.15), transparent);
+  animation: scrollpulse 2s ease-in-out infinite;
+}
+@keyframes scrollpulse {
+  0%,100% { opacity: .3; transform: scaleY(1); }
+  50% { opacity: .8; transform: scaleY(1.15); }
+}
+
+/* ── SECTION SHARED ── */
+.section-label {
+  font-family: var(--mono); font-size: .5rem; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--dim);
+  display: flex; align-items: center; gap: .5rem;
+}
+.section-label::before {
+  content: ''; display: block; width: 20px; height: 1px; background: var(--border);
+}
+.section-head {
+  font-family: var(--syne); font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 800;
+  line-height: 1.05; letter-spacing: -.02em; color: var(--bk);
+}
+
+/* ── STORY SECTION ── */
+#story {
+  background: var(--paper);
+  padding: 120px 0;
+}
+.story-container {
+  max-width: 1320px; margin: 0 auto; padding: 0 2.5rem;
+}
+.story-header {
+  display: grid; grid-template-columns: 280px 1fr; gap: 4rem;
+  align-items: start; margin-bottom: 6rem;
+}
+.story-meta {
+  padding-top: .3rem;
+}
+.story-meta-item {
+  margin-bottom: 1.4rem;
+}
+.smi-key {
+  font-family: var(--mono); font-size: .46rem; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--dim); margin-bottom: .3rem;
+}
+.smi-val {
+  font-family: var(--sans); font-size: .88rem; font-weight: 400; color: var(--text);
+}
+.story-intro-head {
+  font-family: var(--syne); font-size: clamp(2rem, 3.5vw, 2.8rem); font-weight: 800;
+  line-height: 1.1; letter-spacing: -.02em;
+}
+.story-body {
+  display: grid; grid-template-columns: 280px 1fr; gap: 4rem;
+}
+.story-toc {
+  position: sticky; top: 76px; height: fit-content;
+  padding-top: 2px;
+}
+.toc-head {
+  font-family: var(--mono); font-size: .46rem; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--dim); margin-bottom: 1rem;
+}
+.toc-list {
+  list-style: none; display: flex; flex-direction: column; gap: .15rem;
+}
+.toc-list a {
+  font-family: var(--sans); font-size: .82rem; color: var(--dim);
+  text-decoration: none; display: block; padding: .3rem 0;
+  border-left: 2px solid transparent; padding-left: .7rem;
+  transition: all .15s; line-height: 1.3;
+}
+.toc-list a:hover, .toc-list a.active {
+  color: var(--bk); border-left-color: var(--bk);
+}
+.story-content {}
+.story-chapter {
+  margin-bottom: 5rem; padding-bottom: 5rem;
+  border-bottom: 1px solid var(--border);
+}
+.story-chapter:last-child { border-bottom: none; }
+.chapter-label {
+  font-family: var(--mono); font-size: .48rem; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--dim); margin-bottom: .9rem;
+}
+.chapter-title {
+  font-family: var(--syne); font-size: 1.5rem; font-weight: 800;
+  margin-bottom: 1.6rem; letter-spacing: -.01em;
+}
+.chapter-body p {
+  font-family: var(--sans); font-size: 1.05rem; line-height: 1.82;
+  color: var(--text); margin-bottom: 1.4rem; font-weight: 300;
+}
+.chapter-body p:last-child { margin-bottom: 0; }
+.chapter-body strong { font-weight: 500; color: var(--bk); }
+.pull-quote {
+  margin: 2.5rem 0; padding: 1.5rem 2rem;
+  border-left: 3px solid var(--bk);
+  background: rgba(0,0,0,.025);
+}
+.pull-quote p {
+  font-family: var(--corm); font-size: 1.35rem !important; font-style: italic;
+  line-height: 1.55 !important; color: var(--bk) !important; margin: 0 !important;
+}
+.chapter-body .callout {
+  background: var(--bk); color: #fff; padding: 1.5rem 1.8rem;
+  margin: 2rem 0;
+  font-family: var(--mono); font-size: .7rem; line-height: 1.7;
+}
+.stat-inline {
+  display: inline-flex; align-items: baseline; gap: .35rem;
+}
+.stat-n {
+  font-family: var(--syne); font-size: 1.4rem; font-weight: 800; line-height: 1;
+}
+.stat-u {
+  font-family: var(--mono); font-size: .55rem; letter-spacing: .1em; color: var(--dim);
+}
+.missing-list {
+  list-style: none; margin: 1.2rem 0;
+  display: flex; flex-direction: column; gap: .5rem;
+}
+.missing-list li {
+  font-family: var(--sans); font-size: 1.05rem; line-height: 1.6;
+  color: var(--text); font-weight: 300;
+  display: flex; align-items: baseline; gap: .65rem;
+}
+.missing-list li::before {
+  content: '—'; font-family: var(--mono); color: var(--dim); flex-shrink: 0;
+}
+.missing-list li b { font-weight: 500; color: var(--bk); }
+
+/* ── SYSTEM SECTION ── */
+#system {
+  background: var(--bk); padding: 120px 0;
+  color: #fff;
+}
+.sys-container {
+  max-width: 1320px; margin: 0 auto; padding: 0 2.5rem;
+}
+.sys-header {
+  margin-bottom: 5rem; display: flex; align-items: flex-end; justify-content: space-between;
+}
+.sys-header .section-label { color: rgba(255,255,255,.3); }
+.sys-header .section-label::before { background: rgba(255,255,255,.1); }
+.sys-header .section-head { color: #fff; }
+.sys-subtitle {
+  font-family: var(--sans); font-size: .9rem; color: rgba(255,255,255,.4);
+  max-width: 340px; text-align: right; line-height: 1.65;
+}
+.pipeline-flow {
+  display: grid; grid-template-columns: repeat(6, 1fr);
+  align-items: center; gap: 0; margin-bottom: 5rem;
+  border: 1px solid rgba(255,255,255,.06); overflow: hidden;
+}
+.pipeline-stage {
+  padding: 1.8rem 1.2rem; border-right: 1px solid rgba(255,255,255,.06);
+  text-align: center;
+}
+.pipeline-stage:last-child { border-right: none; }
+.ps-tag {
+  font-family: var(--mono); font-size: .44rem; letter-spacing: .14em;
+  text-transform: uppercase; color: rgba(255,255,255,.25); margin-bottom: .5rem;
+}
+.ps-name {
+  font-family: var(--syne); font-size: .78rem; font-weight: 800;
+  color: #fff; margin-bottom: .35rem;
+}
+.ps-detail {
+  font-family: var(--mono); font-size: .5rem; color: rgba(255,255,255,.3);
+  line-height: 1.5;
+}
+.ps-hz {
+  font-family: var(--syne); font-size: .9rem; font-weight: 800;
+  color: rgba(255,255,255,.15); margin-top: .4rem;
+}
+.modules-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px;
+  background: rgba(255,255,255,.06);
+}
+.module-card {
+  background: var(--bk); padding: 2.5rem 2.8rem;
+  transition: background .2s;
+}
+.module-card:hover { background: #111110; }
+.mc-num {
+  font-family: var(--mono); font-size: .48rem; letter-spacing: .16em;
+  color: rgba(255,255,255,.2); margin-bottom: .7rem;
+}
+.mc-name {
+  font-family: var(--syne); font-size: 1.3rem; font-weight: 800;
+  color: #fff; margin-bottom: .2rem;
+}
+.mc-file {
+  font-family: var(--mono); font-size: .52rem; color: rgba(255,255,255,.25);
+  margin-bottom: 1.2rem; letter-spacing: .05em;
+}
+.mc-desc {
+  font-family: var(--sans); font-size: .9rem; line-height: 1.7;
+  color: rgba(255,255,255,.5); font-weight: 300; margin-bottom: 1.4rem;
+}
+.mc-stats {
+  display: flex; gap: 1.8rem;
+}
+.mc-stat {
+  display: flex; flex-direction: column; gap: .2rem;
+}
+.mc-sv {
+  font-family: var(--syne); font-size: 1.2rem; font-weight: 800; color: #fff;
+}
+.mc-sk {
+  font-family: var(--mono); font-size: .44rem; letter-spacing: .1em;
+  text-transform: uppercase; color: rgba(255,255,255,.25);
+}
+.mc-formula {
+  font-family: var(--mono); font-size: .58rem; color: rgba(255,255,255,.2);
+  border-top: 1px solid rgba(255,255,255,.06); padding-top: 1rem; margin-top: 1.2rem;
+  line-height: 1.8;
+}
+
+/* ── SIMULATION SECTION ── */
+#simulation {
+  background: var(--warm);
+  border-top: 1.5px solid var(--bk);
+}
+.sim-header {
+  max-width: 1320px; margin: 0 auto; padding: 2rem 2.5rem 0;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+.sim-header-left {
+  display: flex; align-items: center; gap: 1rem;
+}
+.sim-header-sq {
+  width: 24px; height: 24px; background: var(--bk);
+  display: flex; align-items: center; justify-content: center;
+}
+.sim-header-sq svg { width: 11px; height: 11px; }
+.sim-header-title {
+  font-family: var(--syne); font-size: .9rem; font-weight: 800; letter-spacing: .04em;
+}
+.sim-header-sub {
+  font-family: var(--mono); font-size: .5rem; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--dim); margin-top: .15rem;
+}
+.sim-badge {
+  font-family: var(--mono); font-size: .5rem; padding: .2rem .5rem;
+  border: 1px solid var(--grn); color: var(--grn); letter-spacing: .08em;
+}
+/* The simulation workspace */
+.sim-ws {
+  display: flex; height: calc(100vh - 120px); min-height: 580px;
+}
+.sim-left {
+  width: 278px; flex-shrink: 0; border-right: 1.5px solid var(--bk);
+  display: flex; flex-direction: column; overflow-y: auto; background: var(--warm);
+}
+.sim-left::-webkit-scrollbar { width: 2px; }
+.sim-left::-webkit-scrollbar-thumb { background: var(--border); }
+.ssec { padding: 1.1rem 1.2rem; border-bottom: 1px solid var(--border); }
+.sslbl {
+  font-family: var(--mono); font-size: .49rem; letter-spacing: .15em;
+  text-transform: uppercase; color: var(--dim); margin-bottom: .85rem;
+  display: flex; align-items: center; gap: .4rem;
+}
+.sslbl::before { content: ''; display: block; width: 10px; height: 1px; background: var(--border); }
+.stlist { display: flex; flex-direction: column; gap: .3rem; }
+.stbtn {
+  display: flex; align-items: center; gap: .55rem; padding: .55rem .65rem;
+  border: 1px solid var(--border); background: transparent; cursor: pointer; width: 100%;
+  transition: border-color .12s;
+}
+.stbtn:hover { border-color: var(--bk); }
+.stbtn.on { border-color: var(--red); background: rgba(184,50,30,.04); }
+.st-ico { font-size: .95rem; width: 24px; text-align: center; flex-shrink: 0; }
+.st-nm { font-family: var(--syne); font-size: .7rem; font-weight: 700; margin-bottom: .12rem; }
+.st-sp { font-family: var(--mono); font-size: .46rem; color: var(--dim); line-height: 1.5; }
+.stbtn.on .st-sp { color: rgba(184,50,30,.5); }
+.ssrow { margin-bottom: .75rem; }
+.sstop { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: .4rem; }
+.sskey { font-family: var(--mono); font-size: .52rem; color: var(--dim); }
+.ssval { font-family: var(--syne); font-size: .78rem; font-weight: 800; }
+input[type=range] {
+  width: 100%; -webkit-appearance: none; height: 1.5px; background: var(--border);
+  outline: none; cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--warm); border: 2px solid var(--bk);
+}
+.stmarks {
+  display: flex; justify-content: space-between; font-family: var(--mono);
+  font-size: .43rem; color: var(--dim); margin-top: .3rem;
+}
+.spgrid { display: grid; grid-template-columns: 1fr 1fr; gap: .3rem; }
+.spcell { padding: .48rem .55rem; border: 1px solid var(--border); }
+.spv { font-family: var(--mono); font-size: .76rem; }
+.spk { font-family: var(--mono); font-size: .42rem; color: var(--dim); margin-top: .12rem; letter-spacing: .06em; }
+.sprows { display: flex; flex-direction: column; gap: .38rem; }
+.sprow { display: flex; justify-content: space-between; align-items: center; }
+.spk2 { font-family: var(--mono); font-size: .52rem; color: var(--dim); }
+.spv2 { font-family: var(--mono); font-size: .52rem; }
+.ok { color: var(--grn); } .bad { color: var(--red); } .am { color: var(--amb); } .dim-c { color: var(--dim); }
+.srunsec { padding: 1.1rem 1.2rem; }
+.srbtn {
+  width: 100%; padding: .82rem; font-family: var(--syne); font-size: .8rem; font-weight: 800;
+  letter-spacing: .05em; cursor: pointer; border: 1.5px solid var(--bk);
+  background: var(--bk); color: #fff; transition: all .18s;
+}
+.srbtn:hover { background: transparent; color: var(--bk); }
+.srbtn:disabled { border-color: var(--border); background: transparent; color: var(--dim); cursor: not-allowed; }
+.srbtn.running { border-color: var(--amb); background: transparent; color: var(--amb); }
+.sim-center { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.scvwrap { flex: 1; position: relative; overflow: hidden; }
+#cv { display: block; width: 100%; height: 100%; }
+.sovtl { position: absolute; top: .9rem; left: 1.1rem; pointer-events: none; }
+.sovcity { font-family: var(--syne); font-size: 1.25rem; font-weight: 800; line-height: 1; }
+.sovcoord { font-family: var(--mono); font-size: .5rem; color: var(--dim); margin-top: .2rem; }
+.sovtr { position: absolute; top: .9rem; right: 1.1rem; text-align: right; pointer-events: none; }
+.sovs { font-family: var(--mono); font-size: .5rem; color: var(--dim); margin-bottom: .15rem; }
+.sovs span { color: var(--bk); }
+.slogwrap {
+  height: 106px; flex-shrink: 0; border-top: 1.5px solid var(--bk);
+  background: #F2F1EE; display: flex; flex-direction: column;
+}
+.sloghdr {
+  height: 26px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; padding: 0 .9rem; flex-shrink: 0;
+}
+.slogt { font-family: var(--mono); font-size: .48rem; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+.slogclr { font-family: var(--mono); font-size: .46rem; color: var(--dim); background: none; border: none; cursor: pointer; }
+.slogclr:hover { color: var(--bk); }
+.slogbody { flex: 1; overflow-y: auto; padding: .3rem .85rem; display: flex; flex-direction: column; gap: .08rem; }
+.slogbody::-webkit-scrollbar { width: 2px; }
+.slogbody::-webkit-scrollbar-thumb { background: var(--border); }
+.sll { font-family: var(--mono); font-size: .5rem; line-height: 1.65; display: flex; gap: .5rem; }
+.sll-t { color: var(--dim); flex-shrink: 0; }
+.sll-s { flex-shrink: 0; font-weight: 500; }
+.sll-s.m1 { color: var(--bl, #2454a4); } .sll-s.m2 { color: var(--amb); } .sll-s.m3 { color: var(--grn); }
+.sll-s.m4 { color: var(--bk); } .sll-s.sf { color: var(--red); } .sll-s.ok { color: var(--grn); } .sll-s.sys { color: var(--dim); }
+.sll-m { color: var(--dim); }
+.sll-m b { color: var(--bk); }
+.sim-right { width: 238px; flex-shrink: 0; border-left: 1.5px solid var(--bk); overflow-y: auto; }
+.sim-right::-webkit-scrollbar { width: 2px; }
+.sim-right::-webkit-scrollbar-thumb { background: var(--border); }
+.sbmet { padding: 1.1rem 1.2rem; border-bottom: 1px solid var(--border); }
+.sbn { font-family: var(--syne); font-size: 2.3rem; font-weight: 800; line-height: 1; }
+.sbn.ok { color: var(--grn); } .sbn.bad { color: var(--red); } .sbn.neu { color: var(--bk); }
+.sbl { font-family: var(--mono); font-size: .46rem; color: var(--dim); margin-top: .22rem; letter-spacing: .07em; text-transform: uppercase; }
+.smrows { padding: 1.1rem 1.2rem; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: .42rem; }
+.smrow { display: flex; justify-content: space-between; align-items: center; }
+.smk { font-family: var(--mono); font-size: .52rem; color: var(--dim); }
+.smv { font-family: var(--mono); font-size: .52rem; }
+.sbrows { padding: 1.1rem 1.2rem; border-bottom: 1px solid var(--border); }
+.sbrow { display: flex; flex-direction: column; gap: .18rem; margin-bottom: .45rem; }
+.sbtop { display: flex; justify-content: space-between; }
+.sbk { font-family: var(--mono); font-size: .46rem; color: var(--dim); }
+.sbp { font-family: var(--mono); font-size: .46rem; }
+.sbtrack { height: 1.5px; background: var(--border); }
+.sbfill { height: 100%; transition: width .7s cubic-bezier(.16,1,.3,1); }
+.sresbox { padding: 1.1rem 1.2rem; display: none; }
+.sresbox.show { display: block; }
+.srestit { font-family: var(--syne); font-size: .9rem; font-weight: 800; margin-bottom: .85rem; padding-bottom: .65rem; border-bottom: 1px solid var(--border); }
+.srestit.win { color: var(--grn); } .srestit.lose { color: var(--red); }
+.sresrows { display: flex; flex-direction: column; gap: .38rem; }
+.srr { display: flex; justify-content: space-between; }
+.srk { font-family: var(--mono); font-size: .5rem; color: var(--dim); }
+.srv { font-family: var(--mono); font-size: .5rem; }
+
+/* ── HARDWARE SECTION ── */
+#hardware {
+  background: var(--paper); padding: 120px 0;
+  border-top: 1.5px solid var(--bk);
+}
+.hw-container { max-width: 1320px; margin: 0 auto; padding: 0 2.5rem; }
+.hw-header { margin-bottom: 5rem; }
+.hw-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+}
+.hw-card {
+  border: 1px solid var(--border); padding: 2rem 2.2rem;
+}
+.hw-card-title {
+  font-family: var(--syne); font-size: .95rem; font-weight: 800;
+  letter-spacing: .02em; margin-bottom: 1.4rem; padding-bottom: .9rem;
+  border-bottom: 1px solid var(--border);
+}
+.hw-specs { display: flex; flex-direction: column; gap: .5rem; }
+.hw-spec { display: flex; justify-content: space-between; align-items: baseline; }
+.hw-key { font-family: var(--mono); font-size: .54rem; color: var(--dim); }
+.hw-val { font-family: var(--mono); font-size: .54rem; font-weight: 500; }
+.hw-missing {
+  margin-top: 4rem; padding: 2.5rem; background: var(--bk); color: #fff;
+  display: flex; gap: 3rem; align-items: center;
+}
+.hw-m-label {
+  font-family: var(--mono); font-size: .46rem; letter-spacing: .16em;
+  text-transform: uppercase; color: rgba(255,255,255,.3); flex-shrink: 0;
+}
+.hw-m-text {
+  font-family: var(--corm); font-size: 1.2rem; font-style: italic;
+  color: rgba(255,255,255,.75); line-height: 1.6;
+}
+
+/* ── ABOUT SECTION ── */
+#about {
+  background: var(--bk); color: #fff;
+  padding: 120px 0;
+}
+.about-container { max-width: 1320px; margin: 0 auto; padding: 0 2.5rem; }
+.about-grid {
+  display: grid; grid-template-columns: 380px 1fr; gap: 6rem;
+  align-items: start;
+}
+.about-visual {
+  position: sticky; top: 80px;
+}
+.about-monogram {
+  width: 100%; aspect-ratio: 1; background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08); display: flex; align-items: center;
+  justify-content: center; margin-bottom: 1.5rem;
+}
+.about-monogram-inner {
+  font-family: var(--syne); font-size: 5rem; font-weight: 800;
+  color: rgba(255,255,255,.12); letter-spacing: -.05em; line-height: 1;
+}
+.about-meta { display: flex; flex-direction: column; gap: .5rem; }
+.about-meta-row { display: flex; gap: .6rem; align-items: baseline; }
+.am-k { font-family: var(--mono); font-size: .46rem; letter-spacing: .12em; color: rgba(255,255,255,.2); width: 70px; flex-shrink: 0; }
+.am-v { font-family: var(--sans); font-size: .82rem; color: rgba(255,255,255,.5); }
+.about-content {}
+.about-content .section-label { color: rgba(255,255,255,.2); }
+.about-content .section-label::before { background: rgba(255,255,255,.08); }
+.about-content .section-head { color: #fff; margin: 1rem 0 2.5rem; }
+.about-content p {
+  font-family: var(--sans); font-size: 1.05rem; line-height: 1.82;
+  color: rgba(255,255,255,.5); font-weight: 300; margin-bottom: 1.4rem;
+}
+.about-content strong { color: rgba(255,255,255,.85); font-weight: 500; }
+.about-links {
+  margin-top: 3rem; display: flex; gap: 1rem;
+}
+.about-link {
+  font-family: var(--mono); font-size: .56rem; letter-spacing: .1em;
+  text-transform: uppercase; text-decoration: none; padding: .65rem 1.1rem;
+  transition: all .18s;
+}
+.about-link.primary { background: #fff; color: var(--bk); }
+.about-link.primary:hover { background: rgba(255,255,255,.85); }
+.about-link.secondary { border: 1px solid rgba(255,255,255,.2); color: rgba(255,255,255,.5); }
+.about-link.secondary:hover { border-color: rgba(255,255,255,.6); color: #fff; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--bk); color: rgba(255,255,255,.2);
+  border-top: 1px solid rgba(255,255,255,.06);
+  padding: 2rem 2.5rem; display: flex; align-items: center; justify-content: space-between;
+}
+.footer-left { font-family: var(--mono); font-size: .5rem; letter-spacing: .1em; }
+.footer-right { font-family: var(--mono); font-size: .5rem; }
+
+/* ── REVEAL ANIMATIONS ── */
+.reveal {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity .7s ease, transform .7s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .story-header, .story-body { grid-template-columns: 1fr; gap: 2rem; }
+  .story-toc { display: none; }
+  .modules-grid, .hw-grid { grid-template-columns: 1fr; }
+  .about-grid { grid-template-columns: 1fr; }
+  .about-visual { position: static; }
+  .pipeline-flow { grid-template-columns: repeat(3, 1fr); }
+  .hero-cost { flex-direction: column; gap: 1.5rem; }
+  .sim-ws { flex-direction: column; height: auto; }
+  .sim-left { width: 100%; height: auto; border-right: none; border-bottom: 1.5px solid var(--bk); }
+  .sim-right { width: 100%; border-left: none; border-top: 1.5px solid var(--bk); }
+  .nav-links { display: none; }
+  .sys-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .sys-subtitle { text-align: left; }
+}
+
 </style>
 </head>
 <body>
-<header>
-  <div class="logo">
-    <div class="logo-sq">
+
+<!-- ════════════════════════════════
+     NAVIGATION
+════════════════════════════════ -->
+<nav id="nav" class="dark">
+  <a href="#hero" class="nav-logo">
+    <div class="nav-logo-sq">
+      <svg viewBox="0 0 14 14" fill="none">
+        <polygon points="7,1 13,12 1,12" stroke="currentColor" stroke-width="1.5" fill="none"/>
+        <circle cx="7" cy="9" r="1.5" fill="currentColor"/>
+      </svg>
+    </div>
+    AEGIS
+  </a>
+  <div class="nav-links">
+    <a href="#story">Project</a>
+    <a href="#system">System</a>
+    <a href="#simulation">Simulation</a>
+    <a href="#hardware">Hardware</a>
+    <a href="#about">About</a>
+  </div>
+  <a href="https://github.com/Vitalcheffe/Aegis" target="_blank" class="nav-gh">GitHub &#8599;</a>
+</nav>
+
+<!-- ════════════════════════════════
+     HERO
+════════════════════════════════ -->
+<section id="hero">
+  <canvas id="hero-cv"></canvas>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">v1.0.0 &nbsp;&middot;&nbsp; Morocco, 2026 &nbsp;&middot;&nbsp; 63/63 tests passing</div>
+    <h1 class="hero-title">AEGIS</h1>
+    <p class="hero-sub">Autonomous Kinetic Interceptor Swarm</p>
+    <div class="hero-cost">
+      <div class="hc-unit">
+        <div class="hc-val good">$4,200</div>
+        <div class="hc-lbl">AEGIS unit cost</div>
+      </div>
+      <div class="hc-div">versus</div>
+      <div class="hc-unit">
+        <div class="hc-val bad">$4,000,000</div>
+        <div class="hc-lbl">PAC-3 missile</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <span>scroll</span>
+    <div class="hero-scroll-line"></div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════
+     STORY — THE PROJECT PAGE
+════════════════════════════════ -->
+<section id="story">
+<div class="story-container">
+
+  <!-- Header -->
+  <div class="story-header">
+    <div class="story-meta">
+      <div class="story-meta-item">
+        <div class="smi-key">Author</div>
+        <div class="smi-val">Amine Harch</div>
+      </div>
+      <div class="story-meta-item">
+        <div class="smi-key">Age</div>
+        <div class="smi-val">16</div>
+      </div>
+      <div class="story-meta-item">
+        <div class="smi-key">Location</div>
+        <div class="smi-val">Morocco</div>
+      </div>
+      <div class="story-meta-item">
+        <div class="smi-key">Education</div>
+        <div class="smi-val">Seconde, French Lyc&eacute;e</div>
+      </div>
+      <div class="story-meta-item">
+        <div class="smi-key">Version</div>
+        <div class="smi-val">1.0.0 &nbsp;&mdash;&nbsp; 2026</div>
+      </div>
+      <div class="story-meta-item">
+        <div class="smi-key">Status</div>
+        <div class="smi-val" style="color:var(--grn)">Active development</div>
+      </div>
+    </div>
+    <div>
+      <div class="section-label" style="margin-bottom:1.2rem">The Project</div>
+      <h2 class="story-intro-head reveal">Inverting the cost curve of air defense using a swarm of cheap autonomous interceptors.</h2>
+    </div>
+  </div>
+
+  <!-- Body with TOC -->
+  <div class="story-body">
+
+    <div class="story-toc">
+      <div class="toc-head">Contents</div>
+      <ul class="toc-list">
+        <li><a href="#ch-context" class="toc-link">1. Context &amp; Background</a></li>
+        <li><a href="#ch-problem" class="toc-link">2. The Problem</a></li>
+        <li><a href="#ch-nexus" class="toc-link">3. NEXUS &amp; the Pattern</a></li>
+        <li><a href="#ch-wanted" class="toc-link">4. What I Wanted to Build</a></li>
+        <li><a href="#ch-notwanted" class="toc-link">5. What I Refused to Do</a></li>
+        <li><a href="#ch-built" class="toc-link">6. What I Built</a></li>
+        <li><a href="#ch-missing" class="toc-link">7. What&rsquo;s Missing</a></li>
+        <li><a href="#ch-honest" class="toc-link">8. Honest State of the Project</a></li>
+      </ul>
+    </div>
+
+    <div class="story-content">
+
+      <!-- Chapter 1 -->
+      <div class="story-chapter reveal" id="ch-context">
+        <div class="chapter-label">01 &mdash; Context &amp; Background</div>
+        <h3 class="chapter-title">How I got here</h3>
+        <div class="chapter-body">
+          <p>I've been following active conflicts through open-source intelligence since I was 14. Not casually&nbsp;&mdash; seriously. About <strong>90 Telegram channels</strong>: frontline journalists, OSINT analysts, AIS vessel trackers, satellite imagery accounts, intercepted radio feeds. I started doing this because I realized that most of what people know about active conflicts arrives 48 hours late, filtered through outlets that compress a complex situation into a headline.</p>
+          <p>To make sense of all of it, I built <strong>NEXUS</strong>&nbsp;&mdash; an OSINT correlation engine. It pulls from 35+ real-time feeds, clusters events geographically and temporally across six dimensions, and lets me watch conflicts unfold in near-real-time. NEXUS is how I actually understand what's happening in Ukraine, Sudan, the Red Sea, Gaza. It's a personal tool, not a product, but it works.</p>
+          <p>After a year of watching through NEXUS, a pattern became impossible to ignore. It wasn't about any particular conflict. It was about the economics underneath all of them.</p>
+        </div>
+      </div>
+
+      <!-- Chapter 2 -->
+      <div class="story-chapter reveal" id="ch-problem">
+        <div class="chapter-label">02 &mdash; The Problem</div>
+        <h3 class="chapter-title">The math is broken</h3>
+        <div class="chapter-body">
+          <div class="pull-quote">
+            <p>&#8220;Armies are firing million-dollar missiles at twenty-dollar drones. The asymmetry doesn&#8217;t favor the defender. It never will, at current price points.&#8221;</p>
+          </div>
+          <p>A Shahed-136 costs around <strong>$20,000</strong> to manufacture. Iran produces them by the thousands. Every country facing mass drone attack&nbsp;&mdash; Ukraine, Israel, Saudi Arabia&nbsp;&mdash; is responding with interceptors that cost 10 to 200 times more per shot.</p>
+          <p>Iron Dome interceptors: <strong>$40,000&ndash;$100,000 each</strong>. PAC-3 missiles: <strong>$4,000,000 per round</strong>. Each time a Shahed-136 is destroyed, the defender has spent more than the attacker did to produce the threat in the first place.</p>
+          <p>The attacker can sustain this indefinitely. A state actor producing drones at scale can absorb these loss rates easily. The defender cannot. And the problem compounds: as drone swarms grow larger and more sophisticated, the cost disparity gets worse, not better.</p>
+          <p>This is not a technology failure. No one has failed to build a capable interceptor. The failures are economic and structural. The question nobody seemed to be seriously asking was: <em>what would a fundamentally cheaper response look like?</em></p>
+          <p>Not cheaper at the margins. Cheaper by an order of magnitude.</p>
+          <div class="callout">
+SHAHED-136   ........   $20,000 / unit
+IRON DOME    ........   $40,000&ndash;100,000 / intercept
+PAC-3        ........   $4,000,000 / round
+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;
+AEGIS        ........   $4,200 / unit
+              952&times; cheaper than PAC-3 per intercept
+          </div>
+        </div>
+      </div>
+
+      <!-- Chapter 3 -->
+      <div class="story-chapter reveal" id="ch-nexus">
+        <div class="chapter-label">03 &mdash; NEXUS &amp; the Pattern</div>
+        <h3 class="chapter-title">What the data showed me</h3>
+        <div class="chapter-body">
+          <p>NEXUS didn't tell me to build AEGIS. It showed me the scale of the problem clearly enough that I wanted to. There's a difference.</p>
+          <p>Watching hundreds of Shahed intercept events accumulate in the NEXUS feed&nbsp;&mdash; time, location, interceptor type, estimated cost per shot&nbsp;&mdash; the numbers tell a story that no individual report captures. The aggregate burn rate of interceptor stockpiles across conflict zones, measured against drone production rates on the other side, produces a trajectory that only goes one way.</p>
+          <p>I started thinking about what an honest answer to this problem would look like. Not a clever modification to an existing system. Something built from the problem up, with cost as the primary design constraint from day one.</p>
+          <div class="pull-quote">
+            <p>&#8220;If the threat costs $20,000, the defense needs to cost $4,000. Not $400,000. Not even $40,000.&#8221;</p>
+          </div>
+          <p>The insight was simple, even if the engineering isn't: <strong>use swarms</strong>. Five hundred cheap autonomous units covering the same airspace as one expensive missile battery. No single point of failure. No reload delay. Replaceable at a fraction of the cost.</p>
+          <p>I spent about three months working through whether this was actually feasible before writing a line of code. The physics checks out. The economics check out. The software engineering is hard but tractable.</p>
+        </div>
+      </div>
+
+      <!-- Chapter 4 -->
+      <div class="story-chapter reveal" id="ch-wanted">
+        <div class="chapter-label">04 &mdash; What I Wanted to Build</div>
+        <h3 class="chapter-title">The design goals</h3>
+        <div class="chapter-body">
+          <p>I had specific things I wanted to be true about this project before I started. Not aspirations&nbsp;&mdash; constraints. Hard ones.</p>
+          <ul class="missing-list">
+            <li><b>Physics-real constants.</b> Every number in the codebase had to come from a verifiable source: ISA atmosphere model, ITU-R rain attenuation, real motor specs from manufacturer datasheets, MIL-STD-1522A structural factors. No made-up specs.</li>
+            <li><b>A pipeline that actually runs.</b> Not a proof-of-concept sketch. A real 50Hz control loop, with real sensor fusion, real Kalman filtering, real formation physics, running at real-time on standard hardware.</li>
+            <li><b>Honest safety architecture.</b> The weapon had to be locked by default. Hardware failure means LOCKED, not ARMED. Human veto preserved at all times. The ProximityLock had to actually prevent fratricide, not just check a box.</li>
+            <li><b>Provable Byzantine fault tolerance.</b> Drones get jammed and spoofed in real conflict. The system had to keep working with up to 1/3 of sensors compromised, using the same mathematics Lamport proved in 1982&nbsp;&mdash; not a workaround.</li>
+            <li><b>Tractable economics.</b> The bill of materials had to use real parts with real prices from real suppliers (DigiKey, Mouser). The $4,200 unit cost isn't a guess.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Chapter 5 -->
+      <div class="story-chapter reveal" id="ch-notwanted">
+        <div class="chapter-label">05 &mdash; What I Refused to Do</div>
+        <h3 class="chapter-title">What this isn&#8217;t</h3>
+        <div class="chapter-body">
+          <p>There are several things I deliberately refused to do, because they would have made the project dishonest.</p>
+          <ul class="missing-list">
+            <li><b>I didn't make up physics.</b> The V_patrol figure went through multiple corrections&nbsp;&mdash; it's 99 km/h, not 114, not 155. The self-test in oc_types.py rejects any value outside the valid range at import time.</li>
+            <li><b>I didn't hide what doesn't work.</b> Wave 2 of the Nevada simulation (three Lancet-3s in formation) took multiple debugging cycles. The cluster explosion bug, the Q matrix structure, the ASSOC_RADIUS problem&nbsp;&mdash; all documented, all fixed, all with the original broken version still visible in the commit history.</li>
+            <li><b>I didn't build a toy.</b> A toy simulation uses fake numbers and makes everything intercept. The real simulation uses actual Shahed-136 kinematics, real Doppler noise models, real energy budgets. If a drone can't afford the intercept, it RTBs. That's what the code does.</li>
+            <li><b>I didn't pretend the hardware exists.</b> Tessera MK.II is a design specification and a bill of materials. The CFRP airframe, the Cesaroni booster, the 60GHz mesh radio&nbsp;&mdash; none of it has been manufactured. I'm 16 and I'm in Morocco. I'm honest about that.</li>
+          </ul>
+          <div class="pull-quote">
+            <p>&#8220;The most important engineering decision I made was to be honest about what doesn&#8217;t exist yet. A lie in a spec sheet is harder to fix than a bug in code.&#8221;</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chapter 6 -->
+      <div class="story-chapter reveal" id="ch-built">
+        <div class="chapter-label">06 &mdash; What I Built</div>
+        <h3 class="chapter-title">The actual system</h3>
+        <div class="chapter-body">
+          <p>AEGIS is a control pipeline. It runs at <strong>50 Hz</strong>. One full tick for 50 drones takes 6 milliseconds on a laptop. The architecture has four modules:</p>
+          <p><strong>M1 &mdash; SpectralFusion.</strong> Aggregates sensor readings from all drones, filters out Byzantine nodes using Median Absolute Deviation (Lamport 1982 BFT bound: &lt;1/3 of swarm), detects lures using five physical rules derived from real infrared signatures. A flare is above 700K. A cold balloon has contrast below 5K with pixel area above 10. Jettisoned lures decelerate above 15 m/s&#178;. These aren't heuristics&nbsp;&mdash; they come from the physics of what different objects look like in LWIR.</p>
+          <p><strong>M2 &mdash; MultiTargetUKF.</strong> An Unscented Kalman Filter tracking position, velocity, and acceleration in all three axes. The intercept predictor scans 12 seconds forward in 0.1-second windows to find the booster ignition timestamp. Before the Cholesky optimization, this took 37ms. After, it takes 0.9ms. The bug was running a full decomposition every scan step instead of propagating a cheap linear estimate.</p>
+          <p><strong>M3 &mdash; ElasticNet.</strong> Spring-physics formation management. Each drone computes forces from its 6 nearest neighbors only&nbsp;&mdash; O(6N) instead of O(N&#178;). At 500 drones, that's 83x fewer operations. The swarm holds a hexagonal patrol grid, contracts into an engagement cone when a target is confirmed, and self-heals if nodes drop out.</p>
+          <p><strong>M4 &mdash; EnergyBudget.</strong> Three inviolable reserves per drone. 10 Wh for parachute deployment. 40 Wh for return to base. 60 Wh for one combat sprint. The threat worth score combines mass, velocity, and collateral risk into a value between 0 and 100. Below 60: RTB without engaging. 60&ndash;80: authorize automatically in sim mode, request Colonel approval in live mode. Above 80: explicit human authorization required regardless.</p>
+          <div class="callout">
+63 tests passing. 0 failing.
+Full pipeline p99: 14.35ms on 50 drones.
+50Hz budget: 20ms. Margin: 5.65ms.
+Wave 1 (Shahed-136): intercepted in 7 ticks, 54ms wall time.
+          </div>
+        </div>
+      </div>
+
+      <!-- Chapter 7 -->
+      <div class="story-chapter reveal" id="ch-missing">
+        <div class="chapter-label">07 &mdash; What&#8217;s Missing</div>
+        <h3 class="chapter-title">The honest gap list</h3>
+        <div class="chapter-body">
+          <p>There are things that are missing from this project. Some I know how to fix. Others I haven't figured out yet.</p>
+          <ul class="missing-list">
+            <li><b>Physical hardware.</b> Tessera MK.II doesn't exist. The BOM is real, the specs are physics-derived, but no unit has been built or tested. This is the biggest gap.</li>
+            <li><b>Wave 2 convergence.</b> The three Lancet-3 scenario in the Nevada simulation is close but not fully converged. The 22m formation spacing makes track association at 18m ASSOC_RADIUS marginal. I know what the fix is; I haven't implemented the full multi-hypothesis tracker yet.</li>
+            <li><b>Real sensor integration.</b> The sensor fusion module uses simulated detections with Gaussian noise. Real IMX678, FLIR Lepton 3.5, and Inxpect Doppler radar have specific noise models, latencies, and failure modes that aren't fully modeled yet.</li>
+            <li><b>60GHz mesh implementation.</b> The networking protocol exists on paper. The Sivers IQ EVK06002 integration isn't coded; only simulated latency and packet loss are modeled.</li>
+            <li><b>Hardware-in-the-loop testing.</b> Everything runs on a simulated clock. Real-time OS constraints, interrupt latency, and Jetson Orin power management haven't been validated.</li>
+            <li><b>Regulatory and legal framework.</b> Autonomous weapons systems exist in a complicated legal space. I've thought about it; I haven't solved it. The Human Loop Gate is a partial answer&nbsp;&mdash; not a complete one.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Chapter 8 -->
+      <div class="story-chapter reveal" id="ch-honest">
+        <div class="chapter-label">08 &mdash; Honest State of the Project</div>
+        <h3 class="chapter-title">Where this actually is</h3>
+        <div class="chapter-body">
+          <p>This is a serious software project built by a 16-year-old in Morocco with no institutional affiliation, no funding, and no hardware.</p>
+          <p>The things that are real: the physics, the code, the test suite, the benchmark results, the mathematical foundations. All of it is verifiable. The self-test in oc_types.py validates every physical constant at import time against ISA atmosphere and MIL-STD-1522A bounds. If a number is wrong, the system tells you immediately.</p>
+          <p>The things that are not real: the hardware, the full operational scenario, the regulatory pathway. I'm honest about this in the README and in every public description of the project.</p>
+          <p>What this project demonstrates is that <strong>the control architecture for a swarm-based air defense system is tractable with current algorithms and commercial hardware</strong>. The software engineering is solved. The physics is validated. The economics work. What's needed next is fabrication, testing, and institutional support&nbsp;&mdash; none of which I can provide from my position right now.</p>
+          <div class="pull-quote">
+            <p>&#8220;The math is real. The code runs. The hardware doesn&#8217;t exist yet. I think that&#8217;s worth being honest about.&#8221;</p>
+          </div>
+          <p>I'm applying to EPFL (2027), ETH Z&uuml;rich (2027), and MIT (2027). AEGIS is the primary project in my portfolio. I'm not trying to impress anyone with it&nbsp;&mdash; I'm trying to show that I understand a real problem and built a real attempt at solving it. Whether the attempt is good enough is for other people to judge.</p>
+        </div>
+      </div>
+
+    </div><!-- end story-content -->
+  </div><!-- end story-body -->
+</div><!-- end story-container -->
+</section>
+
+<!-- ════════════════════════════════
+     SYSTEM
+════════════════════════════════ -->
+<section id="system">
+<div class="sys-container">
+  <div class="sys-header reveal">
+    <div>
+      <div class="section-label">System Architecture</div>
+      <h2 class="section-head" style="color:#fff;margin-top:.8rem">Four modules.<br>One pipeline.</h2>
+    </div>
+    <div class="sys-subtitle">50 Hz control loop. 6ms average per tick. p99 14.35ms on 50 drones. Budget: 20ms.</div>
+  </div>
+
+  <!-- Pipeline flow -->
+  <div class="pipeline-flow reveal">
+    <div class="pipeline-stage">
+      <div class="ps-tag">Input</div>
+      <div class="ps-name">SensorFrames</div>
+      <div class="ps-detail">EO + LWIR + Doppler<br>120B / frame</div>
+      <div class="ps-hz">&#215;500</div>
+    </div>
+    <div class="pipeline-stage">
+      <div class="ps-tag">M1</div>
+      <div class="ps-name">Spectral&shy;Fusion</div>
+      <div class="ps-detail">MAD BFT filter<br>5-rule lure detect</div>
+      <div class="ps-hz">0.80ms</div>
+    </div>
+    <div class="pipeline-stage">
+      <div class="ps-tag">M2</div>
+      <div class="ps-name">UKF Tracker</div>
+      <div class="ps-detail">9-state &#183; 19&#963; pts<br>12s horizon</div>
+      <div class="ps-hz">0.19ms</div>
+    </div>
+    <div class="pipeline-stage">
+      <div class="ps-tag">M3</div>
+      <div class="ps-name">Elastic&shy;Net</div>
+      <div class="ps-detail">Spring physics<br>O(6N)</div>
+      <div class="ps-hz">3.77ms</div>
+    </div>
+    <div class="pipeline-stage">
+      <div class="ps-tag">M4</div>
+      <div class="ps-name">Energy&shy;Budget</div>
+      <div class="ps-detail">3-reserve model<br>Worth score</div>
+      <div class="ps-hz">0.12ms</div>
+    </div>
+    <div class="pipeline-stage">
+      <div class="ps-tag">Output</div>
+      <div class="ps-name">DroneCommands</div>
+      <div class="ps-detail">48B per drone<br>60 GHz CCP</div>
+      <div class="ps-hz">&#215;500</div>
+    </div>
+  </div>
+
+  <!-- Module cards -->
+  <div class="modules-grid reveal">
+    <div class="module-card">
+      <div class="mc-num">MODULE M1 &mdash; spectral_fusion.py</div>
+      <div class="mc-name">SpectralFusion</div>
+      <div class="mc-file">Byzantine Fault Tolerance &middot; Lure Detection &middot; EMA Clustering</div>
+      <div class="mc-desc">500 drones report simultaneously. Up to 1/3 may be jammed or spoofed. The MAD filter rejects Byzantine votes without knowing which drones are compromised&nbsp;&mdash; it only needs the theoretical minimum from Lamport 1982. Five physical rules classify lures from real IR signatures.</div>
+      <div class="mc-stats">
+        <div class="mc-stat"><div class="mc-sv">3.0&#963;</div><div class="mc-sk">MAD Threshold</div></div>
+        <div class="mc-stat"><div class="mc-sv">&lt;&#8531;</div><div class="mc-sk">Byzantine tol.</div></div>
+        <div class="mc-stat"><div class="mc-sv">5</div><div class="mc-sk">Lure rules</div></div>
+      </div>
+      <div class="mc-formula">score_i = |vote_i &#8722; median| / (1.4826 &times; MAD)<br>reject if score_i &gt; 3.0&#963;</div>
+    </div>
+    <div class="module-card">
+      <div class="mc-num">MODULE M2 &mdash; intercept_ukf.py</div>
+      <div class="mc-name">MultiTargetUKF</div>
+      <div class="mc-file">9-State &middot; Singer Q Matrix &middot; Intercept Predictor</div>
+      <div class="mc-desc">Unscented Kalman Filter tracking [px,py,pz,vx,vy,vz,ax,ay,az]. The intercept predictor scans 12 seconds forward to find the booster ignition timestamp. After fixing the Cholesky bottleneck: 37ms &#8594; 0.9ms per scan. Association radius 18m prevents track merging on Lancet-3 formations.</div>
+      <div class="mc-stats">
+        <div class="mc-stat"><div class="mc-sv">9D</div><div class="mc-sk">State vector</div></div>
+        <div class="mc-stat"><div class="mc-sv">12s</div><div class="mc-sk">Horizon</div></div>
+        <div class="mc-stat"><div class="mc-sv">&#177;0.3s</div><div class="mc-sk">Fire timing tol.</div></div>
+      </div>
+      <div class="mc-formula">&#955; = &#945;&#178;(n+&#954;) &#8722; n &nbsp;&#183;&nbsp; &#945;=10&#8315;&#179; &#946;=2.0 &#954;=0<br>&#963;[i] = &#956; &#177; &#8730;((n+&#955;)&#183;P)<sub>i</sub></div>
+    </div>
+    <div class="module-card">
+      <div class="mc-num">MODULE M3 &mdash; elastic_net.py</div>
+      <div class="mc-name">ElasticNet</div>
+      <div class="mc-file">Spring Physics &middot; O(6N) &middot; Decentralized &middot; 4-State FSM</div>
+      <div class="mc-desc">500 drones self-organize without a central coordinator using only local information from 6 nearest neighbors. Attraction springs, repulsion below 15m, slot-restore force. O(6N) vs O(N&#178;) means 83&#215; fewer operations at N=500. FSM: PATROL &#8594; ENGAGE &#8594; PURSUIT &#8594; REFORM.</div>
+      <div class="mc-stats">
+        <div class="mc-stat"><div class="mc-sv">83&#215;</div><div class="mc-sk">vs O(N&#178;)</div></div>
+        <div class="mc-stat"><div class="mc-sv">45m</div><div class="mc-sk">Cell spacing</div></div>
+        <div class="mc-stat"><div class="mc-sv">0.5G</div><div class="mc-sk">Force clamp</div></div>
+      </div>
+      <div class="mc-formula">F = F_attract + F_repulse + F_slot<br>|F| &#8804; 5.0 m/s&#178;</div>
+    </div>
+    <div class="module-card">
+      <div class="mc-num">MODULE M4 &mdash; budget_manager.py &nbsp;+&nbsp; proximity_lock.py</div>
+      <div class="mc-name">EnergyBudget &amp; Safety</div>
+      <div class="mc-file">3-Reserve Model &middot; Worth Score &middot; ProximityLock &middot; HumanLoopGate</div>
+      <div class="mc-desc">177.6 Wh usable split into three inviolable reserves: 10 Wh chute, 40 Wh RTB, 60 Wh combat. Threat worth score [0&#8211;100] drives RTB/authorize/request-human. ProximityLock checks 15m exclusion sphere + 45&#176;&#215;60m blast cone every tick. Default state: LOCKED.</div>
+      <div class="mc-stats">
+        <div class="mc-stat"><div class="mc-sv">177.6</div><div class="mc-sk">Usable Wh</div></div>
+        <div class="mc-stat"><div class="mc-sv">8s</div><div class="mc-sk">Veto window</div></div>
+        <div class="mc-stat"><div class="mc-sv">28,445</div><div class="mc-sk">KE impact J</div></div>
+      </div>
+      <div class="mc-formula">S = (m/50)&#183;30 + (v/200)&#183;30 + c&#183;25<br>S &lt; 60 &#8594; RTB &nbsp;&#183;&nbsp; S &ge; 80 &#8594; Colonel auth</div>
+    </div>
+  </div><!-- end modules-grid -->
+</div>
+</section>
+
+<!-- ════════════════════════════════
+     SIMULATION
+════════════════════════════════ -->
+<section id="simulation">
+<div class="sim-header">
+  <div class="sim-header-left">
+    <div class="sim-header-sq">
       <svg viewBox="0 0 14 14" fill="none">
         <polygon points="7,1 13,12 1,12" stroke="white" stroke-width="1.5" fill="none"/>
         <circle cx="7" cy="9" r="1.5" fill="white"/>
       </svg>
     </div>
-    <span class="logo-name">AEGIS</span>
-    <div class="logo-sep"></div>
-    <span class="logo-sub">Live Simulation — Real Algorithms</span>
+    <div>
+      <div class="sim-header-title">Live Simulation Engine</div>
+      <div class="sim-header-sub">Real algorithms &middot; JS port of Python pipeline &middot; MAD filter &middot; UKF &middot; ElasticNet</div>
+    </div>
   </div>
-  <div class="hdr-mid">M1 SpectralFusion &middot; M2 UKF &middot; M3 ElasticNet &middot; M4 EnergyBudget &middot; ProximityLock</div>
-  <div class="hdr-r">
-    <span class="badge badge-rdy" id="hdr-badge">READY</span>
-    <span class="clk" id="clk"></span>
-  </div>
-</header>
-<div class="ws">
-  <div class="left">
-    <div class="sec">
-      <div class="slbl">Threat Platform</div>
-      <div class="tlist">
-        <button class="tbtn on" data-t="shahed" onclick="pickThreat(this)">
-          <div class="t-ico">&#129315;</div>
-          <div><div class="t-nm">Shahed-136</div><div class="t-sp">50 kg &middot; 185 km/h &middot; 490 K IR<br>Iranian &middot; ~$20k/unit</div></div>
+  <span class="sim-badge">REAL PIPELINE</span>
+</div>
+
+<div class="sim-ws">
+  <!-- Left config -->
+  <div class="sim-left">
+    <div class="ssec">
+      <div class="sslbl">Threat Platform</div>
+      <div class="stlist">
+        <button class="stbtn on" data-t="shahed" onclick="pickThreat(this)">
+          <div class="st-ico">&#129315;</div>
+          <div><div class="st-nm">Shahed-136</div><div class="st-sp">50 kg &middot; 185 km/h &middot; 490 K IR<br>Iranian &middot; ~$20k/unit</div></div>
         </button>
-        <button class="tbtn" data-t="lancet" onclick="pickThreat(this)">
-          <div class="t-ico">&#9889;</div>
-          <div><div class="t-nm">Lancet-3</div><div class="t-sp">5 kg &middot; 300 km/h &middot; 380 K IR<br>Russian &middot; ~$35k/unit</div></div>
+        <button class="stbtn" data-t="lancet" onclick="pickThreat(this)">
+          <div class="st-ico">&#9889;</div>
+          <div><div class="st-nm">Lancet-3</div><div class="st-sp">5 kg &middot; 300 km/h &middot; 380 K IR<br>Russian &middot; ~$35k/unit</div></div>
         </button>
-        <button class="tbtn" data-t="orlan" onclick="pickThreat(this)">
-          <div class="t-ico">&#128225;</div>
-          <div><div class="t-nm">Orlan-10</div><div class="t-sp">15 kg &middot; 150 km/h &middot; 420 K IR<br>Russian &middot; ~$87k/unit</div></div>
+        <button class="stbtn" data-t="orlan" onclick="pickThreat(this)">
+          <div class="st-ico">&#128225;</div>
+          <div><div class="st-nm">Orlan-10</div><div class="st-sp">15 kg &middot; 150 km/h &middot; 420 K IR<br>Russian &middot; ~$87k/unit</div></div>
         </button>
       </div>
     </div>
-    <div class="sec">
-      <div class="slbl">Mission Config</div>
-      <div class="srow">
-        <div class="stop"><span class="skey">Inbound threats</span><span class="sval" id="sv-nt">8</span></div>
+    <div class="ssec">
+      <div class="sslbl">Mission Config</div>
+      <div class="ssrow">
+        <div class="sstop"><span class="sskey">Inbound threats</span><span class="ssval" id="sv-nt">8</span></div>
         <input id="sl-nt" type="range" min="2" max="40" value="8" oninput="document.getElementById('sv-nt').textContent=this.value">
-        <div class="tmarks"><span>2</span><span>10</span><span>20</span><span>40</span></div>
+        <div class="stmarks"><span>2</span><span>10</span><span>20</span><span>40</span></div>
       </div>
-      <div class="srow">
-        <div class="stop"><span class="skey">Interceptor swarm</span><span class="sval" id="sv-sw">25</span></div>
+      <div class="ssrow">
+        <div class="sstop"><span class="sskey">Interceptor swarm</span><span class="ssval" id="sv-sw">25</span></div>
         <input id="sl-sw" type="range" min="8" max="60" value="25" oninput="document.getElementById('sv-sw').textContent=this.value">
-        <div class="tmarks"><span>8</span><span>20</span><span>40</span><span>60</span></div>
+        <div class="stmarks"><span>8</span><span>20</span><span>40</span><span>60</span></div>
       </div>
-      <div class="srow">
-        <div class="stop"><span class="skey">Byzantine nodes %</span><span class="sval" id="sv-byz">10</span></div>
+      <div class="ssrow">
+        <div class="sstop"><span class="sskey">Byzantine nodes %</span><span class="ssval" id="sv-byz">10</span></div>
         <input id="sl-byz" type="range" min="0" max="30" value="10" oninput="document.getElementById('sv-byz').textContent=this.value">
-        <div class="tmarks"><span>0</span><span>10</span><span>20</span><span>30</span></div>
+        <div class="stmarks"><span>0</span><span>10</span><span>20</span><span>30</span></div>
       </div>
     </div>
-    <div class="sec">
-      <div class="slbl">Physics &mdash; oc_types.py</div>
-      <div class="pgrid">
-        <div class="pcell"><div class="pv">99.3</div><div class="pk">V_patrol km/h</div></div>
-        <div class="pcell"><div class="pv">320</div><div class="pk">V_sprint km/h</div></div>
-        <div class="pcell"><div class="pv">28,445</div><div class="pk">KE impact J</div></div>
-        <div class="pcell"><div class="pv">1.190</div><div class="pk">&rho;(300m) kg/m&sup3;</div></div>
-        <div class="pcell"><div class="pv">28.6</div><div class="pk">Endurance min</div></div>
-        <div class="pcell"><div class="pv">1.93</div><div class="pk">SF MIL-STD</div></div>
+    <div class="ssec">
+      <div class="sslbl">Physics &mdash; oc_types.py</div>
+      <div class="spgrid">
+        <div class="spcell"><div class="spv">99.3</div><div class="spk">V_patrol km/h</div></div>
+        <div class="spcell"><div class="spv">320</div><div class="spk">V_sprint km/h</div></div>
+        <div class="spcell"><div class="spv">28,445</div><div class="spk">KE impact J</div></div>
+        <div class="spcell"><div class="spv">1.190</div><div class="spk">&rho;(300m) kg/m&sup3;</div></div>
+        <div class="spcell"><div class="spv">28.6</div><div class="spk">Endurance min</div></div>
+        <div class="spcell"><div class="spv">1.93</div><div class="spk">SF MIL-STD</div></div>
       </div>
     </div>
-    <div class="sec">
-      <div class="slbl">Pipeline</div>
-      <div class="prows">
-        <div class="prow"><span class="pk2">M1 SpectralFusion</span><span class="pv2 dim" id="ps-m1">STANDBY</span></div>
-        <div class="prow"><span class="pk2">M2 MultiTargetUKF</span><span class="pv2 dim" id="ps-m2">STANDBY</span></div>
-        <div class="prow"><span class="pk2">M3 ElasticNet</span><span class="pv2 dim" id="ps-m3">STANDBY</span></div>
-        <div class="prow"><span class="pk2">M4 EnergyBudget</span><span class="pv2 dim" id="ps-m4">STANDBY</span></div>
-        <div class="prow"><span class="pk2">ProximityLock</span><span class="pv2 bad" id="ps-lock">LOCKED</span></div>
-        <div class="prow"><span class="pk2">HumanLoopGate</span><span class="pv2 dim" id="ps-gate">&mdash;</span></div>
+    <div class="ssec">
+      <div class="sslbl">Pipeline</div>
+      <div class="sprows">
+        <div class="sprow"><span class="spk2">M1 SpectralFusion</span><span class="spv2 dim-c" id="ps-m1">STANDBY</span></div>
+        <div class="sprow"><span class="spk2">M2 MultiTargetUKF</span><span class="spv2 dim-c" id="ps-m2">STANDBY</span></div>
+        <div class="sprow"><span class="spk2">M3 ElasticNet</span><span class="spv2 dim-c" id="ps-m3">STANDBY</span></div>
+        <div class="sprow"><span class="spk2">M4 EnergyBudget</span><span class="spv2 dim-c" id="ps-m4">STANDBY</span></div>
+        <div class="sprow"><span class="spk2">ProximityLock</span><span class="spv2 bad" id="ps-lock">LOCKED</span></div>
+        <div class="sprow"><span class="spk2">HumanLoopGate</span><span class="spv2 dim-c" id="ps-gate">&mdash;</span></div>
       </div>
     </div>
-    <div class="runsec">
-      <button class="rbtn" id="rbtn" onclick="runSim()">RUN SIMULATION &rarr;</button>
+    <div class="srunsec">
+      <button class="srbtn" id="rbtn" onclick="runSim()">RUN SIMULATION &rarr;</button>
     </div>
   </div>
-  <div class="center">
-    <div class="cvwrap">
+
+  <!-- Center canvas -->
+  <div class="sim-center">
+    <div class="scvwrap">
       <canvas id="cv"></canvas>
-      <div class="ovtl">
-        <div class="ovcity">KYIV</div>
-        <div class="ovcoord">50.45&deg;N 30.52&deg;E &middot; 300m AGL &middot; Active Defense</div>
+      <div class="sovtl">
+        <div class="sovcity">KYIV</div>
+        <div class="sovcoord">50.45&deg;N 30.52&deg;E &middot; 300m AGL &middot; Active Defense</div>
       </div>
-      <div class="ovtr">
-        <div class="ovs">Threats <span id="ui-n">&mdash;</span></div>
-        <div class="ovs">Intercepts <span id="ui-hit">&mdash;</span></div>
-        <div class="ovs">Tick <span id="ui-tick">0</span></div>
+      <div class="sovtr">
+        <div class="sovs">Threats <span id="ui-n">&mdash;</span></div>
+        <div class="sovs">Intercepts <span id="ui-hit">&mdash;</span></div>
+        <div class="sovs">Tick <span id="ui-tick">0</span></div>
       </div>
     </div>
-    <div class="logwrap">
-      <div class="loghdr">
-        <span class="logt">Real-time pipeline log &mdash; 50 Hz simulation</span>
-        <button class="logclr" onclick="clearLog()">CLEAR</button>
+    <div class="slogwrap">
+      <div class="sloghdr">
+        <span class="slogt">Real-time pipeline log &mdash; 50 Hz</span>
+        <button class="slogclr" onclick="clearLog()">CLEAR</button>
       </div>
-      <div class="logbody" id="log"></div>
+      <div class="slogbody" id="log"></div>
     </div>
   </div>
-  <div class="right">
-    <div class="bmet">
-      <div class="bn neu" id="r-hit">&mdash;</div>
-      <div class="bl">Threats neutralized</div>
+
+  <!-- Right metrics -->
+  <div class="sim-right">
+    <div class="sbmet">
+      <div class="sbn neu" id="r-hit">&mdash;</div>
+      <div class="sbl">Threats neutralized</div>
     </div>
-    <div class="bmet" style="padding:.85rem 1.2rem">
-      <div class="bn neu" id="r-pen" style="font-size:1.8rem">&mdash;</div>
-      <div class="bl">Penetrations</div>
+    <div class="sbmet" style="padding:.85rem 1.2rem">
+      <div class="sbn neu" id="r-pen" style="font-size:1.8rem">&mdash;</div>
+      <div class="sbl">Penetrations</div>
     </div>
-    <div class="mrows">
-      <div class="slbl" style="margin-bottom:.15rem">Engagement</div>
-      <div class="mrow"><span class="mk">BFT rejections</span><span class="mv dim" id="m-bft">0</span></div>
-      <div class="mrow"><span class="mk">Lures identified</span><span class="mv am" id="m-lure">0</span></div>
-      <div class="mrow"><span class="mk">Avg intercept t</span><span class="mv am" id="m-time">&mdash;</span></div>
-      <div class="mrow"><span class="mk">Battery reserve</span><span class="mv ok" id="m-batt">177.6 Wh</span></div>
-      <div class="mrow"><span class="mk">Swarm health</span><span class="mv ok" id="m-hlth">100%</span></div>
-      <div class="mrow"><span class="mk">Net quorum</span><span class="mv ok" id="m-qrm">&mdash;</span></div>
+    <div class="smrows">
+      <div class="sslbl" style="margin-bottom:.15rem">Engagement</div>
+      <div class="smrow"><span class="smk">BFT rejections</span><span class="smv dim-c" id="m-bft">0</span></div>
+      <div class="smrow"><span class="smk">Lures identified</span><span class="smv am" id="m-lure">0</span></div>
+      <div class="smrow"><span class="smk">Avg intercept t</span><span class="smv am" id="m-time">&mdash;</span></div>
+      <div class="smrow"><span class="smk">Battery reserve</span><span class="smv ok" id="m-batt">177.6 Wh</span></div>
+      <div class="smrow"><span class="smk">Swarm health</span><span class="smv ok" id="m-hlth">100%</span></div>
+      <div class="smrow"><span class="smk">Net quorum</span><span class="smv ok" id="m-qrm">&mdash;</span></div>
     </div>
-    <div class="brows">
-      <div class="slbl" style="margin-bottom:.5rem">Wave progression</div>
-      <div class="brow"><div class="btop"><span class="bk">Detection</span><span class="bp" id="bp-det">0%</span></div><div class="btrack"><div class="bfill" id="bf-det" style="background:var(--bl);width:0%"></div></div></div>
-      <div class="brow"><div class="btop"><span class="bk">UKF tracking</span><span class="bp" id="bp-trk">0%</span></div><div class="btrack"><div class="bfill" id="bf-trk" style="background:var(--am);width:0%"></div></div></div>
-      <div class="brow"><div class="btop"><span class="bk">Intercept fire</span><span class="bp" id="bp-int">0%</span></div><div class="btrack"><div class="bfill" id="bf-int" style="background:var(--rd);width:0%"></div></div></div>
-      <div class="brow"><div class="btop"><span class="bk">Neutralized</span><span class="bp" id="bp-neu">0%</span></div><div class="btrack"><div class="bfill" id="bf-neu" style="background:var(--gn);width:0%"></div></div></div>
+    <div class="sbrows">
+      <div class="sslbl" style="margin-bottom:.5rem">Wave progression</div>
+      <div class="sbrow"><div class="sbtop"><span class="sbk">Detection</span><span class="sbp" id="bp-det">0%</span></div><div class="sbtrack"><div class="sbfill" id="bf-det" style="background:#2454a4;width:0%"></div></div></div>
+      <div class="sbrow"><div class="sbtop"><span class="sbk">UKF tracking</span><span class="sbp" id="bp-trk">0%</span></div><div class="sbtrack"><div class="sbfill" id="bf-trk" style="background:#9A6608;width:0%"></div></div></div>
+      <div class="sbrow"><div class="sbtop"><span class="sbk">Intercept fire</span><span class="sbp" id="bp-int">0%</span></div><div class="sbtrack"><div class="sbfill" id="bf-int" style="background:#B82C1A;width:0%"></div></div></div>
+      <div class="sbrow"><div class="sbtop"><span class="sbk">Neutralized</span><span class="sbp" id="bp-neu">0%</span></div><div class="sbtrack"><div class="sbfill" id="bf-neu" style="background:#16763D;width:0%"></div></div></div>
     </div>
-    <div class="resbox" id="resbox">
-      <div class="restit" id="res-tit">MISSION COMPLETE</div>
-      <div class="resrows" id="res-rows"></div>
+    <div class="sresbox" id="resbox">
+      <div class="srestit" id="res-tit">MISSION COMPLETE</div>
+      <div class="sresrows" id="res-rows"></div>
+    </div>
+  </div>
+</div><!-- end sim-ws -->
+</section>
+
+<!-- ════════════════════════════════
+     HARDWARE
+════════════════════════════════ -->
+<section id="hardware">
+<div class="hw-container">
+  <div class="hw-header reveal">
+    <div class="section-label">Hardware</div>
+    <h2 class="section-head" style="margin-top:.8rem">Tessera MK.II</h2>
+    <p style="font-family:var(--corm);font-size:1.1rem;font-style:italic;color:var(--dim);margin-top:.6rem">
+      Delta-canard CFRP airframe &middot; 7.2 kg MTOW &middot; Cesaroni Pro54 APCP booster &middot; None of this has been built yet.
+    </p>
+  </div>
+  <div class="hw-grid reveal">
+    <div class="hw-card">
+      <div class="hw-card-title">Airframe &amp; Flight Envelope</div>
+      <div class="hw-specs">
+        <div class="hw-spec"><span class="hw-key">Configuration</span><span class="hw-val">Delta-Canard Pusher</span></div>
+        <div class="hw-spec"><span class="hw-key">Material</span><span class="hw-val">Toray T800H CFRP Autoclave</span></div>
+        <div class="hw-spec"><span class="hw-key">Wingspan</span><span class="hw-val">940 mm</span></div>
+        <div class="hw-spec"><span class="hw-key">Length</span><span class="hw-val">1,120 mm</span></div>
+        <div class="hw-spec"><span class="hw-key">MTOW</span><span class="hw-val">7.20 kg</span></div>
+        <div class="hw-spec"><span class="hw-key">RCS</span><span class="hw-val">&lt; 0.003 m&#178;</span></div>
+        <div class="hw-spec"><span class="hw-key">V_patrol (L/D max)</span><span class="hw-val">99.3 km/h</span></div>
+        <div class="hw-spec"><span class="hw-key">V_sprint (booster)</span><span class="hw-val">320 km/h</span></div>
+        <div class="hw-spec"><span class="hw-key">G_design</span><span class="hw-val">22 G (SF 1.93 &mdash; MIL-STD-1522A)</span></div>
+        <div class="hw-spec"><span class="hw-key">Patrol endurance</span><span class="hw-val">28.6 min @ V_patrol</span></div>
+      </div>
+    </div>
+    <div class="hw-card">
+      <div class="hw-card-title">Sensors &amp; Compute</div>
+      <div class="hw-specs">
+        <div class="hw-spec"><span class="hw-key">EO Camera</span><span class="hw-val">Sony IMX678 &mdash; 4K 60fps</span></div>
+        <div class="hw-spec"><span class="hw-key">IR Thermal</span><span class="hw-val">FLIR Lepton 3.5 LWIR (8&ndash;14&mu;m)</span></div>
+        <div class="hw-spec"><span class="hw-key">Radar</span><span class="hw-val">Inxpect LBK-24 Doppler 24 GHz</span></div>
+        <div class="hw-spec"><span class="hw-key">Compute</span><span class="hw-val">Jetson Orin NX</span></div>
+        <div class="hw-spec"><span class="hw-key">Neural Acc.</span><span class="hw-val">Hailo H15 &mdash; 40 TOPS @ 3.5W</span></div>
+        <div class="hw-spec"><span class="hw-key">Mesh Radio</span><span class="hw-val">Sivers IQ EVK06002 &mdash; 60 GHz</span></div>
+        <div class="hw-spec"><span class="hw-key">Fallback Radio</span><span class="hw-val">SiK 900 MHz</span></div>
+        <div class="hw-spec"><span class="hw-key">GPS</span><span class="hw-val">Here3+ RTK</span></div>
+      </div>
+    </div>
+    <div class="hw-card">
+      <div class="hw-card-title">Propulsion &amp; Energy</div>
+      <div class="hw-specs">
+        <div class="hw-spec"><span class="hw-key">Motor</span><span class="hw-val">T-Motor U10 Plus (&#951; 93%)</span></div>
+        <div class="hw-spec"><span class="hw-key">ESC</span><span class="hw-val">FLAME 60A</span></div>
+        <div class="hw-spec"><span class="hw-key">Propeller</span><span class="hw-val">Xoar CFRP 16&times;10 6-blade (&#951; 78%)</span></div>
+        <div class="hw-spec"><span class="hw-key">Battery</span><span class="hw-val">Tattu Plus 10Ah 6S LiPo Si-anode</span></div>
+        <div class="hw-spec"><span class="hw-key">Usable energy</span><span class="hw-val">177.6 Wh (80% DoD)</span></div>
+        <div class="hw-spec"><span class="hw-key">Booster</span><span class="hw-val">Cesaroni Pro54 6GXL APCP</span></div>
+        <div class="hw-spec"><span class="hw-key">Booster impulse</span><span class="hw-val">764.5 N&middot;s / 1.8s</span></div>
+        <div class="hw-spec"><span class="hw-key">&#916;V booster</span><span class="hw-val">+107 m/s (0 &rarr; 320 km/h)</span></div>
+      </div>
+    </div>
+    <div class="hw-card">
+      <div class="hw-card-title">Economics</div>
+      <div class="hw-specs">
+        <div class="hw-spec"><span class="hw-key">CFRP airframe</span><span class="hw-val">$680</span></div>
+        <div class="hw-spec"><span class="hw-key">Sensors + compute</span><span class="hw-val">$1,400</span></div>
+        <div class="hw-spec"><span class="hw-key">Propulsion + booster</span><span class="hw-val">$420</span></div>
+        <div class="hw-spec"><span class="hw-key">Battery + electronics</span><span class="hw-val">$380</span></div>
+        <div class="hw-spec"><span class="hw-key">Assembly + QA</span><span class="hw-val">$1,320</span></div>
+        <div class="hw-spec" style="border-top:1px solid var(--border);padding-top:.5rem;margin-top:.3rem">
+          <span class="hw-key" style="font-weight:500;color:var(--bk)">Unit total</span>
+          <span class="hw-val" style="font-family:var(--syne);font-weight:800;font-size:.8rem">$4,200</span>
+        </div>
+        <div class="hw-spec"><span class="hw-key">PAC-3 per round</span><span class="hw-val" style="color:var(--dim)">$4,000,000</span></div>
+        <div class="hw-spec"><span class="hw-key">Cost advantage</span><span class="hw-val" style="color:var(--grn);font-weight:500">952&times;</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="hw-missing reveal">
+    <div class="hw-m-label">Status</div>
+    <div class="hw-m-text">&#8220;None of this hardware has been manufactured. The BOM uses real part numbers from DigiKey and Mouser. The physics is derived from first principles using ISA atmosphere, manufacturer datasheets, and MIL-STD-1522A. But Tessera MK.II exists only as a specification.&#8221;</div>
+  </div>
+</div>
+</section>
+
+<!-- ════════════════════════════════
+     ABOUT
+════════════════════════════════ -->
+<section id="about">
+<div class="about-container">
+  <div class="about-grid reveal">
+    <div class="about-visual">
+      <div class="about-monogram">
+        <div class="about-monogram-inner">AH</div>
+      </div>
+      <div class="about-meta">
+        <div class="about-meta-row"><span class="am-k">Name</span><span class="am-v">Amine Harch</span></div>
+        <div class="about-meta-row"><span class="am-k">Handle</span><span class="am-v">Vitalcheffe</span></div>
+        <div class="about-meta-row"><span class="am-k">Age</span><span class="am-v">16</span></div>
+        <div class="about-meta-row"><span class="am-k">Location</span><span class="am-v">Morocco</span></div>
+        <div class="about-meta-row"><span class="am-k">School</span><span class="am-v">Seconde, French Lyc&eacute;e</span></div>
+        <div class="about-meta-row"><span class="am-k">Targets</span><span class="am-v">EPFL &bull; ETH &bull; MIT (2027)</span></div>
+      </div>
+    </div>
+    <div class="about-content">
+      <div class="section-label">About</div>
+      <h2 class="section-head">The person who built this.</h2>
+      <p>I built NEXUS because I was frustrated with how hard it is to understand what's actually happening in active conflict zones in real time. I built AEGIS because NEXUS showed me a problem I thought was worth trying to solve.</p>
+      <p>I don't have a defense industry background. I don't have institutional affiliation. I'm in my first year of secondary school in Morocco, working from a laptop. The advantage is that I had no prior assumptions about what the answer was supposed to look like. I just followed the math.</p>
+      <p>Everything in this codebase is mine &mdash; <strong>not generated, not copied</strong>. The algorithms are literature-sourced (Van der Merwe 2001, Lamport 1982, Olfati-Saber 2006). The constants are derived from primary sources. The bugs were real bugs, and fixing them taught me more than writing the initial code did.</p>
+      <p>I'm applying to EPFL in January 2027, ETH Z&uuml;rich in December 2026, and MIT Early Action in November 2026. AEGIS is the centerpiece of my application. Whether it's good enough is for the admissions committees to decide.</p>
+      <p>If you want to discuss the project, the code is public and the commit history is honest.</p>
+      <div class="about-links">
+        <a href="https://github.com/Vitalcheffe/Aegis" target="_blank" class="about-link primary">GitHub Repository &#8599;</a>
+        <a href="#simulation" class="about-link secondary">Run Simulation</a>
+      </div>
     </div>
   </div>
 </div>
+</section>
+
+<!-- ════════════════════════════════
+     FOOTER
+════════════════════════════════ -->
+<footer>
+  <div class="footer-left">AEGIS v1.0.0 &nbsp;&middot;&nbsp; Amine Harch &nbsp;&middot;&nbsp; Morocco, 2026</div>
+  <div class="footer-right">Van der Merwe 2001 &nbsp;&middot;&nbsp; Lamport 1982 &nbsp;&middot;&nbsp; Olfati-Saber 2006 &nbsp;&middot;&nbsp; ISA &middot; MIL-STD-1522A</div>
+</footer>
+
+
+<script>
+/* ════════════════════════════════════════════════════════════
+   HERO CANVAS ANIMATION
+   State machine: PATROL → ALERT → ENGAGE → INTERCEPT → RESET
+════════════════════════════════════════════════════════════ */
+(function() {
+var hcv = document.getElementById('hero-cv');
+var hctx = hcv.getContext('2d');
+var HW, HH, HOX, HOY;
+
+function resizeHero() {
+    HW = hcv.width  = hcv.offsetWidth;
+    HH = hcv.height = hcv.offsetHeight;
+    HOX = HW / 2; HOY = HH / 2;
+}
+window.addEventListener('resize', resizeHero);
+resizeHero();
+
+// Build hex grid of drones
+var DRONES = [];
+var HEX_SP_HERO = 52;
+function buildGrid() {
+    DRONES = [];
+    var rows = Math.ceil(HH / (HEX_SP_HERO * Math.sqrt(3) / 2)) + 2;
+    var cols = Math.ceil(HW / HEX_SP_HERO) + 2;
+    var offX = HOX - (cols * HEX_SP_HERO / 2);
+    var offY = HOY - (rows * HEX_SP_HERO * Math.sqrt(3) / 2 / 2);
+    for (var r = 0; r < rows; r++) {
+        for (var c = 0; c < cols; c++) {
+            var rowH = HEX_SP_HERO * Math.sqrt(3) / 2;
+            var ox = offX + c * HEX_SP_HERO + (r % 2 ? HEX_SP_HERO / 2 : 0);
+            var oy = offY + r * rowH;
+            DRONES.push({
+                bx: ox, by: oy,   // base position
+                x: ox, y: oy,
+                vx: 0, vy: 0,
+                alpha: 0.08 + Math.random() * 0.12,
+                size: 1.2 + Math.random() * 0.8,
+                phase: Math.random() * Math.PI * 2,
+                spd: 0.002 + Math.random() * 0.003,
+                engaged: false, speed: 0,
+            });
+        }
+    }
+}
+buildGrid();
+window.addEventListener('resize', buildGrid);
+
+// State machine
+var STATE = 'PATROL';
+var stateTimer = 0;
+var THREAT = null;
+var ENGAGED_DRONES = [];
+var heroT = 0;
+
+function getRandomEdgePoint() {
+    var side = Math.floor(Math.random() * 4);
+    if (side === 0) return { x: Math.random() * HW, y: -20 };
+    if (side === 1) return { x: HW + 20, y: Math.random() * HH };
+    if (side === 2) return { x: Math.random() * HW, y: HH + 20 };
+    return { x: -20, y: Math.random() * HH };
+}
+
+function heroFrame() {
+    heroT++;
+    stateTimer++;
+
+    // State transitions
+    if (STATE === 'PATROL' && stateTimer > 240) {
+        STATE = 'ALERT';
+        stateTimer = 0;
+        var ep = getRandomEdgePoint();
+        THREAT = {
+            x: ep.x, y: ep.y,
+            tx: HOX + (Math.random() - 0.5) * HW * 0.4,
+            ty: HOY + (Math.random() - 0.5) * HH * 0.4,
+            alpha: 1, r: 4,
+        };
+        // Pick 5-7 nearest drones
+        var sorted = DRONES.slice().sort(function(a, b) {
+            return Math.hypot(a.x - THREAT.tx, a.y - THREAT.ty) -
+                   Math.hypot(b.x - THREAT.tx, b.y - THREAT.ty);
+        });
+        ENGAGED_DRONES = sorted.slice(0, 6);
+        ENGAGED_DRONES.forEach(function(d) { d.engaged = true; d.speed = 3.5 + Math.random() * 2; });
+    } else if (STATE === 'ALERT' && stateTimer > 60) {
+        STATE = 'ENGAGE';
+        stateTimer = 0;
+    } else if (STATE === 'ENGAGE') {
+        // Move engaged drones toward intercept point
+        var allClose = true;
+        ENGAGED_DRONES.forEach(function(d) {
+            var dx = THREAT.tx - d.x, dy = THREAT.ty - d.y;
+            var dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist > 12) {
+                allClose = false;
+                d.x += (dx / dist) * d.speed;
+                d.y += (dy / dist) * d.speed;
+            }
+        });
+        // Move threat toward center
+        var dtx = THREAT.tx - THREAT.x, dty = THREAT.ty - THREAT.y;
+        var dtd = Math.sqrt(dtx * dtx + dty * dty);
+        THREAT.x += (THREAT.tx - THREAT.x) * 0.022;
+        THREAT.y += (THREAT.ty - THREAT.y) * 0.022;
+        if (allClose || stateTimer > 180) {
+            STATE = 'INTERCEPT';
+            stateTimer = 0;
+            THREAT.alpha = 1;
+        }
+    } else if (STATE === 'INTERCEPT') {
+        THREAT.r += 2; THREAT.alpha -= 0.06;
+        if (THREAT.alpha <= 0 || stateTimer > 25) {
+            STATE = 'RESET';
+            stateTimer = 0;
+            THREAT = null;
+            ENGAGED_DRONES.forEach(function(d) { d.engaged = false; });
+            ENGAGED_DRONES = [];
+        }
+    } else if (STATE === 'RESET' && stateTimer > 80) {
+        STATE = 'PATROL';
+        stateTimer = 0;
+    }
+
+    // Draw
+    // Fade effect (not clearing fully = trail blur)
+    hctx.fillStyle = 'rgba(10,10,9,0.18)';
+    hctx.fillRect(0, 0, HW, HH);
+
+    // Subtle grid lines
+    hctx.strokeStyle = 'rgba(255,255,255,0.015)';
+    hctx.lineWidth = 0.4;
+    for (var gx = 0; gx < HW; gx += 80) {
+        hctx.beginPath(); hctx.moveTo(gx, 0); hctx.lineTo(gx, HH); hctx.stroke();
+    }
+    for (var gy = 0; gy < HH; gy += 80) {
+        hctx.beginPath(); hctx.moveTo(0, gy); hctx.lineTo(HW, gy); hctx.stroke();
+    }
+
+    // Draw drones
+    DRONES.forEach(function(d) {
+        if (!d.engaged) {
+            // Gentle idle drift
+            d.phase += d.spd;
+            d.x = d.bx + Math.sin(d.phase) * 3.5;
+            d.y = d.by + Math.cos(d.phase * 0.7) * 3.5;
+        }
+        var alpha = d.engaged ? 0.75 : d.alpha;
+        var size = d.engaged ? 2.2 : d.size;
+        hctx.beginPath();
+        hctx.arc(d.x, d.y, size, 0, Math.PI * 2);
+        if (d.engaged) { hctx.shadowColor = 'rgba(255,255,255,0.6)'; hctx.shadowBlur = 8; }
+        hctx.fillStyle = 'rgba(255,255,255,' + alpha + ')';
+        hctx.fill();
+        hctx.shadowBlur = 0;
+    });
+
+    // Draw threat
+    if (THREAT) {
+        // Glow
+        var grad = hctx.createRadialGradient(THREAT.x, THREAT.y, 0, THREAT.x, THREAT.y, 40);
+        grad.addColorStop(0, 'rgba(184,50,30,' + (THREAT.alpha * 0.3) + ')');
+        grad.addColorStop(1, 'rgba(184,50,30,0)');
+        hctx.beginPath(); hctx.arc(THREAT.x, THREAT.y, 40, 0, Math.PI * 2);
+        hctx.fillStyle = grad; hctx.fill();
+        // Core
+        hctx.beginPath(); hctx.arc(THREAT.x, THREAT.y, THREAT.r, 0, Math.PI * 2);
+        hctx.shadowColor = 'rgba(184,50,30,0.8)'; hctx.shadowBlur = 16;
+        hctx.fillStyle = 'rgba(184,50,30,' + THREAT.alpha + ')'; hctx.fill();
+        hctx.shadowBlur = 0;
+        // Expand ring on intercept
+        if (STATE === 'INTERCEPT') {
+            hctx.beginPath(); hctx.arc(THREAT.x, THREAT.y, THREAT.r + 8, 0, Math.PI * 2);
+            hctx.strokeStyle = 'rgba(255,255,255,' + THREAT.alpha * 0.5 + ')';
+            hctx.lineWidth = 1; hctx.stroke();
+        }
+    }
+
+    requestAnimationFrame(heroFrame);
+}
+heroFrame();
+})();
+
+/* ════════════════════════════════════════════════════════════
+   NAVIGATION — dark/light switch on scroll
+════════════════════════════════════════════════════════════ */
+(function() {
+var nav = document.getElementById('nav');
+var heroEl = document.getElementById('hero');
+function updateNav() {
+    var heroBottom = heroEl.getBoundingClientRect().bottom;
+    if (heroBottom > 0) {
+        nav.className = 'dark';
+    } else {
+        nav.className = 'light';
+    }
+}
+window.addEventListener('scroll', updateNav, { passive: true });
+updateNav();
+})();
+
+/* ════════════════════════════════════════════════════════════
+   REVEAL ON SCROLL
+════════════════════════════════════════════════════════════ */
+(function() {
+var revEls = document.querySelectorAll('.reveal');
+var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+        if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+    });
+}, { threshold: 0.1 });
+revEls.forEach(function(el) { obs.observe(el); });
+})();
+
+/* ════════════════════════════════════════════════════════════
+   TOC ACTIVE STATE
+════════════════════════════════════════════════════════════ */
+(function() {
+var tlinks = document.querySelectorAll('.toc-link');
+var chapters = Array.from(document.querySelectorAll('.story-chapter'));
+function updateToc() {
+    var active = null;
+    chapters.forEach(function(ch) {
+        var rect = ch.getBoundingClientRect();
+        if (rect.top < 120) active = ch.id;
+    });
+    tlinks.forEach(function(a) {
+        var href = a.getAttribute('href').replace('#','');
+        a.classList.toggle('active', href === active);
+    });
+}
+window.addEventListener('scroll', updateToc, { passive: true });
+})();
+
+</script>
+
+<!-- ════════════════════════════════
+     SIMULATION ENGINE (real algorithms)
+════════════════════════════════ -->
 <script>
 (function() {
 
@@ -651,16 +1921,16 @@ window.clearLog = function() { document.getElementById('log').innerHTML = ''; };
 
 function addLog(src, msg) {
     var el = document.getElementById('log');
-    var div = document.createElement('div'); div.className = 'll';
+    var div = document.createElement('div'); div.className = 'sll';
     var ts = new Date().toUTCString().slice(17, 25);
-    div.innerHTML = '<span class="ll-t">' + ts + '</span><span class="ll-s ' + src + '">[' + src.toUpperCase() + ']</span><span class="ll-m">' + msg + '</span>';
+    div.innerHTML = '<span class="sll-t">' + ts + '</span><span class="sll-s ' + src + '">[' + src.toUpperCase() + ']</span><span class="sll-m">' + msg + '</span>';
     el.appendChild(div); el.scrollTop = el.scrollHeight;
     if (el.children.length > 120) el.removeChild(el.firstChild);
 }
 
 function setPipe(id, cls, txt) {
     var el = document.getElementById('ps-' + id);
-    el.textContent = txt; el.className = 'pv2 ' + cls;
+    el.textContent = txt; el.className = 'spv2 ' + cls;
 }
 
 function setProg(id, col, pct) {
@@ -743,10 +2013,10 @@ window.runSim = function() {
 
     // UI update
     var btn = document.getElementById('rbtn');
-    btn.className = 'rbtn running'; btn.textContent = 'RUNNING\u2026'; btn.disabled = true;
-    document.getElementById('resbox').classList.remove('show');
-    document.getElementById('r-hit').textContent = '\u2014'; document.getElementById('r-hit').className = 'bn neu';
-    document.getElementById('r-pen').textContent = '\u2014'; document.getElementById('r-pen').className = 'bn neu';
+    btn.className = 'srbtn running'; btn.textContent = 'RUNNING\u2026'; btn.disabled = true;
+    var rb2=document.getElementById('resbox');if(rb2)rb2.classList.remove('show');
+    document.getElementById('r-hit').textContent = '\u2014'; document.getElementById('r-hit').className = 'sbn neu';
+    document.getElementById('r-pen').textContent = '\u2014'; document.getElementById('r-pen').className = 'sbn neu';
     document.getElementById('hdr-badge').textContent = 'RUNNING'; document.getElementById('hdr-badge').className = 'badge badge-run';
 
     setPipe('m1', 'ok', 'ACTIVE'); setPipe('m2', 'ok', 'ACTIVE');
@@ -821,7 +2091,7 @@ function simFrame() {
                 SIM.pen++;
                 addExpl(th.x, th.y, 'pen');
                 document.getElementById('r-pen').textContent = SIM.pen;
-                document.getElementById('r-pen').className = 'bn bad';
+                document.getElementById('r-pen').className = 'sbn bad';
                 continue;
             }
         }
@@ -987,8 +2257,8 @@ function addExpl(x, y, type) {
 function updateHit() {
     var nReal = SIM.threats.filter(function(t) { return !t.isLure; }).length;
     var rate = SIM.hit / Math.max(nReal, 1);
-    document.getElementById('r-hit').textContent = SIM.hit + ' / ' + nReal;
-    document.getElementById('r-hit').className = 'bn ' + (rate > .75 ? 'ok' : rate > .4 ? 'am' : 'bad');
+    var rhit=document.getElementById('r-hit');if(rhit)rhit.textContent = SIM.hit + ' / ' + nReal;
+    if(rhit)rhit.className = 'sbn ' + (rate > .75 ? 'ok' : rate > .4 ? 'am' : 'bad');
     document.getElementById('ui-hit').textContent = SIM.hit;
     if (SIM.times.length > 0) {
         var avg = SIM.times.reduce(function(a, b) { return a + b; }) / SIM.times.length;
@@ -1009,22 +2279,23 @@ function endSim() {
         ['BFT rej.', SIM.bft], ['AEGIS cost', '$' + (SIM.hit * 4200).toLocaleString()],
         ['PAC-3 equiv', '$' + (SIM.hit * 4000000).toLocaleString()]
     ];
-    document.getElementById('res-tit').textContent = win ? '\u2713 MISSION SUCCESS' : '\u2717 ASSET STRUCK';
-    document.getElementById('res-tit').className = 'restit ' + (win ? 'win' : 'lose');
-    document.getElementById('res-rows').innerHTML = rows.map(function(r) {
+    var rtit=document.getElementById('res-tit');if(rtit)rtit.textContent = win ? '\u2713 MISSION SUCCESS' : '\u2717 ASSET STRUCK';
+    if(rtit)rtit.className = 'srestit ' + (win ? 'win' : 'lose');
+    var rrows=document.getElementById('res-rows');if(rrows)rrows.innerHTML = rows.map(function(r) {
         return '<div class="rr"><span class="rk">' + r[0] + '</span><span class="rv">' + r[1] + '</span></div>';
     }).join('');
-    document.getElementById('resbox').classList.add('show');
+    var rb=document.getElementById('resbox');if(rb)rb.classList.add('show');
     setPipe('m1','dim','STANDBY'); setPipe('m2','dim','STANDBY');
     setPipe('m3','dim','STANDBY'); setPipe('m4','dim','STANDBY');
     setPipe('lock','bad','LOCKED'); setPipe('gate','dim','\u2014');
     document.getElementById('hdr-badge').textContent = 'READY';
     document.getElementById('hdr-badge').className = 'badge badge-rdy';
     var btn = document.getElementById('rbtn');
-    btn.className = 'rbtn'; btn.textContent = 'RUN AGAIN \u2192'; btn.disabled = false;
+    btn.className = 'srbtn'; btn.textContent = 'RUN AGAIN \u2192'; btn.disabled = false;
 }
 
 })();
 </script>
+
 </body>
 </html>
