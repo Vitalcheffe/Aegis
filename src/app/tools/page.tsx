@@ -37,10 +37,10 @@ const tools = [
     title: "Deployment Planner",
     description:
       "Plan optimal sensor placement and coverage zones for your operational environment. Visualize detection envelopes and blind spots before deployment.",
-    href: "#",
+    href: "/tools/deployment-planner",
     icon: MapPin,
-    available: false,
-    tag: "COMING SOON",
+    available: true,
+    tag: "LIVE",
   },
 ];
 

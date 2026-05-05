@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { ScrollProgress } from "@/components/sections/scroll-reveal";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -65,6 +66,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} antialiased bg-black text-white min-h-screen flex flex-col`}
       >
+        <ScrollProgress />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />

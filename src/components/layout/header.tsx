@@ -83,6 +83,7 @@ const navGroups: NavGroup[] = [
     label: "Resources",
     href: "/resources",
     items: [
+      { label: "Threat Database", href: "/threat-database", description: "Drone threat intelligence" },
       { label: "White Papers", href: "/resources/white-papers", description: "Technical research" },
       { label: "Datasheets", href: "/resources/datasheets", description: "Product specifications" },
       { label: "Videos", href: "/resources/videos", description: "Product demos & footage" },
@@ -92,6 +93,7 @@ const navGroups: NavGroup[] = [
       { label: "Selection Guide", href: "/resources/selection-guide", description: "Find your solution" },
       { label: "Case Studies", href: "/case-studies", description: "Real-world deployments" },
       { label: "Blog", href: "/blog", description: "Industry insights & analysis" },
+      { label: "Security Advisories", href: "/security-advisories", description: "Threat intelligence feed" },
     ],
   },
   {

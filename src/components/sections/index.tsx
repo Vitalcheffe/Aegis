@@ -4,78 +4,29 @@ export { KillChainDiagram } from "./kill-chain-diagram";
 export { FAQSection } from "./faq-section";
 export { AnimatedCounter, AnimatedStatsSection } from "./animated-counter";
 export { BlogCard, CaseStudyCard, ResourceCard } from "./blog-card";
+export {
+  ScrollReveal,
+  AnimatedLine,
+  StaggerChild,
+  ScrollProgress,
+} from "./scroll-reveal";
 
-import { useEffect, useRef, ReactNode } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import {
+  motion,
+  useMotionValue,
+  useScroll,
+  useTransform,
+  animate as fmAnimate,
+} from "framer-motion";
+import { ScrollReveal as ScrollRevealComponent } from "./scroll-reveal";
 
 /* ════════════════════════════════════════════════════════════════
-   SCROLL REVEAL — Fades in + slides up on viewport entry
+   SECTION HERO — Full-screen cinematic hero with staggered entrance
    ════════════════════════════════════════════════════════════════ */
-export function ScrollReveal({
-  children,
-  delay = 0,
-  className = "",
-}: {
-  children: ReactNode;
-  delay?: number;
-  className?: string;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => el.classList.add("revealed"), delay);
-          observer.unobserve(el);
-        }
-      },
-      { threshold: 0.15 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [delay]);
-
-  return (
-    <div ref={ref} className={`scroll-reveal ${className}`}>
-      {children}
-    </div>
-  );
-}
-
-/* ════════════════════════════════════════════════════════════════
-   ANIMATED LINE — Horizontal divider that slides in from left
-   ════════════════════════════════════════════════════════════════ */
-export function AnimatedLine({ className = "" }: { className?: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          el.classList.add("revealed");
-          observer.unobserve(el);
-        }
-      },
-      { threshold: 0.5 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <div ref={ref} className={`scroll-reveal-line h-px bg-white/20 w-full ${className}`} />
-  );
-}
-
-/* ════════════════════════════════════════════════════════════════
-   SECTION HERO — Full-screen cinematic hero with gradient overlay
-   ════════════════════════════════════════════════════════════════ */
 export function SectionHero({
   image,
   label,
@@ -113,47 +64,63 @@ export function SectionHero({
             : "text-left"
         }`}
       >
+        {/* Staggered entrance: label → title → subtitle → CTA */}
         {label && (
-          <ScrollReveal>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+          >
             <span className="inline-block text-[10px] md:text-[11px] uppercase tracking-[0.2em] text-white/50 mb-6 border border-white/10 px-4 py-1.5">
               {label}
             </span>
-          </ScrollReveal>
+          </motion.div>
         )}
-        <ScrollReveal delay={100}>
-          <h1
-            className={`text-[clamp(2.5rem,8vw,7rem)] font-bold tracking-[-0.04em] leading-[0.95] text-white ${
-              align === "center" ? "max-w-5xl" : "max-w-4xl"
+        <motion.h1
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+          className={`text-[clamp(2.5rem,8vw,7rem)] font-bold tracking-[-0.04em] leading-[0.95] text-white ${
+            align === "center" ? "max-w-5xl" : "max-w-4xl"
+          }`}
+        >
+          {title}
+        </motion.h1>
+        {subtitle && (
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+            className={`mt-8 text-[#b9b9b9] text-lg md:text-xl lg:text-2xl leading-relaxed ${
+              align === "center" ? "max-w-2xl" : "max-w-xl"
             }`}
           >
-            {title}
-          </h1>
-        </ScrollReveal>
-        {subtitle && (
-          <ScrollReveal delay={200}>
-            <p
-              className={`mt-8 text-[#b9b9b9] text-lg md:text-xl lg:text-2xl leading-relaxed ${
-                align === "center" ? "max-w-2xl" : "max-w-xl"
-              }`}
-            >
-              {subtitle}
-            </p>
-          </ScrollReveal>
+            {subtitle}
+          </motion.p>
         )}
         {cta && (
-          <ScrollReveal delay={300}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
+          >
             <Link
               href={ctaHref}
               className="inline-block mt-10 bg-white text-black px-10 py-4 text-sm font-medium uppercase tracking-[0.15em] hover:bg-[#e0e0e0] transition-all duration-300"
             >
               {cta}
             </Link>
-          </ScrollReveal>
+          </motion.div>
         )}
       </div>
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-white/30 text-[10px] uppercase tracking-[0.3em] animate-bounce">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.2, duration: 0.6 }}
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 text-white/30 text-[10px] uppercase tracking-[0.3em] animate-bounce"
+      >
         Scroll ↓
-      </div>
+      </motion.div>
     </section>
   );
 }
@@ -161,6 +128,7 @@ export function SectionHero({
 /* ════════════════════════════════════════════════════════════════
    CALLOUT — Massive centered statement text
    ════════════════════════════════════════════════════════════════ */
+
 export function Callout({
   children,
   className = "",
@@ -171,19 +139,126 @@ export function Callout({
   return (
     <section className={`py-28 md:py-44 bg-black ${className}`}>
       <div className="max-w-[80rem] mx-auto px-6 md:px-12 lg:px-20 text-center">
-        <ScrollReveal>
+        <ScrollRevealComponent>
           <p className="text-[clamp(1.5rem,5vw,4.5rem)] font-bold tracking-[-0.04em] leading-[1.1] text-white">
             {children}
           </p>
-        </ScrollReveal>
+        </ScrollRevealComponent>
       </div>
     </section>
   );
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SPLIT SECTION — Image one side, text other side (alternating)
+   ANIMATED STAT NUMBER — Counts up from 0 when scrolled into view
    ════════════════════════════════════════════════════════════════ */
+
+function AnimatedStatNumber({
+  value,
+  suffix = "",
+  prefix = "",
+}: {
+  value: number;
+  suffix?: string;
+  prefix?: string;
+}) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const motionVal = useMotionValue(0);
+  const [display, setDisplay] = useState(0);
+  const hasAnimated = useRef(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasAnimated.current) {
+          hasAnimated.current = true;
+          const controls = fmAnimate(motionVal, value, {
+            duration: 2,
+            ease: [0.25, 0.1, 0.25, 1],
+          });
+          return () => controls.stop();
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [motionVal, value]);
+
+  useEffect(() => {
+    const unsubscribe = motionVal.on("change", (v) => {
+      setDisplay(Math.floor(v));
+    });
+    return unsubscribe;
+  }, [motionVal]);
+
+  return (
+    <span ref={ref}>
+      {prefix}
+      {display.toLocaleString()}
+      {suffix}
+    </span>
+  );
+}
+
+/**
+ * Parse a stat value string like "240+", "1M+", "98.9%", "35 km"
+ * into a numeric value and suffix/prefix for animated display.
+ */
+function parseStatValue(raw: string): {
+  numericValue: number;
+  prefix: string;
+  suffix: string;
+} {
+  const trimmed = raw.trim();
+
+  // Match patterns like "240+", "500+", "1M+"
+  const plusMatch = trimmed.match(/^(\d+(?:\.\d+)?)\s*([MK]?[\+]?)/i);
+  if (plusMatch) {
+    const num = parseFloat(plusMatch[1]);
+    const suffix = plusMatch[2];
+    let numericValue = num;
+    if (suffix.startsWith("M") || suffix.startsWith("m")) {
+      numericValue = num; // keep as-is, show M in suffix
+    }
+    return { numericValue, prefix: "", suffix };
+  }
+
+  // Match patterns like "98.9%"
+  const percentMatch = trimmed.match(/^(\d+(?:\.\d+)?)\s*%$/);
+  if (percentMatch) {
+    return {
+      numericValue: parseFloat(percentMatch[1]),
+      prefix: "",
+      suffix: "%",
+    };
+  }
+
+  // Match patterns like "35 km", "<2 s", "200+ km"
+  const unitMatch = trimmed.match(/^([<>]?\s*\d+(?:\.\d+)?)\s*(.*)$/);
+  if (unitMatch) {
+    const numPart = unitMatch[1].replace(/[<>]\s*/, "");
+    const prefixChar = unitMatch[1].match(/^([<>])/)?.[1] ?? "";
+    return {
+      numericValue: parseFloat(numPart),
+      prefix: prefixChar,
+      suffix: unitMatch[2] ? ` ${unitMatch[2]}` : "",
+    };
+  }
+
+  // Match "24/7" or other non-numeric — don't animate
+  return { numericValue: 0, prefix: raw, suffix: "" };
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SPLIT SECTION — Image one side, text other side (alternating)
+   Enhanced with directional reveal animations
+   ════════════════════════════════════════════════════════════════ */
+
 export function SplitSection({
   image,
   label,
@@ -205,10 +280,15 @@ export function SplitSection({
 }) {
   return (
     <section className="min-h-screen flex flex-col md:flex-row">
-      <div
+      {/* Image side — slides in from the side it's on */}
+      <motion.div
         className={`relative w-full md:w-1/2 min-h-[50vh] md:min-h-screen ${
           reverse ? "md:order-2" : ""
         }`}
+        initial={{ opacity: 0, x: reverse ? 80 : -80 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.9, ease: [0.25, 0.1, 0.25, 1] }}
       >
         <Image
           src={image}
@@ -220,14 +300,19 @@ export function SplitSection({
         <div
           className={`absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black via-black/60 to-transparent`}
         />
-      </div>
-      <div
+      </motion.div>
+      {/* Text side — fades in from the opposite side */}
+      <motion.div
         className={`w-full md:w-1/2 flex items-center bg-black ${
           reverse ? "md:order-1" : ""
         }`}
+        initial={{ opacity: 0, x: reverse ? -40 : 40 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.8, delay: 0.15, ease: [0.25, 0.1, 0.25, 1] }}
       >
         <div className="px-6 md:px-12 lg:px-20 py-20 md:py-0 max-w-xl">
-          <ScrollReveal>
+          <ScrollRevealComponent>
             {label && (
               <span className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-6 block">
                 {label}
@@ -261,16 +346,17 @@ export function SplitSection({
                 ))}
               </div>
             )}
-          </ScrollReveal>
+          </ScrollRevealComponent>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
 
 /* ════════════════════════════════════════════════════════════════
-   STATS SECTION — Row of large stat numbers
+   STATS SECTION — Row of large stat numbers with animated counters
    ════════════════════════════════════════════════════════════════ */
+
 export function StatsSection({
   stats,
   label,
@@ -282,26 +368,41 @@ export function StatsSection({
     <section className="py-20 md:py-32 bg-black border-y border-white/10">
       {label && (
         <div className="max-w-[80rem] mx-auto px-6 md:px-12 lg:px-20 mb-16">
-          <ScrollReveal>
+          <ScrollRevealComponent>
             <span className="text-[10px] uppercase tracking-[0.2em] text-white/40">
               {label}
             </span>
-          </ScrollReveal>
+          </ScrollRevealComponent>
         </div>
       )}
       <div className="max-w-[80rem] mx-auto px-6 md:px-12 lg:px-20 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-10 md:gap-12">
-        {stats.map((s, i) => (
-          <ScrollReveal key={s.label} delay={i * 80}>
-            <div className="text-center">
-              <div className="text-[clamp(2rem,5vw,3.5rem)] font-bold text-white tracking-[-0.02em]">
-                {s.value}
+        {stats.map((s, i) => {
+          const parsed = parseStatValue(s.value);
+          // If we can't extract a numeric value, just show the raw string
+          const canAnimate =
+            parsed.numericValue > 0 || s.value.trim() === "0";
+
+          return (
+            <ScrollRevealComponent key={s.label} delay={i * 80}>
+              <div className="text-center">
+                <div className="text-[clamp(2rem,5vw,3.5rem)] font-bold text-white tracking-[-0.02em]">
+                  {canAnimate ? (
+                    <AnimatedStatNumber
+                      value={parsed.numericValue}
+                      suffix={parsed.suffix}
+                      prefix={parsed.prefix}
+                    />
+                  ) : (
+                    s.value
+                  )}
+                </div>
+                <div className="text-[10px] uppercase tracking-[0.15em] text-[#767676] mt-2">
+                  {s.label}
+                </div>
               </div>
-              <div className="text-[10px] uppercase tracking-[0.15em] text-[#767676] mt-2">
-                {s.label}
-              </div>
-            </div>
-          </ScrollReveal>
-        ))}
+            </ScrollRevealComponent>
+          );
+        })}
       </div>
     </section>
   );
@@ -310,6 +411,7 @@ export function StatsSection({
 /* ════════════════════════════════════════════════════════════════
    FEATURE LIST — Border-separated list of features (Palantir style)
    ════════════════════════════════════════════════════════════════ */
+
 export function FeatureList({
   label,
   title,
@@ -327,7 +429,7 @@ export function FeatureList({
   return (
     <section className="py-28 md:py-44 bg-black">
       <div className="max-w-[80rem] mx-auto px-6 md:px-12 lg:px-20">
-        <ScrollReveal>
+        <ScrollRevealComponent>
           <div className="mb-16 md:mb-24">
             {label && (
               <span className="text-[10px] uppercase tracking-[0.2em] text-white/40 block mb-4">
@@ -338,11 +440,11 @@ export function FeatureList({
               {title}
             </h2>
           </div>
-        </ScrollReveal>
+        </ScrollRevealComponent>
 
         <div className="space-y-0">
           {items.map((item, i) => (
-            <ScrollReveal key={item.title} delay={i * 60}>
+            <ScrollRevealComponent key={item.title} delay={i * 60}>
               {item.href ? (
                 <Link
                   href={item.href}
@@ -390,7 +492,7 @@ export function FeatureList({
                   </div>
                 </div>
               )}
-            </ScrollReveal>
+            </ScrollRevealComponent>
           ))}
           <div className="border-t border-white/10" />
         </div>
@@ -400,8 +502,9 @@ export function FeatureList({
 }
 
 /* ════════════════════════════════════════════════════════════════
-   IMAGE BREAK — Full-bleed image between sections
+   IMAGE BREAK — Full-bleed image with subtle parallax
    ════════════════════════════════════════════════════════════════ */
+
 export function ImageBreak({
   image,
   height = "70vh",
@@ -411,15 +514,25 @@ export function ImageBreak({
   height?: string;
   overlay?: string;
 }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+  // Parallax: image moves slower than scroll — translateY from -40px to 40px
+  const y = useTransform(scrollYProgress, [0, 1], [-40, 40]);
+
   return (
-    <section className="relative overflow-hidden" style={{ height }}>
-      <Image
-        src={image}
-        alt=""
-        fill
-        className="object-cover"
-        sizes="100vw"
-      />
+    <section ref={ref} className="relative overflow-hidden" style={{ height }}>
+      <motion.div className="absolute inset-[-40px]" style={{ y }}>
+        <Image
+          src={image}
+          alt=""
+          fill
+          className="object-cover"
+          sizes="100vw"
+        />
+      </motion.div>
       <div className={`absolute inset-0 ${overlay}`} />
     </section>
   );
@@ -428,6 +541,7 @@ export function ImageBreak({
 /* ════════════════════════════════════════════════════════════════
    SPEC TABLE — Technical specifications grid
    ════════════════════════════════════════════════════════════════ */
+
 export function SpecTable({
   label,
   title,
@@ -441,7 +555,7 @@ export function SpecTable({
     <section className="py-20 md:py-32 bg-black border-t border-white/10">
       <div className="max-w-[80rem] mx-auto px-6 md:px-12 lg:px-20">
         {(label || title) && (
-          <ScrollReveal>
+          <ScrollRevealComponent>
             <div className="mb-12 md:mb-16">
               {label && (
                 <span className="text-[10px] uppercase tracking-[0.2em] text-white/40 block mb-4">
@@ -454,18 +568,18 @@ export function SpecTable({
                 </h2>
               )}
             </div>
-          </ScrollReveal>
+          </ScrollRevealComponent>
         )}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-0">
           {specs.map((spec, i) => (
-            <ScrollReveal key={spec.label} delay={i * 40}>
+            <ScrollRevealComponent key={spec.label} delay={i * 40}>
               <div className="flex justify-between items-baseline border-b border-white/10 py-5">
                 <span className="text-[#767676] text-sm">{spec.label}</span>
                 <span className="text-white font-medium text-sm md:text-base">
                   {spec.value}
                 </span>
               </div>
-            </ScrollReveal>
+            </ScrollRevealComponent>
           ))}
         </div>
       </div>
@@ -476,6 +590,7 @@ export function SpecTable({
 /* ════════════════════════════════════════════════════════════════
    CTA SECTION — Call to action with dual links
    ════════════════════════════════════════════════════════════════ */
+
 export function CTASection({
   title,
   subtitle,
@@ -494,7 +609,7 @@ export function CTASection({
   return (
     <section className="py-28 md:py-44 bg-black">
       <div className="max-w-[80rem] mx-auto px-6 md:px-12 lg:px-20 text-center">
-        <ScrollReveal>
+        <ScrollRevealComponent>
           <h2 className="text-[clamp(2.5rem,6vw,5rem)] font-bold tracking-[-0.04em] leading-[0.95] text-white">
             {title}
           </h2>
@@ -519,7 +634,7 @@ export function CTASection({
               </Link>
             )}
           </div>
-        </ScrollReveal>
+        </ScrollRevealComponent>
       </div>
     </section>
   );
@@ -528,6 +643,7 @@ export function CTASection({
 /* ════════════════════════════════════════════════════════════════
    QUOTE SECTION — Testimonial or blockquote
    ════════════════════════════════════════════════════════════════ */
+
 export function QuoteSection({
   quote,
   author,
@@ -540,7 +656,7 @@ export function QuoteSection({
   return (
     <section className="py-28 md:py-44 bg-[#0a0a0a]">
       <div className="max-w-[56rem] mx-auto px-6 md:px-12 lg:px-20 text-center">
-        <ScrollReveal>
+        <ScrollRevealComponent>
           <div className="text-white/10 text-[8rem] leading-none font-serif select-none mb-[-3rem]">
             &ldquo;
           </div>
@@ -553,7 +669,7 @@ export function QuoteSection({
               {role}
             </div>
           </div>
-        </ScrollReveal>
+        </ScrollRevealComponent>
       </div>
     </section>
   );
@@ -562,6 +678,7 @@ export function QuoteSection({
 /* ════════════════════════════════════════════════════════════════
    TIMELINE — History / milestones
    ════════════════════════════════════════════════════════════════ */
+
 export function Timeline({
   label,
   title,
@@ -574,7 +691,7 @@ export function Timeline({
   return (
     <section className="py-28 md:py-44 bg-black">
       <div className="max-w-[80rem] mx-auto px-6 md:px-12 lg:px-20">
-        <ScrollReveal>
+        <ScrollRevealComponent>
           <div className="mb-16 md:mb-24">
             {label && (
               <span className="text-[10px] uppercase tracking-[0.2em] text-white/40 block mb-4">
@@ -585,11 +702,11 @@ export function Timeline({
               {title}
             </h2>
           </div>
-        </ScrollReveal>
+        </ScrollRevealComponent>
 
         <div className="space-y-0">
           {events.map((event, i) => (
-            <ScrollReveal key={event.year + event.title} delay={i * 60}>
+            <ScrollRevealComponent key={event.year + event.title} delay={i * 60}>
               <div className="border-t border-white/10 py-10 md:py-12 grid grid-cols-[120px_1fr] md:grid-cols-[200px_1fr] gap-6 md:gap-12 items-start">
                 <div className="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-white/30 tracking-[-0.02em]">
                   {event.year}
@@ -603,7 +720,7 @@ export function Timeline({
                   </p>
                 </div>
               </div>
-            </ScrollReveal>
+            </ScrollRevealComponent>
           ))}
           <div className="border-t border-white/10" />
         </div>
@@ -615,6 +732,7 @@ export function Timeline({
 /* ════════════════════════════════════════════════════════════════
    TEAM GRID — Leadership / people cards
    ════════════════════════════════════════════════════════════════ */
+
 export function TeamGrid({
   label,
   title,
@@ -632,7 +750,7 @@ export function TeamGrid({
   return (
     <section className="py-28 md:py-44 bg-black">
       <div className="max-w-[80rem] mx-auto px-6 md:px-12 lg:px-20">
-        <ScrollReveal>
+        <ScrollRevealComponent>
           <div className="mb-16 md:mb-24">
             {label && (
               <span className="text-[10px] uppercase tracking-[0.2em] text-white/40 block mb-4">
@@ -643,11 +761,11 @@ export function TeamGrid({
               {title}
             </h2>
           </div>
-        </ScrollReveal>
+        </ScrollRevealComponent>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
           {members.map((member, i) => (
-            <ScrollReveal key={member.name} delay={i * 80}>
+            <ScrollRevealComponent key={member.name} delay={i * 80}>
               <div className="group">
                 {member.image && (
                   <div className="relative aspect-[4/3] mb-6 overflow-hidden bg-[#111]">
@@ -668,7 +786,7 @@ export function TeamGrid({
                   {member.bio}
                 </p>
               </div>
-            </ScrollReveal>
+            </ScrollRevealComponent>
           ))}
         </div>
       </div>
@@ -679,6 +797,7 @@ export function TeamGrid({
 /* ════════════════════════════════════════════════════════════════
    CARD GRID — Generic card layout
    ════════════════════════════════════════════════════════════════ */
+
 export function CardGrid({
   label,
   title,
@@ -697,7 +816,7 @@ export function CardGrid({
   return (
     <section className="py-28 md:py-44 bg-black">
       <div className="max-w-[80rem] mx-auto px-6 md:px-12 lg:px-20">
-        <ScrollReveal>
+        <ScrollRevealComponent>
           <div className="mb-16 md:mb-24">
             {label && (
               <span className="text-[10px] uppercase tracking-[0.2em] text-white/40 block mb-4">
@@ -708,7 +827,7 @@ export function CardGrid({
               {title}
             </h2>
           </div>
-        </ScrollReveal>
+        </ScrollRevealComponent>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {cards.map((card, i) => {
@@ -742,7 +861,7 @@ export function CardGrid({
             );
 
             return (
-              <ScrollReveal key={card.title} delay={i * 80}>
+              <ScrollRevealComponent key={card.title} delay={i * 80}>
                 {card.href ? (
                   <Link
                     href={card.href}
@@ -755,7 +874,7 @@ export function CardGrid({
                     {inner}
                   </div>
                 )}
-              </ScrollReveal>
+              </ScrollRevealComponent>
             );
           })}
         </div>
@@ -767,6 +886,7 @@ export function CardGrid({
 /* ════════════════════════════════════════════════════════════════
    PRODUCT HERO — Full-screen product hero with specs strip
    ════════════════════════════════════════════════════════════════ */
+
 export function ProductHero({
   image,
   label,
@@ -792,7 +912,7 @@ export function ProductHero({
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/20" />
       <div className="relative z-10 max-w-[90rem] mx-auto px-6 md:px-12 lg:px-20 pb-20 md:pb-28 w-full">
-        <ScrollReveal>
+        <ScrollRevealComponent>
           <span className="text-[10px] md:text-[11px] uppercase tracking-[0.2em] text-white/50 mb-6 block">
             {label}
           </span>
@@ -802,8 +922,8 @@ export function ProductHero({
           <p className="mt-6 text-[#b9b9b9] text-lg md:text-xl lg:text-2xl leading-relaxed max-w-2xl">
             {subtitle}
           </p>
-        </ScrollReveal>
-        <ScrollReveal delay={200}>
+        </ScrollRevealComponent>
+        <ScrollRevealComponent delay={200}>
           <div className="mt-12 flex flex-wrap gap-x-12 gap-y-6">
             {specs.map((s) => (
               <div key={s.label}>
@@ -816,7 +936,7 @@ export function ProductHero({
               </div>
             ))}
           </div>
-        </ScrollReveal>
+        </ScrollRevealComponent>
       </div>
     </section>
   );
@@ -825,6 +945,7 @@ export function ProductHero({
 /* ════════════════════════════════════════════════════════════════
    TEXT SECTION — Simple text section with label + heading + body
    ════════════════════════════════════════════════════════════════ */
+
 export function TextSection({
   label,
   title,
@@ -839,7 +960,7 @@ export function TextSection({
   return (
     <section className={`py-28 md:py-44 bg-black ${className}`}>
       <div className="max-w-[56rem] mx-auto px-6 md:px-12 lg:px-20">
-        <ScrollReveal>
+        <ScrollRevealComponent>
           {label && (
             <span className="text-[10px] uppercase tracking-[0.2em] text-white/40 block mb-4">
               {label}
@@ -853,7 +974,7 @@ export function TextSection({
           <div className="text-[#b9b9b9] text-base md:text-lg leading-relaxed space-y-6">
             {children}
           </div>
-        </ScrollReveal>
+        </ScrollRevealComponent>
       </div>
     </section>
   );
