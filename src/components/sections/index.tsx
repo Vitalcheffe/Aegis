@@ -1,6 +1,9 @@
 "use client";
 
 export { KillChainDiagram } from "./kill-chain-diagram";
+export { FAQSection } from "./faq-section";
+export { AnimatedCounter, AnimatedStatsSection } from "./animated-counter";
+export { BlogCard, CaseStudyCard, ResourceCard } from "./blog-card";
 
 import { useEffect, useRef, ReactNode } from "react";
 import Image from "next/image";

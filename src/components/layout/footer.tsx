@@ -35,16 +35,46 @@ const footerColumns = [
       { label: "VIP Protection", href: "/solutions/vip-protection" },
       { label: "Maritime", href: "/solutions/maritime" },
       { label: "Urban Security", href: "/solutions/urban-security" },
+      { label: "Prisons", href: "/solutions/prisons" },
+    ],
+  },
+  {
+    title: "Technology",
+    links: [
+      { label: "RF Sensing", href: "/technology/rf-sensing" },
+      { label: "AI & Machine Learning", href: "/technology/ai-ml" },
+      { label: "Radar Systems", href: "/technology/radar" },
+      { label: "Electronic Warfare", href: "/technology/electronic-warfare" },
+      { label: "Sensor Fusion", href: "/technology/sensor-fusion" },
+      { label: "Edge Computing", href: "/technology/edge-computing" },
+    ],
+  },
+  {
+    title: "Resources",
+    links: [
+      { label: "White Papers", href: "/resources/white-papers" },
+      { label: "Datasheets", href: "/resources/datasheets" },
+      { label: "Videos", href: "/resources/videos" },
+      { label: "Webinars", href: "/resources/webinars" },
+      { label: "FAQ", href: "/resources/faq" },
+      { label: "Glossary", href: "/resources/glossary" },
+      { label: "Case Studies", href: "/case-studies" },
+      { label: "Blog", href: "/blog" },
     ],
   },
   {
     title: "Company",
     links: [
-      { label: "About", href: "/about" },
+      { label: "About Aegis", href: "/about" },
       { label: "Leadership", href: "/about/leadership" },
       { label: "History", href: "/about/history" },
+      { label: "R&D", href: "/about/research-development" },
+      { label: "Facilities", href: "/about/facilities" },
+      { label: "Values", href: "/about/values" },
+      { label: "Quality", href: "/about/quality" },
       { label: "Partners", href: "/about/partners" },
-      { label: "News", href: "/news" },
+      { label: "Integrations", href: "/integrations" },
+      { label: "Support", href: "/support" },
       { label: "Careers", href: "/careers" },
       { label: "Investors", href: "/investors" },
       { label: "Contact", href: "/contact" },
@@ -102,9 +132,9 @@ export function Footer() {
       {/* Footer */}
       <footer className="bg-[#050505] border-t border-white/10 mt-auto">
         <div className="max-w-[90rem] mx-auto px-6 md:px-12 lg:px-20 py-20 md:py-28">
-          <div className="grid grid-cols-2 md:grid-cols-6 gap-10 md:gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-8 gap-10 md:gap-8">
             {/* Brand Column */}
-            <div className="col-span-2">
+            <div className="col-span-2 md:col-span-1">
               <Link
                 href="/"
                 className="text-white font-bold text-lg tracking-[0.3em] uppercase"
