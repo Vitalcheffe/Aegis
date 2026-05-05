@@ -9,6 +9,11 @@ import {
   AnimatedLine,
 } from "@/components/sections";
 
+interface FieldError {
+  field: string;
+  message: string;
+}
+
 export default function RequestDemoPage() {
   const [formData, setFormData] = useState({
     fullName: "",
@@ -21,10 +26,45 @@ export default function RequestDemoPage() {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<FieldError[]>([]);
+  const [referenceId, setReferenceId] = useState<string | null>(null);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setIsSubmitting(true);
+    setErrorMessage(null);
+    setFieldErrors([]);
+
+    try {
+      const res = await fetch("/api/demo-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        if (data.errors && Array.isArray(data.errors)) {
+          setFieldErrors(data.errors);
+          setErrorMessage(data.message || "Validation failed");
+        } else {
+          setErrorMessage(data.message || "Something went wrong. Please try again.");
+        }
+        return;
+      }
+
+      setReferenceId(data.referenceId);
+      setSubmitted(true);
+    } catch {
+      setErrorMessage(
+        "Unable to connect to the server. Please check your connection and try again."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (
@@ -33,6 +73,12 @@ export default function RequestDemoPage() {
     >
   ) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    // Clear field-specific error when user edits the field
+    setFieldErrors((prev) => prev.filter((err) => err.field !== e.target.name));
+  };
+
+  const getFieldError = (fieldName: string): string | null => {
+    return fieldErrors.find((err) => err.field === fieldName)?.message ?? null;
   };
 
   return (
@@ -82,15 +128,23 @@ export default function RequestDemoPage() {
                   representative will contact you within 2-3 business days to
                   discuss scheduling and access requirements.
                 </p>
-                <p className="text-[#767676] text-sm mt-6">
-                  Reference ID: ADS-DR-
-                  {Math.random().toString(36).substring(2, 8).toUpperCase()}
-                </p>
+                {referenceId && (
+                  <p className="text-[#767676] text-sm mt-6">
+                    Reference ID: {referenceId}
+                  </p>
+                )}
               </div>
             </ScrollReveal>
           ) : (
             <ScrollReveal>
               <form onSubmit={handleSubmit} className="space-y-8">
+                {/* Server error banner */}
+                {errorMessage && (
+                  <div className="border border-white/30 bg-white/5 px-6 py-4">
+                    <p className="text-white text-sm">{errorMessage}</p>
+                  </div>
+                )}
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div>
                     <label
@@ -106,9 +160,13 @@ export default function RequestDemoPage() {
                       required
                       value={formData.fullName}
                       onChange={handleChange}
-                      className="w-full bg-transparent border border-[#222] text-white px-4 py-3 text-sm focus:border-white/50 focus:outline-none transition-colors placeholder:text-white/20"
+                      disabled={isSubmitting}
+                      className="w-full bg-transparent border border-[#222] text-white px-4 py-3 text-sm focus:border-white/50 focus:outline-none transition-colors placeholder:text-white/20 disabled:opacity-50"
                       placeholder="Your full name"
                     />
+                    {getFieldError("fullName") && (
+                      <p className="text-white/60 text-xs mt-2">{getFieldError("fullName")}</p>
+                    )}
                   </div>
                   <div>
                     <label
@@ -124,9 +182,13 @@ export default function RequestDemoPage() {
                       required
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full bg-transparent border border-[#222] text-white px-4 py-3 text-sm focus:border-white/50 focus:outline-none transition-colors placeholder:text-white/20"
+                      disabled={isSubmitting}
+                      className="w-full bg-transparent border border-[#222] text-white px-4 py-3 text-sm focus:border-white/50 focus:outline-none transition-colors placeholder:text-white/20 disabled:opacity-50"
                       placeholder="your@email.com"
                     />
+                    {getFieldError("email") && (
+                      <p className="text-white/60 text-xs mt-2">{getFieldError("email")}</p>
+                    )}
                   </div>
                 </div>
 
@@ -145,9 +207,13 @@ export default function RequestDemoPage() {
                       required
                       value={formData.organization}
                       onChange={handleChange}
-                      className="w-full bg-transparent border border-[#222] text-white px-4 py-3 text-sm focus:border-white/50 focus:outline-none transition-colors placeholder:text-white/20"
+                      disabled={isSubmitting}
+                      className="w-full bg-transparent border border-[#222] text-white px-4 py-3 text-sm focus:border-white/50 focus:outline-none transition-colors placeholder:text-white/20 disabled:opacity-50"
                       placeholder="Government agency or organization"
                     />
+                    {getFieldError("organization") && (
+                      <p className="text-white/60 text-xs mt-2">{getFieldError("organization")}</p>
+                    )}
                   </div>
                   <div>
                     <label
@@ -163,9 +229,13 @@ export default function RequestDemoPage() {
                       required
                       value={formData.jobTitle}
                       onChange={handleChange}
-                      className="w-full bg-transparent border border-[#222] text-white px-4 py-3 text-sm focus:border-white/50 focus:outline-none transition-colors placeholder:text-white/20"
+                      disabled={isSubmitting}
+                      className="w-full bg-transparent border border-[#222] text-white px-4 py-3 text-sm focus:border-white/50 focus:outline-none transition-colors placeholder:text-white/20 disabled:opacity-50"
                       placeholder="Your position or title"
                     />
+                    {getFieldError("jobTitle") && (
+                      <p className="text-white/60 text-xs mt-2">{getFieldError("jobTitle")}</p>
+                    )}
                   </div>
                 </div>
 
@@ -184,9 +254,13 @@ export default function RequestDemoPage() {
                       required
                       value={formData.country}
                       onChange={handleChange}
-                      className="w-full bg-transparent border border-[#222] text-white px-4 py-3 text-sm focus:border-white/50 focus:outline-none transition-colors placeholder:text-white/20"
+                      disabled={isSubmitting}
+                      className="w-full bg-transparent border border-[#222] text-white px-4 py-3 text-sm focus:border-white/50 focus:outline-none transition-colors placeholder:text-white/20 disabled:opacity-50"
                       placeholder="Country of citizenship"
                     />
+                    {getFieldError("country") && (
+                      <p className="text-white/60 text-xs mt-2">{getFieldError("country")}</p>
+                    )}
                   </div>
                   <div>
                     <label
@@ -201,7 +275,8 @@ export default function RequestDemoPage() {
                       required
                       value={formData.classificationLevel}
                       onChange={handleChange}
-                      className="w-full bg-black border border-[#222] text-white px-4 py-3 text-sm focus:border-white/50 focus:outline-none transition-colors appearance-none cursor-pointer"
+                      disabled={isSubmitting}
+                      className="w-full bg-black border border-[#222] text-white px-4 py-3 text-sm focus:border-white/50 focus:outline-none transition-colors appearance-none cursor-pointer disabled:opacity-50"
                     >
                       <option value="" disabled>
                         Select clearance level
@@ -211,6 +286,9 @@ export default function RequestDemoPage() {
                       <option value="secret">Secret</option>
                       <option value="top-secret">Top Secret</option>
                     </select>
+                    {getFieldError("classificationLevel") && (
+                      <p className="text-white/60 text-xs mt-2">{getFieldError("classificationLevel")}</p>
+                    )}
                   </div>
                 </div>
 
@@ -227,7 +305,8 @@ export default function RequestDemoPage() {
                     required
                     value={formData.interestArea}
                     onChange={handleChange}
-                    className="w-full md:w-1/2 bg-black border border-[#222] text-white px-4 py-3 text-sm focus:border-white/50 focus:outline-none transition-colors appearance-none cursor-pointer"
+                    disabled={isSubmitting}
+                    className="w-full md:w-1/2 bg-black border border-[#222] text-white px-4 py-3 text-sm focus:border-white/50 focus:outline-none transition-colors appearance-none cursor-pointer disabled:opacity-50"
                   >
                     <option value="" disabled>
                       Select your area of interest
@@ -237,6 +316,9 @@ export default function RequestDemoPage() {
                     <option value="integration">Integration</option>
                     <option value="partnership">Partnership</option>
                   </select>
+                  {getFieldError("interestArea") && (
+                    <p className="text-white/60 text-xs mt-2">{getFieldError("interestArea")}</p>
+                  )}
                 </div>
 
                 <div>
@@ -252,9 +334,13 @@ export default function RequestDemoPage() {
                     rows={5}
                     value={formData.message}
                     onChange={handleChange}
-                    className="w-full bg-transparent border border-[#222] text-white px-4 py-3 text-sm focus:border-white/50 focus:outline-none transition-colors placeholder:text-white/20 resize-none"
+                    disabled={isSubmitting}
+                    className="w-full bg-transparent border border-[#222] text-white px-4 py-3 text-sm focus:border-white/50 focus:outline-none transition-colors placeholder:text-white/20 resize-none disabled:opacity-50"
                     placeholder="Describe your operational requirements, specific threats of concern, or any additional context. Do not include classified information."
                   />
+                  {getFieldError("message") && (
+                    <p className="text-white/60 text-xs mt-2">{getFieldError("message")}</p>
+                  )}
                 </div>
 
                 <div className="pt-4">
@@ -275,9 +361,10 @@ export default function RequestDemoPage() {
                   </p>
                   <button
                     type="submit"
-                    className="bg-white text-black px-10 py-4 text-sm font-medium uppercase tracking-[0.15em] hover:bg-[#e0e0e0] transition-all duration-300 cursor-pointer"
+                    disabled={isSubmitting}
+                    className="bg-white text-black px-10 py-4 text-sm font-medium uppercase tracking-[0.15em] hover:bg-[#e0e0e0] transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Submit Demo Request
+                    {isSubmitting ? "Submitting..." : "Submit Demo Request"}
                   </button>
                 </div>
               </form>

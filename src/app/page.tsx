@@ -14,6 +14,7 @@ import {
   AnimatedLine,
   KillChainDiagram,
 } from "@/components/sections";
+import { TestimonialsSection } from "@/components/sections/testimonials-section";
 
 export default function HomePage() {
   return (
@@ -201,6 +202,9 @@ export default function HomePage() {
         author="Lieutenant General Marcus Hartley"
         role="NATO Joint Force Command — Chief of Air and Missile Defense"
       />
+
+      {/* ── TESTIMONIALS ── */}
+      <TestimonialsSection />
 
       {/* ── CTA ── */}
       <CTASection

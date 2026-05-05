@@ -10,6 +10,11 @@ import {
   AnimatedLine,
 } from "@/components/sections";
 
+interface FieldError {
+  field: string;
+  message: string;
+}
+
 export default function ContactPage() {
   const [formData, setFormData] = useState({
     name: "",
@@ -19,10 +24,43 @@ export default function ContactPage() {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<FieldError[]>([]);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setIsSubmitting(true);
+    setErrorMessage(null);
+    setFieldErrors([]);
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        if (data.errors && Array.isArray(data.errors)) {
+          setFieldErrors(data.errors);
+          setErrorMessage(data.message || "Validation failed");
+        } else {
+          setErrorMessage(data.message || "Something went wrong. Please try again.");
+        }
+        return;
+      }
+
+      setSubmitted(true);
+    } catch {
+      setErrorMessage(
+        "Unable to connect to the server. Please check your connection and try again."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (
@@ -31,6 +69,12 @@ export default function ContactPage() {
     >
   ) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    // Clear field-specific error when user edits the field
+    setFieldErrors((prev) => prev.filter((err) => err.field !== e.target.name));
+  };
+
+  const getFieldError = (fieldName: string): string | null => {
+    return fieldErrors.find((err) => err.field === fieldName)?.message ?? null;
   };
 
   return (
@@ -78,6 +122,13 @@ export default function ContactPage() {
           ) : (
             <ScrollReveal>
               <form onSubmit={handleSubmit} className="space-y-8">
+                {/* Server error banner */}
+                {errorMessage && (
+                  <div className="border border-white/30 bg-white/5 px-6 py-4">
+                    <p className="text-white text-sm">{errorMessage}</p>
+                  </div>
+                )}
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div>
                     <label
@@ -93,9 +144,13 @@ export default function ContactPage() {
                       required
                       value={formData.name}
                       onChange={handleChange}
-                      className="w-full bg-transparent border border-[#222] text-white px-4 py-3 text-sm focus:border-white/50 focus:outline-none transition-colors placeholder:text-white/20"
+                      disabled={isSubmitting}
+                      className="w-full bg-transparent border border-[#222] text-white px-4 py-3 text-sm focus:border-white/50 focus:outline-none transition-colors placeholder:text-white/20 disabled:opacity-50"
                       placeholder="Your full name"
                     />
+                    {getFieldError("name") && (
+                      <p className="text-white/60 text-xs mt-2">{getFieldError("name")}</p>
+                    )}
                   </div>
                   <div>
                     <label
@@ -111,9 +166,13 @@ export default function ContactPage() {
                       required
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full bg-transparent border border-[#222] text-white px-4 py-3 text-sm focus:border-white/50 focus:outline-none transition-colors placeholder:text-white/20"
+                      disabled={isSubmitting}
+                      className="w-full bg-transparent border border-[#222] text-white px-4 py-3 text-sm focus:border-white/50 focus:outline-none transition-colors placeholder:text-white/20 disabled:opacity-50"
                       placeholder="your@email.com"
                     />
+                    {getFieldError("email") && (
+                      <p className="text-white/60 text-xs mt-2">{getFieldError("email")}</p>
+                    )}
                   </div>
                 </div>
 
@@ -131,9 +190,13 @@ export default function ContactPage() {
                       name="organization"
                       value={formData.organization}
                       onChange={handleChange}
-                      className="w-full bg-transparent border border-[#222] text-white px-4 py-3 text-sm focus:border-white/50 focus:outline-none transition-colors placeholder:text-white/20"
+                      disabled={isSubmitting}
+                      className="w-full bg-transparent border border-[#222] text-white px-4 py-3 text-sm focus:border-white/50 focus:outline-none transition-colors placeholder:text-white/20 disabled:opacity-50"
                       placeholder="Your organization"
                     />
+                    {getFieldError("organization") && (
+                      <p className="text-white/60 text-xs mt-2">{getFieldError("organization")}</p>
+                    )}
                   </div>
                   <div>
                     <label
@@ -148,7 +211,8 @@ export default function ContactPage() {
                       required
                       value={formData.subject}
                       onChange={handleChange}
-                      className="w-full bg-black border border-[#222] text-white px-4 py-3 text-sm focus:border-white/50 focus:outline-none transition-colors appearance-none cursor-pointer"
+                      disabled={isSubmitting}
+                      className="w-full bg-black border border-[#222] text-white px-4 py-3 text-sm focus:border-white/50 focus:outline-none transition-colors appearance-none cursor-pointer disabled:opacity-50"
                     >
                       <option value="" disabled>
                         Select a subject
@@ -162,6 +226,9 @@ export default function ContactPage() {
                       <option value="media">Media / Press</option>
                       <option value="careers">Careers</option>
                     </select>
+                    {getFieldError("subject") && (
+                      <p className="text-white/60 text-xs mt-2">{getFieldError("subject")}</p>
+                    )}
                   </div>
                 </div>
 
@@ -179,9 +246,13 @@ export default function ContactPage() {
                     rows={6}
                     value={formData.message}
                     onChange={handleChange}
-                    className="w-full bg-transparent border border-[#222] text-white px-4 py-3 text-sm focus:border-white/50 focus:outline-none transition-colors placeholder:text-white/20 resize-none"
+                    disabled={isSubmitting}
+                    className="w-full bg-transparent border border-[#222] text-white px-4 py-3 text-sm focus:border-white/50 focus:outline-none transition-colors placeholder:text-white/20 resize-none disabled:opacity-50"
                     placeholder="Describe your inquiry or requirements. Please do not include classified information in this form."
                   />
+                  {getFieldError("message") && (
+                    <p className="text-white/60 text-xs mt-2">{getFieldError("message")}</p>
+                  )}
                 </div>
 
                 <div className="pt-4">
@@ -199,9 +270,10 @@ export default function ContactPage() {
                   </p>
                   <button
                     type="submit"
-                    className="bg-white text-black px-10 py-4 text-sm font-medium uppercase tracking-[0.15em] hover:bg-[#e0e0e0] transition-all duration-300 cursor-pointer"
+                    disabled={isSubmitting}
+                    className="bg-white text-black px-10 py-4 text-sm font-medium uppercase tracking-[0.15em] hover:bg-[#e0e0e0] transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Submit Message
+                    {isSubmitting ? "Submitting..." : "Submit Message"}
                   </button>
                 </div>
               </form>

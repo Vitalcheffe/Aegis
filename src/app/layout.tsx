@@ -20,11 +20,11 @@ export const metadata: Metadata = {
     "Advanced multi-spectral counter-UAS defense system. Detection, tracking, classification, and neutralization of unmanned aerial threats in 20 milliseconds.",
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "32x32" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
       { url: "/logo.svg", type: "image/svg+xml" },
     ],
-    apple: "/apple-touch-icon.png",
   },
+  metadataBase: new URL("https://aegisco.vercel.app"),
   openGraph: {
     type: "website",
     locale: "en_US",
