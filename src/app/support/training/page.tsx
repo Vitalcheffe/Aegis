@@ -3,10 +3,7 @@
 import {
   SectionHero,
   TextSection,
-  SplitSection,
-  CardGrid,
   FeatureList,
-  FAQSection,
   CTASection,
   AnimatedLine,
   StatsSection,
@@ -32,13 +29,10 @@ export default function TrainingPage() {
       {/* ── OVERVIEW ── */}
       <TextSection label="Overview" title="Train Like You Fight">
         <p>
-          The most sophisticated counter-UAS system in the world is only as effective as the operator behind the console. That is why Aegis invests more in training than any other counter-UAS vendor — because we have seen firsthand how operator proficiency directly determines mission outcomes. Our training programs are developed and delivered by former military operators and defense engineers who bring real-world counter-UAS experience to every course, ensuring that training content reflects the actual threats, environments, and operational constraints that your team will face.
+          The most sophisticated counter-UAS system in the world is only as effective as the operator behind the console. That is why Aegis invests more in training than any other counter-UAS vendor — because we have seen firsthand how operator proficiency directly determines mission outcomes. Our training programs are developed and delivered by former military operators and defense engineers who bring real-world counter-UAS experience to every course.
         </p>
         <p>
-          Aegis training goes beyond button-pushing. Our curriculum emphasizes threat understanding, tactical decision-making, and adaptive problem-solving — the skills that separate effective operators from trained users. Every course includes immersive scenario-based exercises that simulate real engagement conditions, including degraded communications, multi-axis attacks, and rules-of-engagement constraints. These scenarios are derived from actual operational events, ensuring that the training experience is as close to real-world employment as possible without the associated risks.
-        </p>
-        <p>
-          We offer training at our dedicated facilities in Arlington, Virginia and Farnborough, United Kingdom, as well as at customer sites worldwide. All courses are available in English, with select programs offered in French, German, Japanese, and Arabic. Custom training programs can be developed to address customer-specific operational requirements, threat profiles, and rules of engagement.
+          Aegis training goes beyond button-pushing. Our curriculum emphasizes threat understanding, tactical decision-making, and adaptive problem-solving — the skills that separate effective operators from trained users. Every course includes immersive scenario-based exercises that simulate real engagement conditions, including degraded communications, multi-axis attacks, and rules-of-engagement constraints.
         </p>
       </TextSection>
 
@@ -49,133 +43,100 @@ export default function TrainingPage() {
           { value: "500+", label: "Operators Trained" },
           { value: "12", label: "Nations Served" },
           { value: "98%", label: "Pass Rate" },
-          { value: "40+", label: "Course Offerings" },
           { value: "24", label: "Instructors" },
         ]}
       />
 
-      {/* ── COURSE TYPES ── */}
+      {/* ── COURSE CATALOG ── */}
       <FeatureList
         label="Course Catalog"
         title="Training Programs"
         items={[
           {
-            title: "Operator Basic Course",
+            title: "Aegis Operator Course",
+            tag: "5 Days · Arlington or On-Site · Contact for Pricing",
             description:
-              "The Operator Basic Course is the foundational training program for all Aegis system operators. This five-day intensive course covers system architecture and components, sensor operations and management, track interpretation and situational awareness, basic classification and threat assessment, engagement procedures and rules of employment, and basic troubleshooting and fault isolation. Students complete a minimum of 12 scenario-based exercises culminating in a live-fire demonstration with real UAS targets. Upon successful completion, operators receive Aegis Operator Qualification, which is required for unsupervised operation of any Aegis system. The course is offered monthly at our Arlington and Farnborough training centers.",
-            tag: "5 Days",
-          },
-          {
-            title: "Operator Advanced Course",
-            description:
-              "The Operator Advanced Course builds on basic qualification with sophisticated operational skills including multi-sensor fusion management, swarm engagement tactics, degraded mode operations, joint force coordination, and advanced rules-of-engagement interpretation. The three-day course uses our high-fidelity Aegis Tactical Simulator, which can simulate complex multi-threat scenarios that would be impossible or impractical to replicate with live UAS. Advanced operators learn to manage system performance under stress, adapt to unexpected threat behaviors, and coordinate counter-UAS operations with adjacent units and higher headquarters. Prerequisite: Operator Basic Course qualification.",
-            tag: "3 Days",
-          },
-          {
-            title: "Threat Analyst Course",
-            description:
-              "The Threat Analyst Course trains intelligence professionals to leverage Aegis sensor data and classification outputs for threat analysis and reporting. The five-day course covers Aegis data export and analysis tools, UAS threat taxonomy and classification methodology, RF signature analysis and correlation, flight pattern analysis and behavioral profiling, threat reporting formats and intelligence products, and predictive threat modeling using Aegis AI analytics. Threat analysts learn to transform raw Aegis sensor data into actionable intelligence that informs operational planning and force protection decisions. The course includes hands-on exercises with real (sanitized) threat data from Aegis operational archives.",
-            tag: "5 Days",
+              "The foundational training program for all Aegis system operators. Covers daily operations, threat assessment, engagement authorization, and graduated response protocols. Students complete 16 hours of simulator time across a minimum of 12 scenario-based exercises, culminating in a live-fire demonstration with real UAS targets. Topics include system architecture and components, sensor operations and management, track interpretation and situational awareness, classification confidence evaluation, engagement procedures and rules of employment, and basic troubleshooting. Upon successful completion, operators receive Aegis Operator Qualification required for unsupervised operation. No prerequisites beyond a valid security clearance. Pre-course self-study module (4 hours) required.",
           },
           {
             title: "System Administrator Course",
+            tag: "10 Days · Arlington · Contact for Pricing",
             description:
-              "The System Administrator Course trains IT and communications professionals to install, configure, maintain, and troubleshoot Aegis hardware and software. The ten-day course covers hardware installation and commissioning, network configuration and cybersecurity hardening, user account management and access control, sensor integration and adapter configuration, software update procedures and rollback management, system health monitoring and performance optimization, and disaster recovery and backup procedures. System administrators learn to perform all first-line and second-line maintenance tasks, reducing dependence on Aegis field engineering support for routine operations.",
-            tag: "10 Days",
+              "Trains IT and communications professionals to install, configure, maintain, and troubleshoot Aegis hardware and software. Covers system configuration and deployment, maintenance procedures and spare parts management, software updates and rollback management, network troubleshooting and cybersecurity hardening, health monitoring and performance optimization, and disaster recovery and backup procedures. Students perform all first-line and second-line maintenance tasks on live Aegis hardware. Lab exercises include simulated failure scenarios requiring diagnostic fault isolation and system restoration. Prerequisite: Aegis Operator Course or equivalent operational experience.",
           },
           {
-            title: "Train-the-Trainer Course",
+            title: "Aegis Command Master Class",
+            tag: "3 Days · Arlington · Contact for Pricing",
             description:
-              "The Train-the-Trainer Course qualifies customer personnel to deliver Aegis Operator Basic Course instruction to their own organizations. The five-day course covers adult learning principles and instructional design, Aegis training curriculum and lesson plans, simulator operation and scenario development, assessment and evaluation methods, and training program administration. Graduates receive certified instructor status and ongoing access to updated training materials, scenario libraries, and instructor support channels. This course enables large organizations to scale their Aegis training capacity without proportional increases in vendor-provided training.",
-            tag: "5 Days",
+              "Advanced C2 training for fleet managers and senior operators. Covers multi-system coordination across distributed defense networks, rules of engagement management and hierarchical authorization, after-action review methodology and reporting, resource allocation under contested conditions, and cross-domain coordination with allied C2 systems. The course uses the high-fidelity Aegis Tactical Simulator to reproduce complex multi-threat scenarios requiring coordination between four or more Aegis nodes. Students learn to manage overlapping coverage zones, deconflict engagement assignments, and maintain situational awareness across a distributed battlespace. Prerequisite: Aegis Operator Course qualification.",
           },
           {
-            title: "Executive Awareness Briefing",
+            title: "Integration Engineering Workshop",
+            tag: "5 Days · Arlington · Contact for Pricing",
             description:
-              "The Executive Awareness Briefing is a one-day program designed for senior military and civilian leaders who need to understand Aegis capabilities, limitations, and employment considerations without the technical depth of operator training. The briefing covers the counter-UAS threat landscape, Aegis system capabilities and performance, rules of engagement and legal considerations, force structure and staffing requirements, and cost of ownership and lifecycle planning. The briefing includes a live demonstration of Aegis capabilities and a question-and-answer session with Aegis operational leadership.",
-            tag: "1 Day",
+              "Designed for partners and customer engineering teams who need to integrate Aegis with existing defense architectures. Covers API development and authentication flows, STANAG 4676 interface configuration and testing, custom sensor integration using the Aegis Adapter SDK, data model extensions and custom classification pipelines, and performance testing and validation procedures. Students build a working integration with a simulated external system during the course, including track data exchange, alert forwarding, and system status monitoring. Hands-on labs use the Aegis Integration Test Bench, which provides a sandboxed environment with simulated sensor feeds and external C2 interfaces. No prior Aegis experience required — suitable for software engineers and system architects.",
+          },
+          {
+            title: "Executive Briefing Program",
+            tag: "1 Day · Arlington or On-Site · Contact for Pricing",
+            description:
+              "For senior decision-makers who need to understand Aegis capabilities, limitations, and employment considerations without the technical depth of operator training. Covers the counter-UAS threat landscape and its strategic implications, Aegis system capabilities and demonstrated performance, rules of engagement and legal frameworks, force structure and staffing requirements, and total cost of ownership and lifecycle planning. The program includes a live demonstration of Aegis capabilities and a question-and-answer session with Aegis operational leadership. Ideal for procurement decision-makers, military leadership, and government stakeholders evaluating counter-UAS programs. No prerequisites. Available on-site at customer locations worldwide.",
           },
         ]}
       />
 
-      {/* ── TRAINING FACILITY ── */}
-      <SplitSection
-        image="/images/pages/lab-research.jpg"
-        label="Facilities"
-        title="State-of-the-Art Training Centers"
-        description="Aegis operates dedicated training centers at our headquarters in Arlington, Virginia and at our European office in Farnborough, United Kingdom. Each facility features multiple classrooms equipped with Aegis operator workstations, a high-fidelity tactical simulator suite capable of reproducing complex multi-threat scenarios, a live-fire range for UAS engagement demonstrations, and secure briefing rooms for classified course content. Our training centers also house the Aegis Threat Library, a curated collection of over 800 UAS threat profiles with associated RF signatures, flight characteristics, and neutralization parameters — the most comprehensive counter-UAS reference database in the industry. Students have access to the library throughout their course, building the threat knowledge that is essential for effective operational employment."
-        cta="Schedule a Visit"
-        ctaHref="/request-demo"
-        stats={[
-          { value: "2", label: "Training Centers" },
-          { value: "800+", label: "Threat Profiles" },
-        ]}
-      />
+      {/* ── FACILITIES ── */}
+      <section className="py-20 md:py-32 bg-black border-t border-white/10">
+        <div className="max-w-[80rem] mx-auto px-6 md:px-12 lg:px-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Arlington */}
+            <div className="border border-white/10 bg-[#0a0a0a] p-8">
+              <span className="text-[9px] uppercase tracking-[0.15em] text-white/40 border border-white/10 px-3 py-1 inline-block mb-6">
+                Americas
+              </span>
+              <h3 className="text-2xl font-bold text-white mb-4">
+                Arlington, Virginia
+              </h3>
+              <p className="text-[#b9b9b9] text-sm leading-relaxed mb-6">
+                Our flagship training center features multiple classrooms with Aegis operator workstations, a high-fidelity tactical simulator suite, a live-fire range for UAS engagement demonstrations, and secure briefing rooms for classified course content. Houses the Aegis Threat Library with over 800 curated threat profiles.
+              </p>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <div className="text-2xl font-bold text-white">6</div>
+                  <div className="text-[10px] uppercase tracking-[0.12em] text-[#767676] mt-1">Classrooms</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-white">12</div>
+                  <div className="text-[10px] uppercase tracking-[0.12em] text-[#767676] mt-1">Simulator Stations</div>
+                </div>
+              </div>
+            </div>
 
-      {/* ── CERTIFICATION CARDS ── */}
-      <CardGrid
-        label="Certifications"
-        title="Qualification & Certification"
-        cards={[
-          {
-            title: "Aegis Operator Qualification",
-            description:
-              "Awarded upon successful completion of the Operator Basic Course, this qualification certifies that the holder is proficient in all standard Aegis operator tasks and is authorized for unsupervised operation of Aegis systems. Qualification is valid for two years and requires requalification through the Operator Recertification Course, which covers new capabilities introduced since initial qualification and validates continued proficiency through scenario-based assessments.",
-            tag: "Operators",
-          },
-          {
-            title: "Aegis Advanced Operator",
-            description:
-              "Awarded upon successful completion of the Operator Advanced Course, this certification recognizes proficiency in complex operational scenarios including swarm engagement, degraded mode operations, and joint force coordination. Advanced Operator status is a prerequisite for team leader and shift supervisor positions in Aegis operations centers. The certification demonstrates the ability to manage high-tempo, multi-threat environments with minimal supervision.",
-            tag: "Advanced",
-          },
-          {
-            title: "Aegis System Administrator",
-            description:
-              "Awarded upon successful completion of the System Administrator Course, this certification authorizes the holder to perform all first-line and second-line maintenance tasks on Aegis hardware and software. Certified administrators can install and commission new systems, manage user accounts and access controls, configure sensor integrations, and perform software updates and system recovery procedures. The certification is valid for three years with continuing education requirements.",
-            tag: "Administrators",
-          },
-          {
-            title: "Aegis Certified Instructor",
-            description:
-              "Awarded upon successful completion of the Train-the-Trainer Course, this certification authorizes the holder to deliver Aegis Operator Basic Course instruction within their organization. Certified instructors receive ongoing access to updated training materials, new scenario packages, and direct support from the Aegis training development team. Instructor certification requires annual recertification through a virtual review of instructional delivery and curriculum knowledge.",
-            tag: "Instructors",
-          },
-        ]}
-      />
-
-      {/* ── FAQ ── */}
-      <FAQSection
-        label="Training FAQ"
-        title="Frequently Asked Questions"
-        items={[
-          {
-            question: "What are the prerequisites for Aegis training courses?",
-            answer:
-              "The Operator Basic Course has no prerequisites beyond a valid security clearance appropriate to the customer's deployment environment. Advanced courses require completion of prerequisite courses as specified in the course catalog. All students must complete a pre-course self-study module (approximately 4 hours) that covers basic Aegis architecture and terminology. Students who have not completed the pre-course module may be denied admission to the course.",
-          },
-          {
-            question: "Can training be conducted at our facility instead of Aegis training centers?",
-            answer:
-              "Yes. Aegis offers mobile training teams that can deliver all courses at customer facilities worldwide. Mobile training requires a suitable classroom environment with network connectivity, projector, and sufficient space for operator workstations. For live-fire demonstrations, a suitable outdoor range with appropriate airspace clearances is required. Our training logistics team will work with your facility managers to ensure that all requirements are met before the training team arrives.",
-          },
-          {
-            question: "How often do operators need to recertify?",
-            answer:
-              "Aegis Operator Qualification is valid for two years. Recertification requires completion of a two-day Operator Recertification Course that covers new capabilities, validates continued proficiency through scenario-based assessments, and addresses any procedural changes since initial qualification. Operators who do not recertify within the validity period must complete the full Operator Basic Course to regain qualification.",
-          },
-          {
-            question: "Are training courses available in languages other than English?",
-            answer:
-              "Select Aegis training courses are available in French, German, Japanese, and Arabic. Translated courses are delivered by native-speaking instructors who are also qualified Aegis operators. For languages not currently supported, we offer simultaneous interpretation services at an additional cost. We are continuously expanding our multilingual training capacity based on customer demand.",
-          },
-          {
-            question: "What is the instructor-to-student ratio for training courses?",
-            answer:
-              "Aegis maintains a maximum 1:6 instructor-to-student ratio for all operator courses and a 1:4 ratio for simulator-based practical exercises. This ensures that every student receives adequate individual attention and hands-on time with the system. For the System Administrator Course, the ratio is 1:4 for hands-on lab exercises. These ratios are based on military training best practices and have been validated through nine years of training delivery.",
-          },
-        ]}
-      />
+            {/* On-Site */}
+            <div className="border border-white/10 bg-[#0a0a0a] p-8">
+              <span className="text-[9px] uppercase tracking-[0.15em] text-white/40 border border-white/10 px-3 py-1 inline-block mb-6">
+                Global
+              </span>
+              <h3 className="text-2xl font-bold text-white mb-4">
+                Mobile Training Teams
+              </h3>
+              <p className="text-[#b9b9b9] text-sm leading-relaxed mb-6">
+                All courses are available at customer facilities worldwide. Mobile training requires a suitable classroom environment with network connectivity, projector, and space for operator workstations. For live-fire demonstrations, a suitable outdoor range with appropriate airspace clearances is required.
+              </p>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <div className="text-2xl font-bold text-white">50+</div>
+                  <div className="text-[10px] uppercase tracking-[0.12em] text-[#767676] mt-1">Countries Supported</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-white">1:6</div>
+                  <div className="text-[10px] uppercase tracking-[0.12em] text-[#767676] mt-1">Instructor Ratio</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ── CTA ── */}
       <CTASection

@@ -2,14 +2,11 @@
 
 import {
   SectionHero,
-  TextSection,
-  CardGrid,
-  FeatureList,
   SplitSection,
+  StatsSection,
   FAQSection,
   CTASection,
   AnimatedLine,
-  StatsSection,
 } from "@/components/sections";
 
 export default function FacilitiesPage() {
@@ -29,120 +26,77 @@ export default function FacilitiesPage() {
 
       <AnimatedLine />
 
-      {/* ── OVERVIEW ── */}
-      <TextSection label="Overview" title="Where We Work">
-        <p>
-          Aegis Defense Systems operates a global network of offices, research laboratories, manufacturing facilities, and training centers designed to provide responsive support to our customers wherever they are deployed. Our facility strategy is driven by a simple principle: we should be close enough to our customers to understand their operational environment and respond quickly to their needs, while maintaining the centralized engineering and manufacturing excellence that ensures every Aegis system meets our exacting quality standards.
-        </p>
-        <p>
-          Each facility serves a strategic purpose within our global operations. Our Arlington headquarters houses executive leadership, core engineering, and the primary R&D laboratory. Our London office leads European and NATO business development and compliance. Our Tel Aviv research center leverages Israel's world-class defense technology ecosystem for advanced signal processing and EW research. Our Singapore office serves as the hub for Asia-Pacific operations, with particular focus on naval and maritime counter-UAS solutions. And our Abu Dhabi office supports our growing presence in the Middle East, where counter-UAS demand continues to accelerate.
-        </p>
-        <p>
-          Beyond our own facilities, Aegis maintains forward-deployed engineering teams at customer sites worldwide, embedded in operational units where they provide real-time technical support and gather the operational feedback that drives product improvement. These embedded teams represent our deepest commitment to customer success — when you buy an Aegis system, you are not just buying a product, you are gaining a partner who will be there for the long haul.
-        </p>
-      </TextSection>
-
       {/* ── FACILITY STATS ── */}
       <StatsSection
         label="Global Footprint"
         stats={[
-          { value: "5", label: "Office Locations" },
-          { value: "3", label: "Research Labs" },
-          { value: "2", label: "Manufacturing Sites" },
-          { value: "2", label: "Training Centers" },
+          { value: "4", label: "Facility Locations" },
+          { value: "270K+", label: "Square Feet Total" },
           { value: "800+", label: "Employees Worldwide" },
+          { value: "TS/SCI", label: "Highest Clearance" },
+          { value: "24/7", label: "Operations Center" },
         ]}
       />
 
-      {/* ── HEADQUARTERS ── */}
+      {/* ── 1. ARLINGTON HEADQUARTERS ── */}
       <SplitSection
         image="/images/pages/dc-capitol.jpg"
         label="Headquarters"
-        title="Arlington, Virginia"
-        description="Aegis headquarters in Arlington, Virginia — just minutes from the Pentagon and Capitol Hill — serves as the nerve center of our global operations. The 120,000 square foot facility houses executive leadership, systems engineering, software development, the primary R&D laboratory, program management, and our 24/7 global support operations center. The Arlington campus includes a secure facility cleared to Top Secret/SCI, enabling us to handle the most sensitive customer requirements and classified program work. Our proximity to the U.S. defense establishment ensures that Aegis leadership maintains constant awareness of evolving requirements and policy directions that shape our product roadmap and investment decisions."
+        title="Arlington Headquarters"
+        description="Aegis headquarters in Arlington, Virginia — just minutes from the Pentagon and Capitol Hill — serves as the nerve center of our global operations. The 85,000 square foot SCIF-accredited facility is cleared to Top Secret/SCI, enabling us to handle the most sensitive customer requirements and classified program work. The building houses executive leadership, program management for all U.S. government contracts, core R&D laboratories, and our 24/7 global support operations center — a continuously staffed facility where trained operators monitor deployed Aegis systems worldwide, coordinate rapid response to technical issues, and provide real-time threat intelligence updates to customers. Our proximity to the U.S. defense establishment ensures that Aegis leadership maintains constant awareness of evolving requirements and policy directions that shape our product roadmap and investment decisions. The Arlington campus also includes a dedicated customer briefing center with secure video teleconferencing, a product demonstration suite, and the primary manufacturing line for Aegis Core and Aegis Shield systems."
         cta="Schedule a Visit"
         ctaHref="/request-demo"
         stats={[
-          { value: "120K", label: "Square Feet" },
-          { value: "450", label: "Employees" },
+          { value: "85K", label: "Square Feet" },
+          { value: "TS/SCI", label: "Facility Clearance" },
+          { value: "450", label: "Personnel" },
         ]}
       />
 
-      {/* ── FACILITY LOCATIONS ── */}
-      <CardGrid
-        label="Locations"
-        title="Our Global Offices"
-        cards={[
-          {
-            title: "Arlington, Virginia — Headquarters",
-            description:
-              "Our global headquarters and primary engineering center. The Arlington campus houses executive leadership, core systems engineering, software development, the primary R&D laboratory with anechoic chamber and directed energy test range, program management for all U.S. government contracts, and the 24/7 global support operations center. The facility is cleared to Top Secret/SCI and includes a SCIF for classified customer engagements. Arlington also hosts our primary manufacturing line for Aegis Core and Aegis Shield systems, with a production capacity of 200 systems per year.",
-            image: "/images/pages/dc-capitol.jpg",
-            tag: "Headquarters",
-          },
-          {
-            title: "London, United Kingdom",
-            description:
-              "Our European headquarters in London's West End leads business development, customer support, and compliance for all European and NATO customers. The London team includes regional sales engineers, a dedicated NATO compliance group, and a small advanced engineering team focused on European-specific integration requirements. The London office also manages our relationships with UK Ministry of Defence, German Bundeswehr, and other European defense ministries. The facility includes secure briefing rooms and a demonstration suite where European customers can evaluate Aegis capabilities in a controlled environment.",
-            image: "/images/pages/london-skyline.jpg",
-            tag: "Europe",
-          },
-          {
-            title: "Tel Aviv, Israel",
-            description:
-              "Our Tel Aviv Advanced Research Center focuses on signal processing, electronic warfare, and RF sensing research, leveraging Israel's world-leading defense technology ecosystem. The center employs 25 research engineers drawn from elite Israeli defense technology units and maintains close relationships with Israeli defense companies and academic institutions. The Tel Aviv center also operates our Middle East field test facility, which provides access to operational environments and threat profiles unique to the region. Research output from Tel Aviv has contributed to 8 of our 32 patents and has directly enhanced the RF detection and EW capabilities of the Aegis platform.",
-            image: "/images/pages/defense-antenna.jpg",
-            tag: "Research",
-          },
-          {
-            title: "Singapore",
-            description:
-              "Our Singapore office serves as the hub for Asia-Pacific operations, with particular focus on naval and maritime counter-UAS solutions. The Singapore team includes regional sales and support engineers, a naval systems integration group, and a small manufacturing cell that produces Asia-specific system configurations. Singapore's strategic location provides rapid response capability for customers across the Indo-Pacific theater, with same-day engineering support available for customers in Japan, Australia, South Korea, and Southeast Asian nations. The office also coordinates our participation in regional defense exhibitions and exercises.",
-            image: "/images/pages/singapore-marina.jpg",
-            tag: "Asia-Pacific",
-          },
-          {
-            title: "Abu Dhabi, United Arab Emirates",
-            description:
-              "Our Abu Dhabi office supports our growing presence in the Middle East, where counter-UAS demand continues to accelerate driven by the region's unique threat environment. The Abu Dhabi team provides sales, customer support, and training services for customers across the Gulf Cooperation Council nations and the broader Middle East. The office includes a regional training center that delivers Aegis operator and system administrator courses, reducing the travel burden for Middle Eastern customers who previously traveled to Arlington or Farnborough for training. The facility also hosts a permanent demonstration system for customer evaluations and regional defense exhibitions.",
-            image: "/images/pages/abu-dhabi-skyline.jpg",
-            tag: "Middle East",
-          },
-        ]}
-      />
-
-      {/* ── MANUFACTURING ── */}
-      <FeatureList
-        label="Manufacturing"
-        title="Production & Quality Assurance"
-        items={[
-          {
-            title: "Arlington Production Line",
-            description:
-              "Our primary manufacturing facility in Arlington produces Aegis Core, Aegis Shield, and Aegis Command systems with a combined capacity of 200 systems per year. The production line operates under ISO 9001:2015 quality management and AS9100D aerospace quality standards, with full traceability from component procurement through final acceptance testing. Every system undergoes a 72-hour burn-in test, a full environmental stress screening, and a comprehensive functional acceptance test before shipment. Production is organized in a lean manufacturing cell layout that enables rapid reconfiguration for different product variants and maintains an average production cycle time of 28 days from order to shipment.",
-            tag: "Primary",
-          },
-          {
-            title: "Farnborough Integration Center",
-            description:
-              "Our Farnborough, UK facility serves as the European integration and test center, where Aegis systems destined for European and NATO customers undergo final configuration, integration testing with European-specific sensor and C2 systems, and STANAG compliance validation before deployment. The integration center includes a NATO-standard network test bed, a multi-sensor integration suite, and a dedicated space for STANAG 4671 certification testing. European-configured systems are manufactured in Arlington and shipped to Farnborough for regional customization and acceptance, ensuring that every system meets both Aegis quality standards and European customer requirements.",
-            tag: "Europe",
-          },
-        ]}
-      />
-
-      {/* ── TRAINING CENTERS ── */}
+      {/* ── 2. AEGIS ADVANCED ENGINEERING CENTER ── */}
       <SplitSection
-        image="/images/support/training.jpg"
-        label="Training"
-        title="Dedicated Training Centers"
-        description="Aegis operates dedicated training centers at our Arlington headquarters and our Farnborough, UK facility. Each center features multiple classrooms with Aegis operator workstations, a high-fidelity tactical simulator suite, and secure briefing rooms for classified course content. The Arlington training center includes a live-fire range for UAS engagement demonstrations — one of the few facilities in the United States authorized for counter-UAS live-fire training with real drone targets. Both centers offer the full Aegis training curriculum, from basic operator qualification through advanced threat analysis and system administration. Combined, the two centers train over 300 operators annually, with capacity to scale during surge periods."
-        cta="Explore Training Programs"
-        ctaHref="/support/training"
+        image="/images/pages/defense-antenna.jpg"
+        label="Engineering"
+        title="Aegis Advanced Engineering Center"
+        description="Located in Sterling, Virginia, the Aegis Advanced Engineering Center is our primary test and evaluation facility — a 120,000 square foot complex purpose-built for the rigorous development and validation of counter-UAS hardware and software. The center houses a dedicated radar test range capable of simulating operational detection scenarios against live and simulated UAS targets at ranges up to 15 kilometers. The RF anechoic chamber — one of the largest in the Mid-Atlantic region — enables controlled electromagnetic testing of sensor arrays, antenna systems, and electronic warfare modules in a precisely calibrated environment free from external interference. The directed energy test bay supports integration and validation of high-power microwave and laser-based neutralization systems under controlled conditions. Environmental test chambers subject Aegis hardware to the full spectrum of MIL-STD-810 conditions — including extreme temperature cycling (−51°C to +71°C), altitude simulation up to 40,000 feet, humidity, salt fog, sand and dust, vibration, and shock — ensuring that every system can survive and perform in the harshest operational environments."
+        cta="Learn About Our Testing"
+        ctaHref="/about/quality"
         reverse
         stats={[
-          { value: "300+", label: "Operators Trained Annually" },
-          { value: "2", label: "Training Centers" },
+          { value: "120K", label: "Square Feet" },
+          { value: "15km", label: "Radar Test Range" },
+          { value: "MIL-STD-810", label: "Environmental Testing" },
+        ]}
+      />
+
+      {/* ── 3. LONDON OFFICE ── */}
+      <SplitSection
+        image="/images/pages/london-skyline.jpg"
+        label="EMEA"
+        title="London Office"
+        description="Our London office serves as the EMEA regional headquarters, leading business development, customer support, and compliance for all European and NATO customers. The 25,000 square foot facility in London's West End houses the NATO liaison team — a dedicated group responsible for ensuring Aegis systems meet all STANAG interoperability requirements and can be seamlessly integrated into allied command and control architectures. The London team includes regional sales engineers, a NATO compliance group, and an advanced engineering unit focused on European-specific integration requirements, including STANAG 4671 certification testing and European frequency coordination. The facility includes secure briefing rooms and a demonstration suite where European customers can evaluate Aegis capabilities in a controlled environment. The London office also manages our relationships with the UK Ministry of Defence, German Bundeswehr, French DGA, and other European defense ministries — providing the local presence and cultural understanding that are essential for successful international defense partnerships."
+        cta="Contact EMEA Office"
+        ctaHref="/contact"
+        stats={[
+          { value: "25K", label: "Square Feet" },
+          { value: "NATO", label: "Liaison Team" },
+          { value: "65", label: "Personnel" },
+        ]}
+      />
+
+      {/* ── 4. AEGIS INNOVATION LAB ── */}
+      <SplitSection
+        image="/images/pages/singapore-marina.jpg"
+        label="Research"
+        title="Aegis Innovation Lab"
+        description="The Aegis Innovation Lab in Tel Aviv is our primary AI/ML research and signal processing R&D center — a 40,000 square foot facility that leverages Israel's world-leading defense technology ecosystem and unmatched operational experience with counter-UAS systems. The lab employs research engineers drawn from elite Israeli defense technology units — including Talpiot, Unit 8200, and the Technion — and maintains close partnerships with Israeli defense companies, academic institutions, and the Israeli Ministry of Defense. The Innovation Lab focuses on three core research areas: next-generation AI and machine learning algorithms for real-time threat classification and autonomous engagement authorization; advanced signal processing techniques for RF detection, direction finding, and emitter characterization in dense electromagnetic environments; and startup partnerships — a structured program that provides Aegis with early access to emerging Israeli defense technologies through equity investments and technology collaboration agreements. Research output from Tel Aviv has contributed to 8 of our 32 patents and has directly enhanced the RF detection and EW capabilities of the Aegis platform."
+        cta="Explore Our R&D"
+        ctaHref="/about/research-development"
+        reverse
+        stats={[
+          { value: "40K", label: "Square Feet" },
+          { value: "8", label: "Patents Contributed" },
+          { value: "35", label: "Research Engineers" },
         ]}
       />
 
@@ -154,12 +108,12 @@ export default function FacilitiesPage() {
           {
             question: "Can customers visit Aegis facilities?",
             answer:
-              "Yes. Aegis welcomes customer visits to all of our facilities. Arlington headquarters tours include the R&D laboratory, manufacturing floor, and training center. International office visits can be arranged through your regional Aegis representative. All visits require advance scheduling and, for classified facilities, appropriate security clearance verification. We recommend scheduling visits at least two weeks in advance to ensure availability of the appropriate personnel and facilities.",
+              "Yes. Aegis welcomes customer visits to all of our facilities. Arlington headquarters tours include the R&D laboratory, manufacturing floor, and 24/7 operations center. The Sterling Engineering Center offers guided tours of the radar test range, anechoic chamber, and environmental test facilities. International office visits can be arranged through your regional Aegis representative. All visits require advance scheduling and, for classified facilities, appropriate security clearance verification. We recommend scheduling visits at least two weeks in advance.",
           },
           {
             question: "Does Aegis plan to open additional offices?",
             answer:
-              "Yes. Aegis is actively evaluating expansion into additional locations based on customer demand and regional threat environments. Current plans include a dedicated office in Tokyo, Japan to serve the growing Japanese defense market, and a regional support center in Canberra, Australia to support Australian Defence Force requirements. Expansion timelines are driven by customer commitments and regional regulatory requirements.",
+              "Yes. Aegis is actively evaluating expansion into additional locations based on customer demand and regional threat environments. Current plans include a dedicated office in Tokyo, Japan to serve the growing Japanese defense market, and a regional support center in Canberra, Australia to support Australian Defence Force requirements. We are also evaluating a Pacific test range facility in partnership with allied governments.",
           },
           {
             question: "How does Aegis ensure consistent quality across global facilities?",
@@ -169,12 +123,12 @@ export default function FacilitiesPage() {
           {
             question: "Are Aegis facilities secure enough for classified work?",
             answer:
-              "Our Arlington headquarters includes a certified SCIF (Sensitive Compartmented Information Facility) cleared to Top Secret/SCI, enabling classified program work and customer engagements at the highest security levels. International offices are equipped with secure facilities appropriate to their regional requirements and customer base. All facilities comply with NIST SP 800-53 security controls and are subject to regular security assessments by independent auditors.",
+              "Our Arlington headquarters includes a certified SCIF (Sensitive Compartmented Information Facility) cleared to Top Secret/SCI, enabling classified program work and customer engagements at the highest security levels. The Sterling Engineering Center also maintains TS/SCI facility clearance for classified test and evaluation programs. International offices are equipped with secure facilities appropriate to their regional requirements. All facilities comply with NIST SP 800-53 security controls.",
           },
           {
-            question: "How does Aegis handle logistics and shipping from global facilities?",
+            question: "What testing capabilities are available at the Sterling Engineering Center?",
             answer:
-              "Aegis maintains strategic spare parts inventories at distribution centers in the United States, United Kingdom, United Arab Emirates, and Singapore, ensuring that replacement components are available for rapid shipment worldwide. Our logistics team provides end-to-end supply chain management including customs clearance, ITAR compliance verification, and proactive inventory replenishment. Standard parts shipments are delivered within 72 hours for most locations; critical components can be expedited within 24 hours under Enhanced and Premium Support agreements.",
+              "The Sterling center offers a comprehensive suite of test capabilities: a 15km radar test range for live detection and tracking exercises, a large RF anechoic chamber for controlled electromagnetic testing, a directed energy test bay for HPM and laser integration, and environmental test chambers covering all 29 categories of MIL-STD-810H — including extreme temperature, altitude, humidity, salt fog, sand/dust, vibration, and shock. These facilities are available for customer-directed testing and witnessed acceptance events.",
           },
         ]}
       />

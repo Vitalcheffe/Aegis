@@ -2,11 +2,116 @@
 
 import {
   SectionHero,
-  FeatureList,
   CTASection,
   TextSection,
   StatsSection,
 } from "@/components/sections";
+
+/* ─── Webinar data type ─── */
+interface Webinar {
+  title: string;
+  speaker: string;
+  date: string;
+  duration: string;
+  description: string;
+}
+
+const webinars: Webinar[] = [
+  {
+    title: "The Future of Counter-UAS: 2026 Threat Landscape",
+    speaker: "Dr. Marcus Chen",
+    date: "March 2026",
+    duration: "45 min",
+    description:
+      "Our annual threat landscape analysis examining the evolution of commercial and military drone capabilities projected for 2026 and beyond. Dr. Chen presents findings from the Aegis Threat Intelligence division, covering AI-autonomous navigation systems, swarm coordination protocols, and counter-C-UAS evasion techniques observed in recent conflicts. The session includes updated threat projections and recommended Aegis configuration changes for emerging threat vectors.",
+  },
+  {
+    title: "Sensor Fusion Deep Dive: How Aegis Achieves 99.4% Classification",
+    speaker: "Dr. Elena Vasquez",
+    date: "February 2026",
+    duration: "60 min",
+    description:
+      "A technical examination of the multi-modal sensor fusion pipeline that powers Aegis classification accuracy. Dr. Vasquez explains the Iterated Multi-Model Unscented Kalman Filter at the core of the Fusion Layer, demonstrating how combining radar, RF, EO/IR, and acoustic observations produces classification results that exceed any single sensor modality. Includes live performance comparison data and a walkthrough of the confidence scoring algorithm.",
+  },
+  {
+    title: "Deploying Aegis at Airports: Lessons from 24 Months of Operation",
+    speaker: "Michael Torres",
+    date: "January 2026",
+    duration: "45 min",
+    description:
+      "Field operations manager Michael Torres shares operational data and lessons learned from continuous Aegis deployment at three international airports over 24 months. Covers false alarm management in complex RF environments, coordination with air traffic control, regulatory compliance across jurisdictions, and the graduated response protocol that has neutralized over 40 confirmed drone incursions without a single unnecessary flight disruption.",
+  },
+  {
+    title: "NATO Interoperability: STANAG 4671 in Practice",
+    speaker: "Col. James Harper",
+    date: "December 2025",
+    duration: "30 min",
+    description:
+      "Colonel James Harper (Ret.), VP of NATO Programs, presents a practical guide to achieving STANAG 4671 interoperability with Aegis systems. The session covers the message catalogue, track data exchange procedures, system-to-system handover protocols, and results from the most recent NATO interoperability exercise where Aegis demonstrated seamless integration with four allied C2 platforms simultaneously.",
+  },
+  {
+    title: "Directed Energy Counter-UAS: Capabilities and Timeline",
+    speaker: "Dr. Elena Vasquez",
+    date: "November 2025",
+    duration: "45 min",
+    description:
+      "Dr. Vasquez presents the current state and projected timeline for directed energy counter-UAS capabilities integrated with the Aegis platform. Covers high-power microwave systems, laser weapon integration, and the engineering challenges of combining kinetic and non-kinetic effectors in a unified engagement framework. Includes performance data from Aegis-directed energy integration testing and a technology readiness assessment for operational deployment.",
+  },
+  {
+    title: "Swarm Defense: Aegis Swarm Resolution Algorithm Explained",
+    speaker: "Dr. Elena Vasquez",
+    date: "October 2025",
+    duration: "60 min",
+    description:
+      "A deep technical session on the Aegis Swarm Resolution Algorithm — the AI-driven system that enables simultaneous engagement of coordinated multi-platform drone attacks. Dr. Vasquez explains the threat clustering engine, priority assignment logic, effector allocation optimization, and the real-time adaptation mechanisms that allow the algorithm to respond to swarm behavior changes mid-engagement. Includes a replay of a 30-platform simulated swarm attack with algorithm decision analysis.",
+  },
+];
+
+/* ─── Webinar Card Component ─── */
+function WebinarCard({ webinar, index }: { webinar: Webinar; index: number }) {
+  return (
+    <div className="border-t border-white/10 py-10 md:py-14 group">
+      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6 md:gap-12">
+        {/* Left: Title + Meta */}
+        <div className="md:flex-1">
+          <div className="flex items-center gap-3 mb-3">
+            <span className="text-[10px] uppercase tracking-[0.15em] text-white/30 font-mono">
+              {String(index + 1).padStart(2, "0")}
+            </span>
+            <span className="text-[9px] uppercase tracking-[0.15em] text-white/40 border border-white/10 px-3 py-1">
+              {webinar.duration}
+            </span>
+          </div>
+          <h3 className="text-[clamp(1.3rem,3vw,2.2rem)] font-bold tracking-[-0.02em] text-white leading-snug">
+            {webinar.title}
+          </h3>
+          <div className="mt-3 text-[11px] uppercase tracking-[0.12em] text-[#767676] flex items-center gap-3">
+            <span>{webinar.speaker}</span>
+            <span className="text-white/20">·</span>
+            <span>{webinar.date}</span>
+          </div>
+        </div>
+
+        {/* Right: Description + CTA */}
+        <div className="md:flex-1 md:pt-8">
+          <p className="text-[#b9b9b9] text-sm md:text-base leading-relaxed mb-6">
+            {webinar.description}
+          </p>
+          <a
+            href="/request-demo"
+            className="inline-block text-[10px] uppercase tracking-[0.15em] text-white border border-white/30 px-5 py-2.5 hover:bg-white hover:text-black transition-all duration-300"
+          >
+            Register for Recording
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════
+   PAGE
+   ════════════════════════════════════════════════════════════════ */
 
 export default function WebinarsPage() {
   return (
@@ -24,93 +129,45 @@ export default function WebinarsPage() {
 
       <TextSection label="Overview" title="Learn from the Experts">
         <p>
-          Aegis webinars bring the expertise of our engineering leadership and field operations teams directly to your desk. Each session is designed for defense professionals, system integrators, and procurement decision-makers who need authoritative, detailed information about counter-UAS technology and operations without the time and expense of travel. Our presenters are the same engineers who design our systems and the same operators who deploy them, ensuring that every webinar delivers actionable technical insight rather than marketing generalities.
+          Aegis webinars bring the expertise of our engineering leadership and field operations teams directly to your desk. Each session is designed for defense professionals, system integrators, and procurement decision-makers who need authoritative, detailed information about counter-UAS technology and operations without the time and expense of travel.
         </p>
         <p>
-          Our webinar program runs on a monthly cadence with two session formats. Technical Deep Dives are 90-minute sessions that examine a specific technology area in comprehensive detail, including live system demonstrations and extended Q&A. Strategic Briefings are 60-minute sessions that address broader topics such as threat landscape evolution, regulatory changes, and operational doctrine, featuring panel discussions with external experts from allied defense organizations and government agencies. All sessions are recorded and made available in our on-demand library within 48 hours of the live event.
+          All sessions are recorded and made available in our on-demand library within 48 hours of the live event. Access to recordings requires registration — there is no cost for qualified defense professionals.
         </p>
       </TextSection>
 
       <StatsSection
         label="Program Overview"
         stats={[
-          { value: "6", label: "Upcoming Sessions" },
+          { value: "6", label: "Recent Sessions" },
           { value: "24+", label: "On-Demand Recordings" },
           { value: "3,200+", label: "Attendees YTD" },
           { value: "94%", label: "Satisfaction Rating" },
         ]}
       />
 
-      <FeatureList
-        label="Upcoming"
-        title="Live Webinars"
-        items={[
-          {
-            title: "2025 Swarm Threat Evolution",
-            tag: "March 18, 2025",
-            description:
-              "Our annual swarm threat update, presented by Dr. Elena Vasquez, Director of Threat Intelligence. This session covers the latest observed swarm tactics from conflict zones, the emergence of AI-coordinated decentralized swarm architectures, and new Aegis countermeasures optimized for heterogenous swarm engagement. Includes live demonstration of the updated Swarm Resolution Algorithm against a 30-platform simulated attack. Attendees will receive an advance copy of the 2025 Swarm Tactics white paper before public release. Open to cleared defense professionals only — ITAR compliance verification required.",
-            href: "/request-demo",
-          },
-          {
-            title: "Electronic Warfare in the C-UAS Fight",
-            tag: "April 15, 2025",
-            description:
-              "A technical deep dive into the electronic warfare dimension of counter-UAS operations, presented by Colonel (Ret.) James Hartwell, VP of EW Programs. The session covers precision jamming techniques that disable drone control links without affecting friendly communications, GPS spoofing methodologies for redirecting threats to safe zones, and the emerging challenge of frequency-agile drones that hop across hundreds of channels per second. Includes classified performance data from recent operational deployments and a preview of the Aegis cognitive EW module scheduled for Q3 2025 release.",
-            href: "/request-demo",
-          },
-          {
-            title: "Airport C-UAS: Navigating Regulatory Complexity",
-            tag: "May 20, 2025",
-            description:
-              "A strategic briefing on the regulatory landscape governing counter-UAS operations in civilian airspace, presented by Aegis Legal Counsel and representatives from the FAA and EASA. The session covers the latest FAA Section 333 exemption requirements, EASA Special Condition updates for C-UAS equipment, spectrum allocation for jamming operations, and the legal framework for drone interdiction across 12 jurisdictions. Features case studies from four international airports currently operating Aegis systems and a panel discussion with airport security directors on lessons learned from 24 months of operational deployment.",
-            href: "/request-demo",
-          },
-        ]}
-      />
+      {/* ── Webinar List ── */}
+      <section className="py-20 md:py-32 bg-black">
+        <div className="max-w-[80rem] mx-auto px-6 md:px-12 lg:px-20">
+          <div className="mb-16">
+            <span className="text-[10px] uppercase tracking-[0.2em] text-white/40 block mb-4">
+              Recordings
+            </span>
+            <h2 className="text-[clamp(2.5rem,6vw,5rem)] font-bold tracking-[-0.04em] leading-[0.95] text-white">
+              Recent Webinars
+            </h2>
+          </div>
 
-      <FeatureList
-        label="On-Demand"
-        title="Recorded Sessions"
-        items={[
-          {
-            title: "Introduction to the Aegis Architecture",
-            tag: "Recorded",
-            description:
-              "The foundational overview of the five-layer Aegis Architecture — Sensor, Fusion, AI, Decision, and Action. This session covers the design philosophy behind each layer, the inter-layer data flows and timing requirements, and how the architecture achieves sub-20-millisecond kill chain closure from first sensor contact to engagement authorization. Recommended as the starting point for all new evaluators and integration teams. Includes 30 minutes of Q&A from the live session covering common integration questions and deployment scenarios.",
-            href: "/request-demo",
-          },
-          {
-            title: "RF Sensing Technology: Beyond Detection",
-            tag: "Recorded",
-            description:
-              "Dr. Sarah Chen explains how modern RF sensing goes far beyond simple signal detection to provide threat identification, intent assessment, and forensic evidence collection. The session covers direction-finding array geometry, signal processing pipelines for extracting drone control protocols, and the emerging challenge of encrypted and frequency-hopping control links. Includes performance data from the latest Aegis RF array showing 50+ km detection range and 99.7% protocol identification accuracy against a library of 8,400 known drone communication signatures.",
-            href: "/request-demo",
-          },
-          {
-            title: "Edge Computing for Defense: Why It Matters",
-            tag: "Recorded",
-            description:
-              "Markus Weber, VP of AI Engineering, makes the case for edge-first architecture in defense systems. The session explains why relying on cloud connectivity is unacceptable for mission-critical applications, how Aegis delivers 175 TOPS of AI inference in a deployable 800-watt package, and the engineering decisions that enable full autonomous operation when network connectivity is denied. Includes thermal and vibration testing footage from our environmental qualification program and a comparison of edge vs. cloud processing latency for the Aegis classification pipeline.",
-            href: "/request-demo",
-          },
-          {
-            title: "Critical Infrastructure Protection: Lessons from the Field",
-            tag: "Recorded",
-            description:
-              "A panel discussion featuring Aegis field operations managers from three critical infrastructure deployments — a nuclear power station, a major seaport, and a government data center campus. The panel shares lessons learned from 18 months of continuous operation, covering false alarm management in cluttered environments, coordination with existing security infrastructure, regulatory compliance across different jurisdictions, and the operational procedures that maintain 99.97% system uptime. Includes anonymized engagement logs and statistical analysis of threat patterns observed at each site.",
-            href: "/request-demo",
-          },
-          {
-            title: "Sensor Fusion: Making Sense of Multi-Modal Data",
-            tag: "Recorded",
-            description:
-              "A technical session on the mathematical foundations and practical implementation of multi-modal sensor fusion for counter-UAS. The presentation derives the Iterated Multi-Model Unscented Kalman Filter used in the Aegis Fusion Layer and demonstrates how combining radar, RF, EO/IR, and acoustic observations produces tracks that are more accurate and more reliable than any single sensor modality alone. Includes a live demonstration showing the performance difference between radar-only tracking and fused tracking against a low-observable drone in cluttered terrain.",
-            href: "/request-demo",
-          },
-        ]}
-      />
+          <div>
+            {webinars.map((webinar, i) => (
+              <WebinarCard key={webinar.title} webinar={webinar} index={i} />
+            ))}
+            <div className="border-t border-white/10" />
+          </div>
+        </div>
+      </section>
 
+      {/* ── CTA ── */}
       <CTASection
         title="Stay Informed"
         subtitle="Register for our webinar mailing list and receive invitations to upcoming sessions plus early access to on-demand recordings."

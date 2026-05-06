@@ -1,13 +1,143 @@
 "use client";
 
+import { motion } from "framer-motion";
 import {
   SectionHero,
   Callout,
-  TeamGrid,
   CTASection,
   AnimatedLine,
 } from "@/components/sections";
+import { ScrollReveal, StaggerChild } from "@/components/sections/scroll-reveal";
 
+/* ── Executive Data ── */
+
+interface Executive {
+  name: string;
+  role: string;
+  initials: string;
+  bio: string;
+}
+
+const ceo: Executive = {
+  name: "Dr. Marcus Chen",
+  role: "CEO & Co-Founder",
+  initials: "MC",
+  bio: "Former DARPA program manager for autonomous systems. PhD in Electrical Engineering from MIT. 20+ years in defense technology. Led the development of the first AI-driven counter-UAS classification engine. Previously founded two defense tech startups acquired by major primes. At DARPA, Dr. Chen oversaw $400M in counter-UAS research programs and authored the agency's seminal white paper on integrated air defense against unmanned systems. His doctoral research on multi-spectral sensor fusion laid the theoretical groundwork for the Aegis detection architecture. Prior to DARPA, he spent eight years at Raytheon, leading the development of the AN/TPQ-53 radar system. He has been recognized with the Secretary of Defense Medal for Outstanding Public Service and was named to the Defense News 40 Under 40 list. Dr. Chen founded Aegis Defense Systems in 2016 with a singular vision: to build the world's most intelligent counter-UAS platform — one that would detect, classify, and neutralize aerial threats faster and more reliably than any system that came before it.",
+};
+
+const executives: Executive[] = [
+  {
+    name: "Sarah Mitchell",
+    role: "President & Co-Founder",
+    initials: "SM",
+    bio: "Former Deputy Assistant Secretary of Defense for Emerging Capabilities. 15 years at the Pentagon shaping counter-UAS policy and procurement. Led the Joint Counter-UAS Office's technology assessment program. Georgetown and War College graduate. Mitchell served as the principal civilian advisor on counter-UAS strategy to two Secretaries of Defense, authored the Department's first Counter-UAS Implementation Plan, and established the technology assessment framework that now governs all U.S. military counter-drone acquisitions. Her deep understanding of the defense procurement landscape — from RDT&E budgets to FMS channels — ensures that Aegis capabilities are aligned with the most urgent operational requirements and positioned for rapid adoption across the joint force.",
+  },
+  {
+    name: "Col. James Harper (Ret.)",
+    role: "Chief Strategy Officer & Co-Founder",
+    initials: "JH",
+    bio: "28-year U.S. Army career specializing in air defense artillery. Former commander of the 10th Army Air and Missile Defense Command. Led counter-UAS operations during Operation Inherent Resolve. West Point graduate. Colonel Harper's operational experience includes command of Patriot missile batteries in Southwest Asia, where he was responsible for integrated air and missile defense of coalition forces. His final assignment was as Director of Counter-UAS Operations at U.S. Central Command, coordinating counter-drone efforts across 21 countries and overseeing the deployment of over 40 counter-UAS systems. He holds a Master of Strategic Studies from the U.S. Army War College. At Aegis, he ensures that every system meets the operational demands of warfighters in the field and shapes the company's long-term strategic direction.",
+  },
+  {
+    name: "Dr. Elena Vasquez",
+    role: "Chief Technology Officer",
+    initials: "EV",
+    bio: "Former lead researcher at MIT Lincoln Laboratory. PhD in Signal Processing from Stanford. Pioneered the Iterated Multi-Model Unscented Kalman Filter approach used in Aegis sensor fusion. 47 published papers. Holds 8 patents in multi-spectral detection and real-time threat classification. Before joining Aegis, Dr. Vasquez led the Signal Processing and Adaptive Sensing group at Lincoln Laboratory, where her work on multi-hypothesis tracking for dense UAS environments was transitioned to four major defense programs. Her research on adaptive waveform design for cognitive radar directly informs the Aegis Core's ability to dynamically optimize detection parameters in real time. She oversees all technical development at Aegis, from the Aegis Core architecture to the AI-driven v3.0 platform and directed energy integration.",
+  },
+  {
+    name: "Michael Torres",
+    role: "Chief Revenue Officer",
+    initials: "MT",
+    bio: "18 years in defense sales and business development. Previously VP of International Sales at Raytheon. Closed $2B+ in defense contracts across 30+ nations. Expert in FMS and DCS procurement channels. Fluent in English, Arabic, and French. Torres built and led Raytheon's Middle East and North Africa sales organization, growing regional revenue from $200M to $800M over four years. His expertise spans the full spectrum of defense procurement — from direct commercial sales and Foreign Military Sales to teaming agreements and offset programs. He has personally negotiated defense contracts with ministries of defense in Saudi Arabia, the UAE, Qatar, Egypt, and Jordan, and maintains active relationships with procurement officials across NATO and the Five Eyes alliance.",
+  },
+  {
+    name: "Catherine Smith",
+    role: "Chief Financial Officer",
+    initials: "CS",
+    bio: "Former VP Finance at Northrop Grumman. 20 years in defense industry finance. Led Aegis through Series A-D funding rounds totaling $800M. CPA, MBA from Wharton. Manages $2.4B valuation and path to IPO. Smith oversaw financial planning and analysis for Northrop Grumman's Mission Systems division, a $4B business unit, before joining Aegis. She has deep experience in defense industry cost accounting, government contract financing, and the unique working capital dynamics of long-cycle defense programs. Her disciplined approach to capital allocation has enabled Aegis to sustain 28% R&D investment while maintaining profitable growth — a balance that few defense startups achieve. She is currently preparing the company for a planned IPO on the NYSE.",
+  },
+];
+
+/* ── Initials Avatar ── */
+function InitialsAvatar({
+  initials,
+  size = "default",
+}: {
+  initials: string;
+  size?: "default" | "large";
+}) {
+  const sizeClasses =
+    size === "large"
+      ? "w-32 h-32 md:w-40 md:h-40 text-3xl md:text-4xl"
+      : "w-20 h-20 md:w-24 md:h-24 text-lg md:text-xl";
+
+  return (
+    <div
+      className={`${sizeClasses} border border-[#333] bg-[#111] flex items-center justify-center font-bold text-white/70 tracking-[0.05em] shrink-0`}
+    >
+      {initials}
+    </div>
+  );
+}
+
+/* ── CEO Featured Card ── */
+function CEOCard({ executive }: { executive: Executive }) {
+  return (
+    <ScrollReveal>
+      <motion.div
+        className="group border border-[#222] bg-[#0a0a0a] hover:bg-[#0f0f0f] transition-colors duration-300"
+        whileHover={{ y: -2 }}
+        transition={{ duration: 0.3 }}
+      >
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 p-8 md:p-12">
+          <InitialsAvatar initials={executive.initials} size="large" />
+          <div className="flex-1 min-w-0">
+            <span className="inline-block text-[9px] uppercase tracking-[0.15em] text-white/40 border border-white/10 px-3 py-1 mb-5">
+              Chief Executive Officer
+            </span>
+            <h3 className="text-3xl md:text-4xl font-bold text-white tracking-[-0.02em]">
+              {executive.name}
+            </h3>
+            <div className="text-[11px] uppercase tracking-[0.15em] text-white/50 mt-2 mb-6">
+              {executive.role}
+            </div>
+            <p className="text-[#b9b9b9] text-base md:text-lg leading-relaxed">
+              {executive.bio}
+            </p>
+          </div>
+        </div>
+      </motion.div>
+    </ScrollReveal>
+  );
+}
+
+/* ── Executive Card ── */
+function ExecutiveCard({ executive }: { executive: Executive }) {
+  return (
+    <StaggerChild>
+      <motion.div
+        className="group border border-[#222] bg-[#0a0a0a] hover:bg-[#0f0f0f] transition-colors duration-300 h-full"
+        whileHover={{ y: -2 }}
+        transition={{ duration: 0.3 }}
+      >
+        <div className="p-6 md:p-8">
+          <InitialsAvatar initials={executive.initials} />
+          <h3 className="text-xl md:text-2xl font-bold text-white mt-5 tracking-[-0.02em]">
+            {executive.name}
+          </h3>
+          <div className="text-[10px] uppercase tracking-[0.15em] text-white/50 mt-1.5 mb-5">
+            {executive.role}
+          </div>
+          <p className="text-[#b9b9b9] text-sm leading-relaxed">
+            {executive.bio}
+          </p>
+        </div>
+      </motion.div>
+    </StaggerChild>
+  );
+}
+
+/* ── Page ── */
 export default function LeadershipPage() {
   return (
     <>
@@ -35,49 +165,79 @@ export default function LeadershipPage() {
 
       <AnimatedLine />
 
-      {/* ── TEAM GRID ── */}
-      <TeamGrid
-        label="Executive Team"
-        title="The Leaders Behind Aegis"
-        members={[
-          {
-            name: "Dr. Marcus Chen",
-            role: "CEO & Co-Founder",
-            bio: "Dr. Marcus Chen founded Aegis Defense Systems in 2016 after a distinguished career at the Defense Advanced Research Projects Agency (DARPA), where he served as a program manager in the Strategic Technology Office. At DARPA, he oversaw $400M in counter-UAS research programs and authored the agency's seminal white paper on integrated air defense against unmanned systems. He holds a Ph.D. in Electrical Engineering from MIT, where his doctoral research on multi-spectral sensor fusion laid the theoretical groundwork for the Aegis detection architecture. Prior to DARPA, Dr. Chen spent eight years at Raytheon, leading the development of the AN/TPQ-53 radar system. He has been recognized with the Secretary of Defense Medal for Outstanding Public Service and was named to the Defense News 40 Under 40 list.",
-            image: "/images/pages/leadership-ceo.jpg",
-          },
-          {
-            name: "Sarah Mitchell",
-            role: "Chief Technology Officer",
-            bio: "Sarah Mitchell brings two decades of defense engineering leadership to her role as CTO. Before joining Aegis, she served as Chief Engineer for Counter-UAS Programs at Lockheed Martin, where she led the technical development of the ICARUS counter-drone system and oversaw a team of 300 engineers across six states. Her expertise spans radar systems engineering, signal processing, and real-time embedded systems. Mitchell holds 7 patents in multi-target tracking and sensor fusion algorithms. She earned her M.S. in Aerospace Engineering from Georgia Tech and completed the MIT Sloan Executive Program in Technology Leadership. At Aegis, she is responsible for the entire technical roadmap — from the Aegis Core architecture to the AI-driven v3.0 platform and the directed energy integration program.",
-            image: "/images/pages/leadership-cto.jpg",
-          },
-          {
-            name: "Col. James Harper (Ret.)",
-            role: "Chief Operating Officer",
-            bio: "Colonel James Harper retired from the United States Army after 25 years of distinguished service in air defense artillery. His final assignment was as Director of Counter-UAS Operations at U.S. Central Command, where he was responsible for coordinating counter-drone efforts across 21 countries and overseeing the deployment of over 40 counter-UAS systems. He holds a Master of Strategic Studies from the U.S. Army War College and is a graduate of the Air Defense Artillery Officer Basic and Advanced Courses. His combat deployments include Operation Iraqi Freedom and Operation Inherent Resolve, where he experienced firsthand the devastating impact of drone threats on forward operating bases. At Aegis, he ensures that every system we build meets the operational demands of warfighters in the field.",
-            image: "/images/pages/leadership-coo.jpg",
-          },
-          {
-            name: "Dr. Elena Vasquez",
-            role: "Chief Scientist",
-            bio: "Dr. Elena Vasquez is a pioneer in the application of artificial intelligence and machine learning to defense systems. She holds a Ph.D. in Computer Science from MIT, where her doctoral research on real-time threat classification using deep neural networks achieved breakthrough accuracy rates that were subsequently adopted by multiple defense programs. Before joining Aegis, she led the AI Research Division at the Johns Hopkins Applied Physics Laboratory, where she developed autonomous threat detection algorithms for the U.S. Navy's Aegis Combat System. She has published over 60 peer-reviewed papers on machine learning, computer vision, and autonomous decision-making, and she holds 4 patents in real-time signal classification. At Aegis, she leads the development of the 20-millisecond classification engine and the autonomous engagement authorization framework.",
-            image: "/images/pages/leadership-science.jpg",
-          },
-          {
-            name: "David Park",
-            role: "Chief Financial Officer",
-            bio: "David Park brings a unique combination of defense industry experience and Silicon Valley financial acumen to his role as CFO. Prior to joining Aegis, he served as Vice President of Finance at Palantir Technologies, where he played a key role in the company's direct listing and helped scale revenue from $500M to $1.5B over three years. Before Palantir, he held senior finance roles at Northrop Grumman and Booz Allen Hamilton. Park holds an MBA from the Stanford Graduate School of Business and a B.S. in Economics from the Wharton School. He is a Certified Public Accountant and a CFA charterholder. At Aegis, he manages the company's financial strategy, investor relations, and the capital allocation framework that supports our aggressive R&D investment — currently running at 28% of revenue.",
-            image: "/images/pages/leadership-cfo.jpg",
-          },
-          {
-            name: "Lt. Gen. Maria Torres (Ret.)",
-            role: "Board Director",
-            bio: "Lieutenant General Maria Torres retired from the United States Air Force after 32 years of service, culminating in her role as Commander of NATO Allied Air Command and Deputy Commander of U.S. Air Forces in Europe and Africa. In that capacity, she was responsible for the air defense of 28 NATO member nations and oversaw the integration of counter-UAS capabilities across the alliance. She holds a Master of National Security Strategy from the National War College and has completed senior executive programs at Harvard Kennedy School and the NATO Defense College. Her operational experience includes command of air defense sectors during Operations Enduring Freedom and Odyssey Dawn. General Torres serves as Chair of the Aegis Advisory Board and provides strategic guidance on international partnerships, NATO interoperability, and allied force integration.",
-            image: "/images/pages/leadership-board.jpg",
-          },
-        ]}
-      />
+      {/* ── EXECUTIVE TEAM ── */}
+      <section className="py-28 md:py-44 bg-black">
+        <div className="max-w-[80rem] mx-auto px-6 md:px-12 lg:px-20">
+          <ScrollReveal>
+            <div className="mb-16 md:mb-24">
+              <span className="text-[10px] uppercase tracking-[0.2em] text-white/40 block mb-4">
+                Executive Team
+              </span>
+              <h2 className="text-[clamp(2.5rem,6vw,5rem)] font-bold tracking-[-0.04em] leading-[0.95] text-white">
+                The Leaders Behind Aegis
+              </h2>
+            </div>
+          </ScrollReveal>
+
+          {/* ── CEO Featured ── */}
+          <CEOCard executive={ceo} />
+
+          {/* ── Remaining Executives: 3-column grid ── */}
+          <ScrollReveal staggerChildren={100} className="mt-12 md:mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {executives.map((exec) => (
+              <ExecutiveCard key={exec.name} executive={exec} />
+            ))}
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* ── COMBINED EXPERIENCE STATS ── */}
+      <section className="py-20 md:py-28 bg-black border-y border-white/10">
+        <div className="max-w-[80rem] mx-auto px-6 md:px-12 lg:px-20">
+          <ScrollReveal staggerChildren={80} className="grid grid-cols-2 md:grid-cols-4 gap-10">
+            <StaggerChild>
+              <div className="text-center">
+                <div className="text-[clamp(2rem,5vw,3.5rem)] font-bold text-white tracking-[-0.02em]">
+                  200+
+                </div>
+                <div className="text-[10px] uppercase tracking-[0.15em] text-[#767676] mt-2">
+                  Years Combined Experience
+                </div>
+              </div>
+            </StaggerChild>
+            <StaggerChild>
+              <div className="text-center">
+                <div className="text-[clamp(2rem,5vw,3.5rem)] font-bold text-white tracking-[-0.02em]">
+                  55
+                </div>
+                <div className="text-[10px] uppercase tracking-[0.15em] text-[#767676] mt-2">
+                  Patents Held
+                </div>
+              </div>
+            </StaggerChild>
+            <StaggerChild>
+              <div className="text-center">
+                <div className="text-[clamp(2rem,5vw,3.5rem)] font-bold text-white tracking-[-0.02em]">
+                  $2B+
+                </div>
+                <div className="text-[10px] uppercase tracking-[0.15em] text-[#767676] mt-2">
+                  Contracts Closed
+                </div>
+              </div>
+            </StaggerChild>
+            <StaggerChild>
+              <div className="text-center">
+                <div className="text-[clamp(2rem,5vw,3.5rem)] font-bold text-white tracking-[-0.02em]">
+                  3
+                </div>
+                <div className="text-[10px] uppercase tracking-[0.15em] text-[#767676] mt-2">
+                  Co-Founders
+                </div>
+              </div>
+            </StaggerChild>
+          </ScrollReveal>
+        </div>
+      </section>
 
       {/* ── CTA ── */}
       <CTASection

@@ -5,11 +5,195 @@ import {
   TextSection,
   CardGrid,
   FeatureList,
-  SplitSection,
-  FAQSection,
   CTASection,
   AnimatedLine,
 } from "@/components/sections";
+
+/* ─── Document type ─── */
+interface Doc {
+  title: string;
+  category: string;
+  version: string;
+  updated: string;
+  pages: number;
+  description: string;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   DATA
+   ════════════════════════════════════════════════════════════════ */
+
+const gettingStarted: Doc[] = [
+  {
+    title: "Aegis Core Installation Guide",
+    category: "Getting Started",
+    version: "v4.1",
+    updated: "2026-02-15",
+    pages: 86,
+    description:
+      "Step-by-step installation from unboxing to operational handover. Covers site preparation, hardware mounting, power and network connections, sensor calibration, system initialization, and operational verification testing. Includes wiring diagrams, torque specifications, and a comprehensive commissioning checklist.",
+  },
+  {
+    title: "Aegis Command Quick Start",
+    category: "Getting Started",
+    version: "v3.8",
+    updated: "2026-01-28",
+    pages: 42,
+    description:
+      "Setting up the C2 platform and connecting your first sensor nodes. Covers initial configuration, node discovery, operator account setup, display layout customization, and your first simulated engagement exercise. Designed to get a new Aegis Command deployment operational within four hours.",
+  },
+  {
+    title: "Network Configuration Guide",
+    category: "Getting Started",
+    version: "v5.0",
+    updated: "2026-03-01",
+    pages: 114,
+    description:
+      "JADC2, SATCOM, and tactical radio network setup. Covers multicast configuration for sensor data distribution, STANAG 4676 interface setup, Link 16 gateway configuration, SATCOM terminal integration, and tactical radio bridge deployment. Includes network topology diagrams and port reference tables.",
+  },
+  {
+    title: "Operator Training Manual",
+    category: "Getting Started",
+    version: "v6.2",
+    updated: "2026-02-20",
+    pages: 198,
+    description:
+      "Day-to-day operations, threat assessment, and response protocols. Covers all operator interface functions, track interpretation, classification confidence evaluation, graduated response authorization procedures, and common operational scenarios. Includes quick-reference cards for high-stress situations.",
+  },
+  {
+    title: "System Administrator Guide",
+    category: "Getting Started",
+    version: "v4.5",
+    updated: "2026-01-10",
+    pages: 276,
+    description:
+      "Maintenance, updates, and health monitoring. Covers scheduled and preventive maintenance procedures, software update installation and rollback, system health dashboard interpretation, performance tuning, backup and disaster recovery, and capacity planning for enterprise deployments.",
+  },
+];
+
+const apiDocs: Doc[] = [
+  {
+    title: "Aegis REST API v3.2",
+    category: "API Reference",
+    version: "v3.2.1",
+    updated: "2026-02-28",
+    pages: 324,
+    description:
+      "Full OpenAPI specification for third-party integration. Covers all REST endpoints for track data retrieval, system configuration, operator management, threat intelligence queries, and reporting. Includes authentication flows, rate limits, error codes, and worked examples in Python, C++, JavaScript, and Go.",
+  },
+  {
+    title: "WebSocket Real-Time Feed",
+    category: "API Reference",
+    version: "v2.4",
+    updated: "2026-01-15",
+    pages: 68,
+    description:
+      "Streaming threat data integration via WebSocket. Covers subscription management, track update message formats, classification event streams, alert push notifications, and connection lifecycle management. Includes message schema definitions and a reference client implementation.",
+  },
+  {
+    title: "STANAG 4676 Interface",
+    category: "API Reference",
+    version: "v1.7",
+    updated: "2025-12-20",
+    pages: 142,
+    description:
+      "NATO C2 data exchange protocol guide. Covers STANAG 4676 message formatting, track data exchange procedures, system-to-system handover protocols, and interoperability testing procedures. Aligned with NATO ADatP-3 message catalogue and tested against allied C2 platforms.",
+  },
+  {
+    title: "SDK Reference — Python & C++",
+    category: "API Reference",
+    version: "v3.0",
+    updated: "2026-03-05",
+    pages: 186,
+    description:
+      "Python and C++ SDKs for custom integrations. Covers installation, authentication, session management, all API method signatures, data model classes, error handling, and best practices for high-throughput data ingestion. Includes twelve complete example applications.",
+  },
+];
+
+const complianceDocs: Doc[] = [
+  {
+    title: "ITAR Compliance Guide",
+    category: "Compliance",
+    version: "v2.3",
+    updated: "2026-01-20",
+    pages: 54,
+    description:
+      "Comprehensive guide to International Traffic in Arms Regulations as they apply to Aegis systems. Covers USML classification, export licensing requirements, deemed export controls, technology transfer restrictions, and record-keeping obligations. Essential for any organization involved in Aegis procurement, deployment, or support outside the United States.",
+  },
+  {
+    title: "EAR Classification Matrix",
+    category: "Compliance",
+    version: "v1.9",
+    updated: "2025-11-30",
+    pages: 38,
+    description:
+      "Export Administration Regulations classification matrix for all Aegis hardware, software, and technical data items. Each product and component is classified with its ECCN, reasons for control, and applicable license exceptions. Updated quarterly to reflect regulatory changes.",
+  },
+  {
+    title: "Cybersecurity RMF Package",
+    category: "Compliance",
+    version: "v3.1",
+    updated: "2026-02-10",
+    pages: 92,
+    description:
+      "Complete Risk Management Framework authorization package for Aegis deployments in US government environments. Covers system categorization, control selection and implementation, assessment procedures, continuous monitoring strategy, and POA&M management. Aligned with NIST SP 800-53 Rev 5 and DoD RMF overlays.",
+  },
+  {
+    title: "NATO Security Certification",
+    category: "Compliance",
+    version: "v2.0",
+    updated: "2025-12-15",
+    pages: 46,
+    description:
+      "NATO INFOSEC certification documentation for Aegis systems deployed in allied environments. Covers security target specification, evaluation assurance level, TOE boundary definition, and mutual recognition agreements under the CCRA. Includes results from independent evaluation by NATO-accredited testing laboratory.",
+  },
+];
+
+/* ════════════════════════════════════════════════════════════════
+   DOCUMENT CARD COMPONENT
+   ════════════════════════════════════════════════════════════════ */
+
+function DocCard({ doc }: { doc: Doc }) {
+  return (
+    <div className="border border-white/10 bg-[#0a0a0a] p-6 flex flex-col h-full hover:border-white/20 transition-colors">
+      {/* Category badge */}
+      <span className="text-[9px] uppercase tracking-[0.15em] text-white/40 border border-white/10 px-3 py-1 inline-block w-fit mb-4">
+        {doc.category}
+      </span>
+
+      {/* Title */}
+      <h3 className="text-lg font-bold text-white mb-3 leading-snug">
+        {doc.title}
+      </h3>
+
+      {/* Meta row */}
+      <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10px] uppercase tracking-[0.12em] text-[#767676] mb-4">
+        <span>{doc.version}</span>
+        <span>·</span>
+        <span>{doc.pages} pages</span>
+        <span>·</span>
+        <span>Updated {doc.updated}</span>
+      </div>
+
+      {/* Description */}
+      <p className="text-[#b9b9b9] text-sm leading-relaxed flex-1 mb-5">
+        {doc.description}
+      </p>
+
+      {/* CTA */}
+      <a
+        href="/request-demo"
+        className="inline-block text-[11px] uppercase tracking-[0.15em] text-white border border-white/30 px-5 py-2.5 hover:bg-white hover:text-black transition-all duration-300 text-center"
+      >
+        Request Access
+      </a>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════
+   PAGE
+   ════════════════════════════════════════════════════════════════ */
 
 export default function DocumentationPage() {
   return (
@@ -34,138 +218,105 @@ export default function DocumentationPage() {
           In defense operations, accurate documentation is not a convenience — it is a mission-critical requirement. When an operator needs to interpret an unfamiliar classification alert at 0200, or a system administrator must restore a failed sensor integration during a deployment, the documentation must be precise, accessible, and authoritative. Aegis invests heavily in documentation quality because we understand that the gap between what a system can do and what an operator can make it do is bridged by documentation.
         </p>
         <p>
-          Our documentation is developed by a dedicated team of technical writers who work alongside Aegis engineers and operators throughout the product development lifecycle. Every feature is documented before release, every procedure is validated by operators before publication, and every document is version-controlled against the software release it describes. The result is a documentation suite that consistently earns top marks in customer satisfaction surveys and is frequently cited as a key differentiator by defense procurement evaluators.
-        </p>
-        <p>
-          All documentation is accessible through the Aegis Customer Portal, which provides search across all document types, version history and change tracking, offline download for deployed environments, and automatic notification when documents relevant to your system configuration are updated. Documentation is also available in print format for environments where electronic access is restricted or impractical.
+          Our documentation is developed by a dedicated team of technical writers who work alongside Aegis engineers and operators throughout the product development lifecycle. Every feature is documented before release, every procedure is validated by operators before publication, and every document is version-controlled against the software release it describes.
         </p>
       </TextSection>
 
-      {/* ── DOCUMENTATION CATEGORIES ── */}
+      {/* ── GETTING STARTED ── */}
+      <section className="py-20 md:py-32 bg-black">
+        <div className="max-w-[80rem] mx-auto px-6 md:px-12 lg:px-20">
+          <div className="mb-16">
+            <span className="text-[10px] uppercase tracking-[0.2em] text-white/40 block mb-4">
+              Getting Started
+            </span>
+            <h2 className="text-[clamp(2.5rem,6vw,5rem)] font-bold tracking-[-0.04em] leading-[0.95] text-white">
+              Start Here
+            </h2>
+            <p className="mt-6 text-[#767676] text-base md:text-lg max-w-2xl leading-relaxed">
+              Essential guides for deploying, configuring, and operating your Aegis systems — from first unboxing through sustained operational employment.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {gettingStarted.map((doc) => (
+              <DocCard key={doc.title} doc={doc} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── API DOCUMENTATION ── */}
+      <section className="py-20 md:py-32 bg-black border-t border-white/10">
+        <div className="max-w-[80rem] mx-auto px-6 md:px-12 lg:px-20">
+          <div className="mb-16">
+            <span className="text-[10px] uppercase tracking-[0.2em] text-white/40 block mb-4">
+              API Reference
+            </span>
+            <h2 className="text-[clamp(2.5rem,6vw,5rem)] font-bold tracking-[-0.04em] leading-[0.95] text-white">
+              Integration Documentation
+            </h2>
+            <p className="mt-6 text-[#767676] text-base md:text-lg max-w-2xl leading-relaxed">
+              REST APIs, real-time feeds, NATO protocol interfaces, and SDKs — everything your engineering team needs to integrate Aegis into your existing defense architecture.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {apiDocs.map((doc) => (
+              <DocCard key={doc.title} doc={doc} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── COMPLIANCE DOCUMENTATION ── */}
+      <FeatureList
+        label="Compliance"
+        title="Regulatory & Certification"
+        items={complianceDocs.map((doc) => ({
+          title: doc.title,
+          tag: `${doc.version} · ${doc.pages} pp · ${doc.updated}`,
+          description: doc.description,
+        }))}
+      />
+
+      {/* ── DOCUMENTATION PORTAL ── */}
       <CardGrid
-        label="Document Library"
-        title="Documentation Categories"
+        label="Platform"
+        title="Documentation Portal Features"
         cards={[
           {
-            title: "Operator Manuals",
+            title: "Full-Text Search",
             description:
-              "Comprehensive operator manuals covering all Aegis system functions from basic operation through advanced engagement procedures. Each manual includes step-by-step procedures, screenshot-annotated workflows, decision trees for common operational scenarios, and quick-reference cards for high-stress situations. Manuals are organized by operational role — operator, shift supervisor, and mission commander — ensuring that each user sees only the procedures relevant to their function. Updated quarterly with each software release.",
-            image: "/images/pages/defense-screen.jpg",
-            tag: "Operators",
+              "Search across all document types in under 200 milliseconds with intelligent ranking that prioritizes operational procedures over reference material.",
+            tag: "Search",
           },
           {
-            title: "Integration Guides",
+            title: "Contextual Help",
             description:
-              "Technical integration guides for connecting Aegis with external sensors, C2 systems, and effector platforms. Each guide covers interface specifications, data format descriptions, configuration procedures, validation test procedures, and troubleshooting references. Integration guides are available for all Tier 1 and Tier 2 compatible systems, with new guides published as additional integrations are certified. Integration guides include worked examples with sample data and expected results.",
-            image: "/images/pages/integrator-network.jpg",
+              "Embedded help links in the Aegis operator interface connect directly to relevant documentation sections, eliminating search during time-critical situations.",
             tag: "Integration",
           },
           {
-            title: "API Reference",
+            title: "Offline Synchronization",
             description:
-              "Complete API reference documentation for all Aegis RESTful and gRPC endpoints. Each endpoint is documented with request and response schemas, authentication requirements, rate limits, error codes, and usage examples in all four SDK languages. The API reference is generated directly from source code annotations, ensuring that documentation always matches implementation. Interactive API explorer available in the customer portal enables authenticated testing of endpoints from a web browser.",
-            image: "/images/pages/integrator-code.jpg",
-            tag: "Developers",
+              "Maintain a complete local copy of all documentation on the Aegis system itself, automatically updated when network connectivity is restored.",
+            tag: "Deployed",
           },
           {
-            title: "Maintenance Procedures",
+            title: "Version Control",
             description:
-              "Detailed maintenance procedures for all Aegis hardware components, organized by maintenance level (operator, organizational, depot). Procedures include required tools and test equipment, step-by-step instructions with photographic illustrations, safety precautions and hazard warnings, and acceptance criteria for completed maintenance. Maintenance procedures are aligned with the Aegis spare parts catalog and include cross-references to relevant technical bulletins and service advisories.",
-            image: "/images/pages/robot-arm.jpg",
-            tag: "Maintenance",
+              "Every document is tied to a specific software release. Change highlights are automatically generated so operators can quickly identify what has changed.",
+            tag: "Accuracy",
           },
           {
-            title: "System Administration Guide",
+            title: "Print & USB Media",
             description:
-              "Comprehensive guide for Aegis system administrators covering installation, configuration, user management, security hardening, network setup, backup and recovery, performance tuning, and troubleshooting. The guide includes configuration templates for common deployment scenarios, automated setup scripts, and diagnostic flowcharts for rapid fault isolation. Also covers system monitoring, log analysis, and capacity planning for enterprise deployments.",
-            image: "/images/pages/data-center.jpg",
-            tag: "Admin",
+              "Complete documentation sets shipped on encrypted USB media with each hardware delivery. Individual documents available in PDF for printing.",
+            tag: "Physical",
           },
           {
-            title: "Threat Reference Library",
+            title: "Multi-Language",
             description:
-              "The Aegis Threat Reference Library catalogs over 800 UAS threat types with detailed specifications including physical dimensions, performance characteristics, RF signatures, navigation system types, payload capabilities, and known employment tactics. Each threat profile includes Aegis classification parameters, recommended detection and tracking configurations, and graduated response recommendations. The library is updated monthly with new threat entries and revised profiles based on operational intelligence.",
-            image: "/images/pages/tracking-screen.jpg",
-            tag: "Intelligence",
-          },
-        ]}
-      />
-
-      {/* ── DOCUMENTATION FEATURES ── */}
-      <SplitSection
-        image="/images/pages/matrix-code.jpg"
-        label="Platform"
-        title="Documentation Portal Features"
-        description="The Aegis Documentation Portal is more than a file repository — it is a purpose-built knowledge management platform designed for defense operational environments. Full-text search across all document types returns relevant results in under 200 milliseconds, with intelligent ranking that prioritizes operational procedures over reference material. Contextual help links embedded in the Aegis operator interface connect directly to relevant documentation sections, eliminating the need to search for information during time-critical situations. The portal supports offline synchronization for deployed environments, allowing operators to maintain a complete local copy of all documentation on the Aegis system itself. Version control ensures that every document is tied to a specific software release, and change highlights are automatically generated for each new version so operators can quickly identify what has changed."
-        cta="Access Documentation Portal"
-        ctaHref="/support/customer-portal"
-        stats={[
-          { value: "2,400+", label: "Documents" },
-          { value: "<200ms", label: "Search Latency" },
-        ]}
-      />
-
-      {/* ── DOCUMENT TYPES ── */}
-      <FeatureList
-        label="Document Types"
-        title="Additional Resources"
-        items={[
-          {
-            title: "Release Notes",
-            description:
-              "Detailed release notes accompany every Aegis software update, documenting new features, enhancements, resolved issues, and known limitations. Release notes are published 30 days before general availability, giving system administrators time to plan and test updates before deployment. Each release note includes a compatibility matrix that identifies which hardware variants and integration configurations are affected by the update, along with rollback procedures if issues are encountered during installation.",
-            tag: "Updates",
-          },
-          {
-            title: "Technical Bulletins",
-            description:
-              "Technical bulletins address time-sensitive operational topics including newly identified threat variants, configuration recommendations for specific operational environments, security vulnerability advisories, and interim operating procedures. Bulletins are issued as needed and distributed through the customer portal with email notification to registered system administrators. Critical security bulletins are delivered within 24 hours of vulnerability identification, with recommended mitigations and patched software availability timelines.",
-            tag: "Advisories",
-          },
-          {
-            title: "Training Materials",
-            description:
-              "Comprehensive training materials support all Aegis training courses, including student guides, instructor lesson plans, practical exercise instructions, and assessment rubrics. Training materials are available to certified Aegis instructors through the customer portal and are updated with each training curriculum revision. Self-study packages are available for operators who need to prepare for formal training or maintain proficiency between recertification cycles.",
-            tag: "Training",
-          },
-          {
-            title: "Compliance Documentation",
-            description:
-              "Certification reports, audit findings, and compliance statements for all Aegis certifications including NATO STANAG 4671, ISO 27001, FIPS 140-2, and FedRAMP. Compliance documentation is available to qualified defense and government customers upon request through the secure documentation portal. Export-controlled compliance documents require ITAR authorization verification before release.",
-            tag: "Compliance",
-          },
-        ]}
-      />
-
-      {/* ── FAQ ── */}
-      <FAQSection
-        label="Documentation FAQ"
-        title="Frequently Asked Questions"
-        items={[
-          {
-            question: "How do I access Aegis documentation?",
-            answer:
-              "All Aegis documentation is accessible through the Customer Portal using your organizational credentials. Documentation is organized by product line, document type, and software version. You can also access documentation directly from within the Aegis operator interface using the contextual help system, which links to relevant sections based on the current screen and operator role.",
-          },
-          {
-            question: "Is documentation available offline?",
-            answer:
-              "Yes. The Documentation Portal supports offline synchronization, which downloads a complete copy of all documentation to your local Aegis system. Offline documentation is automatically updated when network connectivity is restored. You can also download individual documents in PDF format for printing or storage on isolated systems. A complete documentation set is also shipped on encrypted USB media with each Aegis hardware delivery.",
-          },
-          {
-            question: "How often is documentation updated?",
-            answer:
-              "Operator manuals and system administration guides are updated quarterly with each software release. API reference documentation is generated from source code and is always current. Integration guides are updated as new integrations are certified. Threat reference library entries are updated monthly. Critical technical bulletins are published as needed, typically within 24 hours of the triggering event.",
-          },
-          {
-            question: "Can I request custom documentation?",
-            answer:
-              "Yes. Aegis offers custom documentation services for customers with unique operational requirements, specialized system configurations, or classified deployment environments. Custom documentation is developed by our technical writing team in collaboration with your operational subject matter experts, ensuring that the content accurately reflects your specific procedures and configurations. Contact your Aegis account representative for a custom documentation consultation.",
-          },
-          {
-            question: "In what languages is documentation available?",
-            answer:
-              "All core documentation is available in English. Operator manuals and quick-reference cards are also available in French, German, Japanese, and Arabic. Additional language translations are available upon request with a typical delivery timeline of 6-8 weeks. API reference documentation is available only in English, as is standard practice in the software industry, but code examples include comments in all four SDK languages.",
+              "Core documentation in English. Operator manuals and quick-reference cards also available in French, German, Japanese, and Arabic.",
+            tag: "Languages",
           },
         ]}
       />

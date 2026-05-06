@@ -1,19 +1,25 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronDown } from "lucide-react";
 
 const footerColumns = [
   {
-    title: "Capabilities",
+    title: "Company",
     links: [
-      { label: "Detection", href: "/capabilities/detection" },
-      { label: "Tracking", href: "/capabilities/tracking" },
-      { label: "Classification", href: "/capabilities/classification" },
-      { label: "Neutralization", href: "/capabilities/neutralization" },
-      { label: "Command & Control", href: "/capabilities/command-control" },
-      { label: "Integration", href: "/capabilities/integration" },
+      { label: "About Aegis", href: "/about" },
+      { label: "Leadership", href: "/about/leadership" },
+      { label: "History", href: "/about/history" },
+      { label: "Careers", href: "/careers" },
+      { label: "Partners", href: "/about/partners" },
+      { label: "Global Presence", href: "/about/global-presence" },
+      { label: "Contact", href: "/contact" },
     ],
   },
   {
-    title: "Platforms",
+    title: "Products",
     links: [
       { label: "Aegis Core", href: "/products/aegis-core" },
       { label: "Aegis Tactical", href: "/products/aegis-tactical" },
@@ -23,6 +29,7 @@ const footerColumns = [
       { label: "Aegis Command", href: "/products/aegis-command" },
       { label: "Aegis Sentinel", href: "/products/aegis-sentinel" },
       { label: "Aegis Integrator", href: "/products/aegis-integrator" },
+      { label: "Compare Products", href: "/products/compare" },
     ],
   },
   {
@@ -35,18 +42,6 @@ const footerColumns = [
       { label: "VIP Protection", href: "/solutions/vip-protection" },
       { label: "Maritime", href: "/solutions/maritime" },
       { label: "Urban Security", href: "/solutions/urban-security" },
-      { label: "Prisons", href: "/solutions/prisons" },
-    ],
-  },
-  {
-    title: "Technology",
-    links: [
-      { label: "RF Sensing", href: "/technology/rf-sensing" },
-      { label: "AI & Machine Learning", href: "/technology/ai-ml" },
-      { label: "Radar Systems", href: "/technology/radar" },
-      { label: "Electronic Warfare", href: "/technology/electronic-warfare" },
-      { label: "Sensor Fusion", href: "/technology/sensor-fusion" },
-      { label: "Edge Computing", href: "/technology/edge-computing" },
     ],
   },
   {
@@ -58,51 +53,88 @@ const footerColumns = [
       { label: "Webinars", href: "/resources/webinars" },
       { label: "FAQ", href: "/resources/faq" },
       { label: "Glossary", href: "/resources/glossary" },
-      { label: "Case Studies", href: "/case-studies" },
+      { label: "Threat Database", href: "/threat-database" },
+      { label: "Security Advisories", href: "/security-advisories" },
       { label: "Blog", href: "/blog" },
     ],
   },
   {
-    title: "Company",
+    title: "Support",
     links: [
-      { label: "About Aegis", href: "/about" },
-      { label: "Leadership", href: "/about/leadership" },
-      { label: "History", href: "/about/history" },
-      { label: "R&D", href: "/about/research-development" },
-      { label: "Facilities", href: "/about/facilities" },
-      { label: "Values", href: "/about/values" },
-      { label: "Quality", href: "/about/quality" },
-      { label: "Partners", href: "/about/partners" },
+      { label: "Documentation", href: "/support/documentation" },
+      { label: "Training", href: "/support/training" },
+      { label: "Customer Portal", href: "/support/customer-portal" },
       { label: "Integrations", href: "/integrations" },
-      { label: "Support", href: "/support" },
-      { label: "Careers", href: "/careers" },
-      { label: "Investors", href: "/investors" },
-      { label: "Contact", href: "/contact" },
-    ],
-  },
-  {
-    title: "Legal",
-    links: [
-      { label: "Privacy Policy", href: "/legal/privacy" },
-      { label: "Terms of Service", href: "/legal/terms" },
-      { label: "ITAR Compliance", href: "/legal/itar" },
-      { label: "Export Control", href: "/legal/export-control" },
-      { label: "Compliance", href: "/legal/compliance" },
     ],
   },
 ];
 
+function MobileFooterColumn({
+  column,
+  isOpen,
+  onToggle,
+}: {
+  column: (typeof footerColumns)[number];
+  isOpen: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <div className="border-b border-[#222]">
+      <button
+        onClick={onToggle}
+        className="flex w-full items-center justify-between py-4 text-left"
+      >
+        <span className="text-[11px] uppercase tracking-[0.15em] font-medium text-white">
+          {column.title}
+        </span>
+        <motion.span
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <ChevronDown className="h-4 w-4 text-[#767676]" />
+        </motion.span>
+      </button>
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+            className="overflow-hidden"
+          >
+            <ul className="pb-5 space-y-3">
+              {column.links.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-[#767676] hover:text-white text-[13px] transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 export function Footer() {
+  const [openColumn, setOpenColumn] = useState<string | null>(null);
+
   return (
     <>
       {/* Dual CTA Section */}
-      <section className="border-t border-white/10">
+      <section className="border-t border-[#222]">
         <div className="grid grid-cols-1 md:grid-cols-2">
           <Link
             href="/request-demo"
             className="group flex flex-col justify-center p-12 md:p-16 lg:p-24 bg-black hover:bg-[#0a0a0a] transition-colors"
           >
-            <span className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-5">
+            <span className="text-[10px] uppercase tracking-[0.2em] text-[#767676] mb-5">
               Get Started
             </span>
             <span className="text-[clamp(1.75rem,4vw,3rem)] font-bold tracking-[-0.04em] leading-[1.1] text-white group-hover:text-white/90 transition-colors">
@@ -114,9 +146,9 @@ export function Footer() {
           </Link>
           <Link
             href="/capabilities"
-            className="group flex flex-col justify-center p-12 md:p-16 lg:p-24 bg-[#0a0a0a] border-l border-white/10 hover:bg-[#111111] transition-colors"
+            className="group flex flex-col justify-center p-12 md:p-16 lg:p-24 bg-[#0a0a0a] border-l border-[#222] hover:bg-[#111111] transition-colors"
           >
-            <span className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-5">
+            <span className="text-[10px] uppercase tracking-[0.2em] text-[#767676] mb-5">
               Learn More
             </span>
             <span className="text-[clamp(1.75rem,4vw,3rem)] font-bold tracking-[-0.04em] leading-[1.1] text-white group-hover:text-white/90 transition-colors">
@@ -130,30 +162,27 @@ export function Footer() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-[#050505] border-t border-white/10 mt-auto">
-        <div className="max-w-[90rem] mx-auto px-6 md:px-12 lg:px-20 py-20 md:py-28">
-          <div className="grid grid-cols-2 md:grid-cols-8 gap-10 md:gap-8">
-            {/* Brand Column */}
-            <div className="col-span-2 md:col-span-1">
-              <Link
-                href="/"
-                className="text-white font-bold text-lg tracking-[0.3em] uppercase"
-              >
-                AEGIS
-              </Link>
-              <p className="mt-4 text-[#767676] text-sm leading-relaxed max-w-[280px]">
-                Advanced counter-UAS defense systems protecting critical assets
-                and infrastructure across 12 nations worldwide.
-              </p>
-              <div className="mt-6 text-[9px] uppercase tracking-[0.2em] text-[#444]">
-                NATO Classified — ITAR Controlled
-              </div>
-            </div>
+      <footer className="bg-[#0a0a0a] border-t border-[#222] mt-auto">
+        <div className="max-w-[90rem] mx-auto px-6 md:px-12 lg:px-20 py-16 md:py-24">
+          {/* Top: Logo + Tagline */}
+          <div className="mb-14 md:mb-20">
+            <Link
+              href="/"
+              className="text-white font-bold text-lg tracking-[0.3em] uppercase"
+            >
+              AEGIS
+            </Link>
+            <p className="mt-4 text-[#767676] text-sm leading-relaxed max-w-[340px]">
+              Advanced counter-UAS defense systems protecting critical assets
+              and infrastructure across 12 nations worldwide.
+            </p>
+          </div>
 
-            {/* Link Columns */}
+          {/* Desktop: 5-column grid */}
+          <div className="hidden md:grid md:grid-cols-5 gap-10 lg:gap-14">
             {footerColumns.map((col) => (
               <div key={col.title}>
-                <h4 className="text-[10px] uppercase tracking-[0.1em] font-medium text-white/30 mb-5">
+                <h4 className="text-[11px] uppercase tracking-[0.15em] font-medium text-white mb-6">
                   {col.title}
                 </h4>
                 <ul className="space-y-3">
@@ -172,20 +201,82 @@ export function Footer() {
             ))}
           </div>
 
-          {/* Bottom Bar */}
-          <div className="mt-20 pt-8 border-t border-white/10">
+          {/* Mobile: Accordion */}
+          <div className="md:hidden">
+            {footerColumns.map((col) => (
+              <MobileFooterColumn
+                key={col.title}
+                column={col}
+                isOpen={openColumn === col.title}
+                onToggle={() =>
+                  setOpenColumn(openColumn === col.title ? null : col.title)
+                }
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="border-t border-[#222]">
+          <div className="max-w-[90rem] mx-auto px-6 md:px-12 lg:px-20 py-8 md:py-10">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-              <div className="text-[#444] text-xs">
-                &copy; {new Date().getFullYear()} Aegis Defense Systems, Inc. All rights
-                reserved.
+              {/* Left: Logo + Copyright */}
+              <div className="flex items-center gap-4">
+                <span className="text-white font-bold text-[13px] tracking-[0.25em] uppercase">
+                  AEGIS
+                </span>
+                <span className="hidden md:inline text-[#333]">|</span>
+                <span className="text-[#767676] text-xs">
+                  &copy; 2026 Aegis Defense Systems. All rights reserved.
+                </span>
+              </div>
+
+              {/* Right: Legal Links */}
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                <Link
+                  href="/legal/privacy"
+                  className="text-[#767676] hover:text-white text-xs transition-colors"
+                >
+                  Privacy Policy
+                </Link>
+                <span className="text-[#333]">|</span>
+                <Link
+                  href="/legal/terms"
+                  className="text-[#767676] hover:text-white text-xs transition-colors"
+                >
+                  Terms of Service
+                </Link>
+                <span className="text-[#333]">|</span>
+                <Link
+                  href="/legal/itar"
+                  className="text-[#767676] hover:text-white text-xs transition-colors"
+                >
+                  ITAR Notice
+                </Link>
+                <span className="text-[#333]">|</span>
+                <Link
+                  href="/legal/export-control"
+                  className="text-[#767676] hover:text-white text-xs transition-colors"
+                >
+                  Export Control
+                </Link>
+                <span className="text-[#333]">|</span>
+                <Link
+                  href="/legal/compliance"
+                  className="text-[#767676] hover:text-white text-xs transition-colors"
+                >
+                  Compliance
+                </Link>
               </div>
             </div>
-            <div className="mt-4 text-[#333] text-[11px] leading-relaxed max-w-3xl">
-              This product is controlled under the International Traffic in Arms
-              Regulations (ITAR) and may not be exported, transferred, or
-              disclosed to foreign persons without prior authorization from the
-              U.S. Department of State. Unauthorized use, reproduction, or
-              distribution is strictly prohibited.
+
+            {/* ITAR Notice */}
+            <div className="mt-6 pt-6 border-t border-[#222]">
+              <p className="text-[#444] text-[11px] leading-relaxed max-w-4xl">
+                This product is subject to U.S. export controls under the
+                International Traffic in Arms Regulations (ITAR). Unauthorized
+                export or re-export is prohibited.
+              </p>
             </div>
           </div>
         </div>
