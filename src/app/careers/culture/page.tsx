@@ -1,12 +1,351 @@
 "use client";
 
+import { motion } from "framer-motion";
 import {
   SectionHero,
   Callout,
-  SplitSection,
   QuoteSection,
   CTASection,
 } from "@/components/sections";
+import { ScrollReveal as ScrollRevealComponent } from "@/components/sections/scroll-reveal";
+import {
+  Heart,
+  Brain,
+  DollarSign,
+  GraduationCap,
+  Users,
+  Lightbulb,
+  Clock,
+  Home,
+  Palmtree,
+  MapPin,
+  Building2,
+} from "lucide-react";
+import Link from "next/link";
+
+/* ────────────────────────────────────────────────────────────────
+   EMPLOYEE TESTIMONIALS
+   ──────────────────────────────────────────────────────────────── */
+
+const testimonials = [
+  {
+    quote:
+      "As a radar engineer, I've worked at three defense primes before Aegis, and the difference is night and day. Here, I ship algorithms to operational systems in weeks, not years. The feedback loop from deployed systems back to our research team means every model I train is tested against real-world threats within a single sprint cycle. That's unheard of in this industry.",
+    author: "Dr. Sarah Kim",
+    role: "Senior Radar Engineer",
+  },
+  {
+    quote:
+      "Deploying to operational sites in the Middle East and Pacific gave me a perspective you simply can't get from a lab. Aegis sent me to three forward operating bases in my first year to install and calibrate systems alongside the operators who use them. That experience shaped every product decision I've made since — because I've seen the stakes with my own eyes.",
+    author: "Capt. Mike Rodriguez (Ret.)",
+    role: "Field Service Lead",
+  },
+  {
+    quote:
+      "The pace of innovation at Aegis is genuinely exhilarating. I published two papers on transformer-based drone classification that went from research to deployed capability in under six months. The company invests heavily in R&D and gives researchers the autonomy to pursue high-impact problems without bureaucratic overhead. It's the best environment I've encountered for applied AI work.",
+    author: "Jessica Wang",
+    role: "AI/ML Researcher",
+  },
+  {
+    quote:
+      "Building tech that matters is what drew me to Aegis, and the culture is what keeps me here. The engineering team operates with a level of rigor and mission focus that I've never experienced at a conventional tech company. Every line of code I write has a direct line to someone's safety — and that creates a kind of shared purpose that makes the hard days worth it.",
+    author: "David Okafor",
+    role: "Software Engineer",
+  },
+];
+
+function EmployeeTestimonials() {
+  return (
+    <section className="py-28 md:py-44 bg-black">
+      <div className="max-w-[80rem] mx-auto px-6 md:px-12 lg:px-20">
+        <ScrollRevealComponent>
+          <div className="mb-16 md:mb-24">
+            <span className="text-[10px] uppercase tracking-[0.2em] text-white/40 block mb-4">
+              Voices
+            </span>
+            <h2 className="text-[clamp(2.5rem,6vw,5rem)] font-bold tracking-[-0.04em] leading-[0.95] text-white">
+              What Our Team Says
+            </h2>
+          </div>
+        </ScrollRevealComponent>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {testimonials.map((t, i) => (
+            <ScrollRevealComponent key={t.author} delay={i * 80}>
+              <div className="border border-white/10 p-8 md:p-10 bg-[#0a0a0a] hover:border-white/20 transition-colors">
+                <div className="text-white/10 text-5xl leading-none font-serif select-none mb-2">
+                  &ldquo;
+                </div>
+                <blockquote className="text-[#b9b9b9] text-base leading-relaxed mb-6">
+                  {t.quote}
+                </blockquote>
+                <div className="h-px w-10 bg-white/10 mb-4" />
+                <div className="text-white text-sm font-medium">
+                  {t.author}
+                </div>
+                <div className="text-[10px] uppercase tracking-[0.15em] text-[#767676] mt-1">
+                  {t.role}
+                </div>
+              </div>
+            </ScrollRevealComponent>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────────
+   BENEFITS & PERKS — 3x3 grid
+   ──────────────────────────────────────────────────────────────── */
+
+const benefits = [
+  {
+    icon: Heart,
+    title: "Medical, Dental & Vision",
+    description:
+      "Comprehensive coverage for you and your family with top-tier providers. Zero-deductible medical plan available.",
+    category: "Health",
+  },
+  {
+    icon: Brain,
+    title: "Mental Health Support",
+    description:
+      "Unlimited therapy sessions, executive coaching, and a dedicated wellness program. Because mission-first requires you-first.",
+    category: "Health",
+  },
+  {
+    icon: DollarSign,
+    title: "401(k) Match 6%",
+    description:
+      "We match up to 6% of your salary with immediate vesting. Plan for the future while building technology that protects it.",
+    category: "Health",
+  },
+  {
+    icon: GraduationCap,
+    title: "Education Reimbursement",
+    description:
+      "Up to $15,000 annually for graduate programs, certifications, and professional development courses at accredited institutions.",
+    category: "Growth",
+  },
+  {
+    icon: Users,
+    title: "Conference Budget",
+    description:
+      "Annual $5,000 budget for attending industry conferences, workshops, and technical summits. Present your work on the global stage.",
+    category: "Growth",
+  },
+  {
+    icon: Lightbulb,
+    title: "Patent Bonuses",
+    description:
+      "$10,000 bonus for each filed patent. We celebrate innovation and ensure you're rewarded for intellectual property contributions.",
+    category: "Growth",
+  },
+  {
+    icon: Clock,
+    title: "Flexible PTO",
+    description:
+      "No accrual caps, no guilt trips. Take the time you need to recharge. We trust you to manage your schedule responsibly.",
+    category: "Balance",
+  },
+  {
+    icon: Home,
+    title: "Remote-Friendly",
+    description:
+      "Hybrid and full-remote options available for most roles. State-of-the-art home office setup provided including hardware and furniture.",
+    category: "Balance",
+  },
+  {
+    icon: Palmtree,
+    title: "Sabbatical Program",
+    description:
+      "4-week paid sabbatical after every 4 years of service. Pursue personal projects, travel, or simply decompress — we've got you covered.",
+    category: "Balance",
+  },
+];
+
+function BenefitsSection() {
+  const categories = ["Health", "Growth", "Balance"];
+
+  return (
+    <section className="py-28 md:py-44 bg-[#0a0a0a] border-t border-white/10">
+      <div className="max-w-[80rem] mx-auto px-6 md:px-12 lg:px-20">
+        <ScrollRevealComponent>
+          <div className="mb-16 md:mb-24">
+            <span className="text-[10px] uppercase tracking-[0.2em] text-white/40 block mb-4">
+              Benefits & Perks
+            </span>
+            <h2 className="text-[clamp(2.5rem,6vw,5rem)] font-bold tracking-[-0.04em] leading-[0.95] text-white">
+              Invested in You
+            </h2>
+          </div>
+        </ScrollRevealComponent>
+
+        {categories.map((category) => (
+          <div key={category} className="mb-12 last:mb-0">
+            <ScrollRevealComponent>
+              <div className="border-b border-[#333] bg-[#0a0a0a] pb-3 mb-6">
+                <span className="text-[11px] uppercase tracking-[0.2em] text-white/60 font-medium">
+                  {category}
+                </span>
+              </div>
+            </ScrollRevealComponent>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {benefits
+                .filter((b) => b.category === category)
+                .map((benefit, i) => (
+                  <ScrollRevealComponent
+                    key={benefit.title}
+                    delay={i * 60}
+                  >
+                    <div className="border border-white/10 p-6 md:p-8 hover:border-white/20 transition-colors bg-black">
+                      <benefit.icon
+                        className="text-white/30 mb-4"
+                        size={24}
+                        strokeWidth={1.5}
+                      />
+                      <h3 className="text-lg font-bold text-white mb-2">
+                        {benefit.title}
+                      </h3>
+                      <p className="text-[#767676] text-sm leading-relaxed">
+                        {benefit.description}
+                      </p>
+                    </div>
+                  </ScrollRevealComponent>
+                ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────────
+   DEI SECTION
+   ──────────────────────────────────────────────────────────────── */
+
+function DEISection() {
+  return (
+    <section className="py-28 md:py-44 bg-black border-t border-white/10">
+      <div className="max-w-[56rem] mx-auto px-6 md:px-12 lg:px-20 text-center">
+        <ScrollRevealComponent>
+          <span className="text-[10px] uppercase tracking-[0.2em] text-white/40 block mb-4">
+            Diversity, Equity & Inclusion
+          </span>
+          <h2 className="text-[clamp(2rem,4vw,3rem)] font-bold tracking-[-0.03em] text-white mb-8">
+            Different Perspectives, Shared Mission
+          </h2>
+          <p className="text-[#b9b9b9] text-lg md:text-xl leading-relaxed mb-6">
+            At Aegis, diversity is not a metric — it is a strategic advantage.
+            The threats we counter are global, and the solutions we build must
+            reflect the breadth of human experience and perspective. We actively
+            recruit from communities historically underrepresented in defense
+            technology, maintain partnerships with organizations including the
+            National Society of Black Engineers, Society of Women Engineers, and
+            Out in Tech, and have established blind resume screening for all
+            engineering roles.
+          </p>
+          <p className="text-[#b9b9b9] text-lg md:text-xl leading-relaxed">
+            Our Employee Resource Groups — Aegis Women in Defense, Veterans
+            Alliance, Black Excellence in Engineering, and Pride in Security —
+            provide community, mentorship, and direct input into company policy.
+            Every quarter, ERG leaders present to the executive team on
+            initiatives that shape hiring, retention, and culture. At Aegis,
+            inclusion is not aspirational. It is operational.
+          </p>
+        </ScrollRevealComponent>
+      </div>
+    </section>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────────
+   OFFICE LIFE
+   ──────────────────────────────────────────────────────────────── */
+
+const offices = [
+  {
+    city: "Arlington",
+    region: "Virginia, USA",
+    description:
+      "Global headquarters in the heart of the U.S. defense corridor. Walking distance from the Pentagon and Capitol Hill, our 85,000 sq ft campus houses executive leadership, core engineering, and the Aegis Operations Center — a 24/7 live threat monitoring facility.",
+    icon: Building2,
+  },
+  {
+    city: "London",
+    region: "United Kingdom",
+    description:
+      "European headquarters in Westminster, steps from the UK Ministry of Defence. The London office leads NATO interoperability programs, European procurement, and maintains a dedicated training facility with live simulation capabilities for allied defense forces.",
+    icon: Building2,
+  },
+  {
+    city: "Tel Aviv",
+    region: "Israel",
+    description:
+      "R&D center in the global epicenter of counter-UAS innovation. The Tel Aviv team leads AI/ML research, sensor fusion development, and maintains close collaboration with the Israeli defense technology ecosystem. Home to our Advanced Threat Simulation Lab.",
+    icon: Building2,
+  },
+  {
+    city: "Singapore",
+    region: "Asia-Pacific",
+    description:
+      "Indo-Pacific regional headquarters in the One North district. The Singapore office manages procurement and deployment across ASEAN nations, South Korea, Japan, and Australia — the fastest-growing C-UAS market outside of NATO.",
+    icon: Building2,
+  },
+];
+
+function OfficeLife() {
+  return (
+    <section className="py-28 md:py-44 bg-[#0a0a0a] border-t border-white/10">
+      <div className="max-w-[80rem] mx-auto px-6 md:px-12 lg:px-20">
+        <ScrollRevealComponent>
+          <div className="mb-16 md:mb-24">
+            <span className="text-[10px] uppercase tracking-[0.2em] text-white/40 block mb-4">
+              Global Offices
+            </span>
+            <h2 className="text-[clamp(2.5rem,6vw,5rem)] font-bold tracking-[-0.04em] leading-[0.95] text-white">
+              Where We Work
+            </h2>
+          </div>
+        </ScrollRevealComponent>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {offices.map((office, i) => (
+            <ScrollRevealComponent key={office.city} delay={i * 80}>
+              <div className="border border-white/10 p-8 md:p-10 hover:border-white/20 transition-colors bg-black">
+                <div className="flex items-start gap-4 mb-4">
+                  <MapPin
+                    className="text-white/30 flex-shrink-0 mt-1"
+                    size={20}
+                    strokeWidth={1.5}
+                  />
+                  <div>
+                    <h3 className="text-2xl font-bold text-white tracking-[-0.01em]">
+                      {office.city}
+                    </h3>
+                    <span className="text-[10px] uppercase tracking-[0.15em] text-white/40">
+                      {office.region}
+                    </span>
+                  </div>
+                </div>
+                <p className="text-[#b9b9b9] text-sm md:text-base leading-relaxed">
+                  {office.description}
+                </p>
+              </div>
+            </ScrollRevealComponent>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════
+   MAIN PAGE
+   ════════════════════════════════════════════════════════════════ */
 
 export default function CareersCulturePage() {
   return (
@@ -30,41 +369,17 @@ export default function CareersCulturePage() {
         resources, and community to do it exceptionally well.
       </Callout>
 
-      {/* ── VALUES SPLIT ── */}
-      <SplitSection
-        image="/images/pages/careers-team.jpg"
-        label="Our Values"
-        title="Principles That Guide Us"
-        description="Our values are not aspirational — they are operational. Mission First means every product decision, engineering trade-off, and customer interaction is measured against one standard: does it make our operators safer and more effective? Radical Transparency means no silos, no hidden agendas, and open access to information across teams — because in defense, information asymmetry kills. Relentless Excellence means we don't ship anything that hasn't been tested beyond the breaking point, because our customers operate beyond the breaking point every day. And Shared Ownership means every employee, from intern to C-suite, has equity in the company and a voice in our direction."
-        cta="View Open Positions"
-        ctaHref="/careers/openings"
-        stats={[
-          { value: "4", label: "Core Values" },
-          { value: "100%", label: "Employee Equity" },
-          { value: "0", label: "Internal Silos" },
-        ]}
-      />
+      {/* ── EMPLOYEE TESTIMONIALS ── */}
+      <EmployeeTestimonials />
 
-      {/* ── VETERAN SUPPORT SPLIT ── */}
-      <SplitSection
-        image="/images/pages/fob-military.jpg"
-        label="Veteran Community"
-        title="Those Who Served Lead the Way"
-        description="Forty percent of Aegis employees are military veterans — and that's not by accident. We actively recruit from the services because no one understands the operational reality of counter-UAS defense better than those who have faced drone threats in the field. Our Veteran Transition Program provides dedicated onboarding, skill credentialing that translates military expertise into civilian career growth, and a peer mentorship network that connects new veteran hires with those who have successfully navigated the transition. We sponsor security clearances, honor military leave obligations, and maintain relationships with veteran service organizations worldwide. At Aegis, your service is not just respected — it's the foundation of our competitive advantage."
-        reverse
-        stats={[
-          { value: "40%", label: "Veteran Employees" },
-          { value: "15+", label: "Countries Represented" },
-          { value: "98%", label: "Veteran Retention" },
-        ]}
-      />
+      {/* ── BENEFITS & PERKS ── */}
+      <BenefitsSection />
 
-      {/* ── EMPLOYEE QUOTE ── */}
-      <QuoteSection
-        quote="I spent twelve years operating air defense systems in the Army, and I've never seen a company that values that experience the way Aegis does. On my first day, my team lead asked me to redesign the operator interface based on what I wished I'd had in Kandahar. That's not a consulting gig — that's giving someone a seat at the table and meaning it. Three years later, I'm leading the operator experience team for our entire product suite, and every feature we ship still starts with the same question: would this have helped me downrange?"
-        author="Major Sarah Chen (Ret.)"
-        role="Director of Operator Experience — Former U.S. Army Air Defense Artillery"
-      />
+      {/* ── DEI SECTION ── */}
+      <DEISection />
+
+      {/* ── OFFICE LIFE ── */}
+      <OfficeLife />
 
       {/* ── CTA ── */}
       <CTASection

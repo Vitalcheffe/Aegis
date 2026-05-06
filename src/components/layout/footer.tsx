@@ -13,7 +13,7 @@ const footerColumns = [
       { label: "Leadership", href: "/about/leadership" },
       { label: "History", href: "/about/history" },
       { label: "Careers", href: "/careers" },
-      { label: "Partners", href: "/about/partners" },
+      { label: "Partners", href: "/partners" },
       { label: "Global Presence", href: "/about/global-presence" },
       { label: "Contact", href: "/contact" },
     ],

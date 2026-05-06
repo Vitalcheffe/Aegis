@@ -1,11 +1,265 @@
 "use client";
 
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   SectionHero,
   Callout,
-  CardGrid,
   CTASection,
 } from "@/components/sections";
+import { ScrollReveal as ScrollRevealComponent } from "@/components/sections/scroll-reveal";
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
+
+/* ────────────────────────────────────────────────────────────────
+   NEWS DATA
+   ──────────────────────────────────────────────────────────────── */
+
+type Category =
+  | "All"
+  | "Press Release"
+  | "Event"
+  | "Blog"
+  | "Threat Intel";
+
+type FilterTab = Category | "Events";
+
+const filterTabs: FilterTab[] = [
+  "All",
+  "Press Release",
+  "Events",
+  "Blog",
+  "Threat Intel",
+];
+
+interface NewsItem {
+  date: string;
+  category: Category;
+  title: string;
+  excerpt: string;
+  href: string;
+}
+
+const newsItems: NewsItem[] = [
+  {
+    date: "Mar 2026",
+    category: "Press Release",
+    title: "$240M CENTCOM Contract Awarded",
+    excerpt:
+      "Aegis Defense Systems has been awarded a $240M contract by U.S. Central Command for deployment of Aegis Shield systems across forward operating bases in the Middle East theater.",
+    href: "/news/press-releases",
+  },
+  {
+    date: "Mar 2026",
+    category: "Threat Intel",
+    title: "Shahed-136 Low-Observable Variant Detected",
+    excerpt:
+      "Aegis threat intelligence has identified a new low-observable variant of the Shahed-136 UAV with reduced RCS and modified RF signatures. Updated threat libraries deployed to all operational systems.",
+    href: "/threat-database",
+  },
+  {
+    date: "Feb 2026",
+    category: "Blog",
+    title: "AI-Driven Drone Detection Breakthrough",
+    excerpt:
+      "Our research team details the new transformer-based detection architecture achieving 99.4% classification accuracy across 200+ simultaneous threats with 18ms mean latency.",
+    href: "/technology/ai-ml",
+  },
+  {
+    date: "Feb 2026",
+    category: "Press Release",
+    title: "Directed Energy Integration Milestone",
+    excerpt:
+      "Successful live-fire integration of 50 kW directed energy weapon with Aegis Shield at White Sands Missile Range — first operational pairing of C-UAS command with high-energy laser.",
+    href: "/news/press-releases",
+  },
+  {
+    date: "Jan 2026",
+    category: "Press Release",
+    title: "NATO Selects Aegis Integrator",
+    excerpt:
+      "NATO has selected Aegis Integrator as the standard C-UAS interoperability platform for allied forces, enabling seamless cross-domain command and control across 32 member nations.",
+    href: "/news/press-releases",
+  },
+  {
+    date: "Jan 2026",
+    category: "Blog",
+    title: "Swarm Defense: Algorithm Explained",
+    excerpt:
+      "A deep technical dive into Aegis's autonomous swarm discrimination algorithm — how we classify, prioritize, and neutralize coordinated multi-drone attacks in real time.",
+    href: "/technology/ai-ml",
+  },
+  {
+    date: "Dec 2025",
+    category: "Press Release",
+    title: "Abu Dhabi Regional HQ Opens",
+    excerpt:
+      "Aegis inaugurates its Middle East and North Africa regional headquarters in Abu Dhabi, establishing dedicated logistics, training, and R&D capabilities for GCC partners.",
+    href: "/news/press-releases",
+  },
+  {
+    date: "Nov 2025",
+    category: "Event",
+    title: "Aegis at DSEI 2025 — Live Demo",
+    excerpt:
+      "Visit Aegis at Stand H4-200 at DSEI London for live demonstrations of Aegis Core v3.0 and directed energy integration. CEO keynote on main stage September 16.",
+    href: "/news/events",
+  },
+  {
+    date: "Nov 2025",
+    category: "Press Release",
+    title: "SkyWatch Airborne Intercept at RIMPAC",
+    excerpt:
+      "Aegis SkyWatch achieves first operational airborne drone intercept during RIMPAC 2025 exercises, neutralizing a simulated swarm attack from a maritime patrol aircraft platform.",
+    href: "/news/press-releases",
+  },
+  {
+    date: "Oct 2025",
+    category: "Press Release",
+    title: "Record $1.2B FY2025 Revenue",
+    excerpt:
+      "Aegis reports record revenue of $1.2B for fiscal year 2025, representing 42% year-over-year growth driven by expansion across 12 sovereign customers and directed energy upsells.",
+    href: "/news/press-releases",
+  },
+  {
+    date: "Sep 2025",
+    category: "Press Release",
+    title: "UK MoD £180M Airport Contract",
+    excerpt:
+      "The UK Ministry of Defence awards Aegis a £180M contract to deploy SkyWatch systems across 8 major airports and critical national infrastructure sites in the United Kingdom.",
+    href: "/news/press-releases",
+  },
+  {
+    date: "Aug 2025",
+    category: "Press Release",
+    title: "Certified Partner Program Launch",
+    excerpt:
+      "Aegis launches the Certified Partner Program, enabling qualified defense integrators to deploy, maintain, and service Aegis platforms worldwide with standardized training and certification.",
+    href: "/news/press-releases",
+  },
+];
+
+/* ────────────────────────────────────────────────────────────────
+   CATEGORY BADGE
+   ──────────────────────────────────────────────────────────────── */
+
+function CategoryBadge({ category }: { category: Category }) {
+  return (
+    <span className="text-[9px] uppercase tracking-[0.15em] text-white/50 border border-white/10 px-3 py-1 inline-block">
+      {category}
+    </span>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────────
+   NEWS LIST with FILTER
+   ──────────────────────────────────────────────────────────────── */
+
+function NewsList() {
+  const [active, setActive] = useState<FilterTab>("All");
+
+  const filtered =
+    active === "All"
+      ? newsItems
+      : newsItems.filter((item) => {
+          if (active === "Events") return item.category === "Event";
+          return item.category === active;
+        });
+
+  return (
+    <section className="py-28 md:py-44 bg-black">
+      <div className="max-w-[80rem] mx-auto px-6 md:px-12 lg:px-20">
+        <ScrollRevealComponent>
+          <div className="mb-16 md:mb-24">
+            <span className="text-[10px] uppercase tracking-[0.2em] text-white/40 block mb-4">
+              Latest Updates
+            </span>
+            <h2 className="text-[clamp(2.5rem,6vw,5rem)] font-bold tracking-[-0.04em] leading-[0.95] text-white">
+              Recent News
+            </h2>
+          </div>
+        </ScrollRevealComponent>
+
+        {/* ── FILTER TABS ── */}
+        <ScrollRevealComponent>
+          <div className="flex flex-wrap gap-2 mb-16 border-b border-white/10 pb-6">
+            {filterTabs.map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActive(tab)}
+                className={`text-[11px] uppercase tracking-[0.15em] px-5 py-2.5 border transition-all duration-200 ${
+                  active === tab
+                    ? "bg-white text-black border-white"
+                    : "bg-transparent text-white/50 border-white/10 hover:text-white hover:border-white/30"
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+        </ScrollRevealComponent>
+
+        {/* ── NEWS ITEMS ── */}
+        <div className="space-y-0">
+          <AnimatePresence mode="popLayout">
+            {filtered.map((item, i) => (
+              <motion.div
+                key={item.title}
+                layout
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{
+                  duration: 0.4,
+                  delay: i * 40,
+                  ease: [0.25, 0.1, 0.25, 1],
+                }}
+              >
+                <Link
+                  href={item.href}
+                  className="block border-t border-white/10 group hover:bg-white/[0.02] transition-colors"
+                >
+                  <div className="py-8 md:py-10 flex flex-col md:flex-row md:items-start md:justify-between gap-4 md:gap-8 px-2 md:px-4 -mx-2 md:-mx-4">
+                    {/* Left: date + category */}
+                    <div className="md:w-48 flex-shrink-0 flex md:flex-col items-center md:items-start gap-3 md:gap-2">
+                      <span className="text-[11px] uppercase tracking-[0.15em] text-white/30">
+                        {item.date}
+                      </span>
+                      <CategoryBadge category={item.category} />
+                    </div>
+
+                    {/* Center: title + excerpt */}
+                    <div className="flex-1">
+                      <h3 className="text-xl md:text-2xl font-bold text-white group-hover:text-white/90 transition-colors tracking-[-0.01em] leading-tight">
+                        {item.title}
+                      </h3>
+                      <p className="text-[#767676] text-sm md:text-base leading-relaxed mt-3 line-clamp-2">
+                        {item.excerpt}
+                      </p>
+                    </div>
+
+                    {/* Right: read more */}
+                    <div className="flex-shrink-0 flex items-center md:pt-2">
+                      <span className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.15em] text-white border-b border-white/30 pb-1 group-hover:border-white transition-colors">
+                        Read More
+                        <ArrowRight size={12} strokeWidth={1.5} />
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+          <div className="border-t border-white/10" />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════
+   MAIN PAGE
+   ════════════════════════════════════════════════════════════════ */
 
 export default function NewsPage() {
   return (
@@ -27,61 +281,8 @@ export default function NewsPage() {
         Systems.
       </Callout>
 
-      {/* ── NEWS CARDS ── */}
-      <CardGrid
-        label="Latest Updates"
-        title="Recent News"
-        cards={[
-          {
-            title: "Aegis Core v3.0 Deployed Across NATO Eastern Flank",
-            description:
-              "The latest iteration of our flagship command-and-control platform is now operational across all NATO Forward Presence battlegroups in the Baltic states and Poland. Version 3.0 introduces real-time multi-domain sensor fusion, autonomous swarm discrimination, and a hardened communications backbone resistant to EW jamming — delivering a 40% improvement in kill-chain latency over the previous generation.",
-            image: "/images/pages/c2-operations.jpg",
-            href: "/news/press-releases",
-            tag: "Press Release",
-          },
-          {
-            title: "Directed Energy Integration Achieves Operational Milestone",
-            description:
-              "Aegis has successfully completed live-fire integration testing of a 50 kW directed energy weapon with our Aegis Shield platform at the White Sands Missile Range. The system demonstrated consistent hard-kill neutralization of Group 1 and Group 2 UAVs at ranges exceeding 1.2 km, marking the first operational pairing of a C-UAS command system with a high-energy laser in a field environment.",
-            image: "/images/pages/neutralization-ew.jpg",
-            href: "/news/press-releases",
-            tag: "Technology",
-          },
-          {
-            title: "Aegis Expands to 12th Nation with Pacific Theater Contract",
-            description:
-              "The Republic of Korea has selected Aegis Shield to protect critical military installations along the DMZ and key naval assets at Jinhae and Busan. The $180M contract includes 24 fixed-site installations, mobile convoy protection units, and a five-year sustainment agreement — representing our largest single-nation deployment in the Indo-Pacific region.",
-            image: "/images/pages/mobile-tactical.jpg",
-            href: "/news/press-releases",
-            tag: "Business",
-          },
-          {
-            title: "Counter-UAS Summit 2025: Aegis Keynote Address",
-            description:
-              "CEO Dr. Elena Vasquez delivered the opening keynote at the 2025 Counter-UAS Summit in Washington, D.C., outlining the emerging threat landscape of AI-coordinated drone swarms and presenting Aegis's vision for autonomous, multi-domain defense architecture. The address was attended by over 2,400 defense professionals from 38 nations.",
-            image: "/images/pages/c2-operations.jpg",
-            href: "/news/events",
-            tag: "Events",
-          },
-          {
-            title: "AI-Driven Swarm Detection Sets New Benchmark",
-            description:
-              "Aegis Research Labs has published results from the largest counter-swarm detection trial ever conducted, tracking and classifying 200+ simultaneous hostile UAVs with 99.4% accuracy and a mean classification time of 18 milliseconds. The new transformer-based architecture processes RF, radar, and EO/IR inputs in parallel, enabling real-time threat prioritization at unprecedented scale.",
-            image: "/images/pages/classification-ai.jpg",
-            href: "/news/press-releases",
-            tag: "Research",
-          },
-          {
-            title: "Strategic Partnership with Naval Defense Consortium",
-            description:
-              "Aegis has entered a strategic partnership with the Combined Naval Defense Consortium, integrating our Aegis Command platform with allied naval C2 systems across 8 navies. The agreement provides standardized C-UAS interoperability, shared threat libraries, and joint training protocols — ensuring coordinated defense against maritime drone threats from the Gulf of Aden to the South China Sea.",
-            image: "/images/pages/naval-warship.jpg",
-            href: "/news/press-releases",
-            tag: "Partnerships",
-          },
-        ]}
-      />
+      {/* ── NEWS LIST WITH FILTER ── */}
+      <NewsList />
 
       {/* ── CTA ── */}
       <CTASection
