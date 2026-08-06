@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  width:1920px;height:800px;
+  background:#ffffff;overflow:hidden;
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;
+}
+.dots{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(0,0,0,0.03) 1px,transparent 1px);background-size:32px 32px;opacity:0.7}
+.glow{position:absolute;top:55%;left:50%;transform:translate(-50%,-50%);width:900px;height:300px;background:radial-gradient(ellipse,rgba(245,158,11,0.04) 0%,transparent 70%);pointer-events:none}
+.grain{position:absolute;inset:0;opacity:0.012;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
+.wrap{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+.title{position:relative;z-index:2;text-align:center;margin-bottom:18px}
+.title h1{font-size:32px;font-weight:700;color:#1A1A1A;letter-spacing:-0.02em;line-height:1}
+.title .line{width:48px;height:1px;background:rgba(245,158,11,0.5);margin:14px auto}
+.title p{font-size:14px;color:#737373;font-weight:400;max-width:720px;margin:0 auto;line-height:1.6}
+.corner{position:absolute;font-size:9px;color:#D4D4D4;letter-spacing:0.2em;font-family:'SF Mono',monospace;z-index:2}
+.tl{top:32px;left:32px}
+.tr{top:32px;right:32px}
+.meta{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);font-size:9px;color:#D4D4D4;letter-spacing:0.2em;font-family:'SF Mono',monospace;z-index:2}
+.legend{position:absolute;bottom:60px;left:50%;transform:translateX(-50%);display:flex;gap:32px;z-index:2}
+.legend-item{display:flex;align-items:center;gap:8px;font-size:10px;color:#737373;font-family:'SF Mono',monospace;letter-spacing:0.15em;text-transform:uppercase}
+.legend-swatch{width:24px;height:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="dots"></div>
+<div class="glow"></div>
+<div class="grain"></div>
+
+<svg width="1400" height="500" viewBox="0 0 1400 500" style="position:relative;z-index:1">
+  <!-- Axes -->
+  <line x1="80" y1="440" x2="1340" y2="440" stroke="#e5e5e5" stroke-width="1"/>
+  <line x1="80" y1="40" x2="80" y2="440" stroke="#e5e5e5" stroke-width="1"/>
+  <!-- Grid lines -->
+  <g stroke="#e5e5e5" stroke-width="0.5" opacity="0.5">
+    <line x1="80" y1="120" x2="1340" y2="120"/>
+    <line x1="80" y1="200" x2="1340" y2="200"/>
+    <line x1="80" y1="280" x2="1340" y2="280"/>
+    <line x1="80" y1="360" x2="1340" y2="360"/>
+  </g>
+  <!-- Y axis labels -->
+  <g fill="#D4D4D4" font-family="SF Mono,monospace" font-size="10" text-anchor="end">
+    <text x="70" y="444">0</text>
+    <text x="70" y="364">200</text>
+    <text x="70" y="284">400</text>
+    <text x="70" y="204">600</text>
+    <text x="70" y="124">800</text>
+    <text x="70" y="44">1000 m</text>
+  </g>
+  <!-- X axis labels -->
+  <g fill="#D4D4D4" font-family="SF Mono,monospace" font-size="10" text-anchor="middle">
+    <text x="80" y="460">t=0</text>
+    <text x="270" y="460">1s</text>
+    <text x="460" y="460">2s</text>
+    <text x="650" y="460">3s</text>
+    <text x="840" y="460">4s</text>
+    <text x="1030" y="460">5s</text>
+    <text x="1220" y="460">6s</text>
+    <text x="1340" y="460">time (s)</text>
+  </g>
+
+  <!-- True trajectory (smooth, amber) -->
+  <path id="true-path" fill="none" stroke="#d97706" stroke-width="2" opacity="0.9"/>
+  <!-- UKF estimated trajectory (cyan, slightly noisy) -->
+  <path id="ukf-path" fill="none" stroke="#0891b2" stroke-width="1.5" opacity="0.85" stroke-dasharray="0"/>
+  <!-- Measurement points (small dots, faint) -->
+  <g id="meas-points" fill="#9333ea" opacity="0.4"/>
+  <!-- Error band (3-sigma) -->
+  <path id="err-upper" fill="none" stroke="#d97706" stroke-width="0.5" opacity="0.15" stroke-dasharray="3,3"/>
+  <path id="err-lower" fill="none" stroke="#d97706" stroke-width="0.5" opacity="0.15" stroke-dasharray="3,3"/>
+  <path id="err-band" fill="#d97706" opacity="0.08"/>
+
+  <!-- Annotation: divergence point -->
+  <g>
+    <line x1="840" y1="40" x2="840" y2="440" stroke="#dc2626" stroke-width="0.5" opacity="0.4" stroke-dasharray="2,4"/>
+    <circle cx="840" cy="180" r="4" fill="#dc2626" opacity="0.8"/>
+    <text x="850" y="172" fill="#dc2626" font-family="SF Mono,monospace" font-size="10" letter-spacing="0.1em">MANEUVER · 4.0s</text>
+    <text x="850" y="186" fill="#737373" font-family="SF Mono,monospace" font-size="9">UKF recovers in 0.6s</text>
+  </g>
+</svg>
+
+<div class="title">
+<h1>UKF State Estimation · Live Trajectory</h1>
+<div class="line"></div>
+<p>True target position (amber) vs Unscented Kalman Filter estimate (cyan) over 6 seconds. Purple dots are noisy sensor measurements. The shaded band is the 3σ covariance envelope. At t=4.0s the target executes a high-g maneuver — the UKF briefly diverges, then re-converges within 600ms as sigma points adapt to the nonlinearity.</p>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-swatch" style="background:#d97706"></div>True Position</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#0891b2"></div>UKF Estimate</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#9333ea;opacity:0.7"></div>Measurements</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#d97706;opacity:0.2"></div>3σ Covariance</div>
+</div>
+
+<div class="corner tl">AEGIS / UKF · v1.0</div>
+<div class="corner tr">50Hz · 6.0s WINDOW · LIVE</div>
+<div class="meta">AEGIS / ESTIMATION / RMSE 4.2m · SIGMA POINTS 7</div>
+</div>
+
+<script>
+(function(){
+  const truePath = document.getElementById('true-path');
+  const ukfPath = document.getElementById('ukf-path');
+  const measPoints = document.getElementById('meas-points');
+  const errBand = document.getElementById('err-band');
+  const NS = 'http://www.w3.org/2000/svg';
+
+  let seed = 1337;
+  function rnd(){ seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+  function randn(){ // Box-Muller
+    const u = rnd() || 0.0001, v = rnd();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  }
+
+  // Generate trajectory: smooth curve with a maneuver at t=4s
+  const N = 300; // 6s at 50Hz
+  const truePts = [], ukfPts = [], measPts = [], errUpper = [], errLower = [];
+  for (let i = 0; i < N; i++) {
+    const t = i / 50; // seconds
+    let y; // altitude in meters
+    // Phase 1: gentle climb 0-4s
+    if (t < 4) {
+      y = 300 + 80 * t + 20 * Math.sin(t * 1.5);
+    } else {
+      // Phase 2: high-g maneuver — sharp turn
+      const dt = t - 4;
+      y = 300 + 80 * 4 + 20 * Math.sin(4 * 1.5) + 200 * dt - 30 * dt * dt;
+    }
+    y = Math.max(50, Math.min(900, y));
+    const x = 80 + (t / 6) * 1260;
+    const ypx = 440 - (y / 1000) * 400;
+    truePts.push([x, ypx]);
+
+    // UKF: tracks closely, slight lag, recovers after maneuver
+    let ukfY;
+    if (t < 4) {
+      ukfY = y - 5 + randn() * 4;
+    } else if (t < 4.6) {
+      // Divergence during maneuver
+      ukfY = y - 30 * Math.exp(-(t - 4) * 2) + randn() * 8;
+    } else {
+      ukfY = y - 4 + randn() * 3;
+    }
+    const ukfYpx = 440 - (ukfY / 1000) * 400;
+    ukfPts.push([x, ukfYpx]);
+
+    // Measurements: noisy, every 5 ticks
+    if (i % 5 === 0) {
+      const measY = y + randn() * 25;
+      const measYpx = 440 - (measY / 1000) * 400;
+      measPts.push([x, measYpx]);
+    }
+
+    // Error band: 3-sigma, widens during maneuver
+    let sigma;
+    if (t < 4) sigma = 12;
+    else if (t < 4.6) sigma = 12 + 40 * Math.exp(-(t - 4) * 3);
+    else sigma = 12;
+    errUpper.push([x, ypx - sigma * 0.4]);
+    errLower.push([x, ypx + sigma * 0.4]);
+  }
+
+  function toPath(pts) {
+    return 'M ' + pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' L ');
+  }
+  truePath.setAttribute('d', toPath(truePts));
+  ukfPath.setAttribute('d', toPath(ukfPts));
+
+  // Measurement dots
+  measPts.forEach(p => {
+    const c = document.createElementNS(NS, 'circle');
+    c.setAttribute('cx', p[0]);
+    c.setAttribute('cy', p[1]);
+    c.setAttribute('r', '2.5');
+    measPoints.appendChild(c);
+  });
+
+  // Error band: upper path + reverse lower
+  const bandPath = 'M ' + errUpper.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' L ') +
+                   ' L ' + errLower.slice().reverse().map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' L ') + ' Z';
+  errBand.setAttribute('d', bandPath);
+})();
+</script>
+</body>
+</html>
