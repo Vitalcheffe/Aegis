@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1920px;height:800px;background:#ffffff;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif}
+.dots{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(0,0,0,0.03) 1px,transparent 1px);background-size:32px 32px;opacity:0.7}
+.glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:500px;background:radial-gradient(ellipse,rgba(245,158,11,0.04) 0%,transparent 70%);pointer-events:none}
+.grain{position:absolute;inset:0;opacity:0.012;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
+.wrap{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+.title{position:absolute;bottom:80px;left:50%;transform:translateX(-50%);z-index:2;text-align:center}
+.title h1{font-size:32px;font-weight:700;color:#1A1A1A;letter-spacing:-0.02em;line-height:1}
+.title .line{width:48px;height:1px;background:rgba(245,158,11,0.5);margin:14px auto}
+.title p{font-size:14px;color:#737373;font-weight:400;max-width:820px;margin:0 auto;line-height:1.6}
+.corner{position:absolute;font-size:9px;color:#D4D4D4;letter-spacing:0.2em;font-family:'SF Mono',monospace;z-index:2}
+.tl{top:32px;left:32px}
+.tr{top:32px;right:32px}
+.meta{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);font-size:9px;color:#D4D4D4;letter-spacing:0.2em;font-family:'SF Mono',monospace;z-index:2}
+.legend{position:absolute;top:80px;left:50%;transform:translateX(-50%);display:flex;gap:32px;z-index:2}
+.legend-item{display:flex;align-items:center;gap:8px;font-size:10px;color:#737373;font-family:'SF Mono',monospace;letter-spacing:0.15em;text-transform:uppercase}
+.legend-swatch{width:10px;height:10px;border-radius:50%}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="dots"></div>
+<div class="glow"></div>
+<div class="grain"></div>
+
+<svg width="900" height="500" viewBox="-450 -250 900 500" style="position:relative;z-index:1">
+  <g id="edges"></g>
+  <g id="nodes"></g>
+  <g id="labels"></g>
+</svg>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-swatch" style="background:#0891b2"></div>Honest Node</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#d97706"></div>Leader (rotating)</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#dc2626"></div>Faulty (excluded)</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#9333ea;opacity:0.7"></div>Consensus message</div>
+</div>
+
+<div class="title">
+<h1>BFT Mesh Topology · 10-Node Network</h1>
+<div class="line"></div>
+<p>Mesh network of 10 sensing agents running Byzantine Fault Tolerant consensus. Honest nodes (cyan) form a fully-connected mesh — every node can reach every other. The current leader (amber) broadcasts the proposed state; all nodes verify and sign. Three faulty nodes (crimson) attempt to inject false data but are isolated by the consensus protocol. Violet edges show active message flow during a consensus round — the mesh maintains connectivity even with 3 nodes excluded.</p>
+</div>
+
+<div class="corner tl">AEGIS / MESH · v1.0</div>
+<div class="corner tr">10 NODES · 3 FAULTY · N=3f+1</div>
+<div class="meta">AEGIS / TOPOLOGY / FULL MESH · PBFT VARIANT</div>
+</div>
+
+<script>
+(function(){
+  const edges = document.getElementById('edges');
+  const nodes = document.getElementById('nodes');
+  const labels = document.getElementById('labels');
+  const NS = 'http://www.w3.org/2000/svg';
+  let seed = 1337;
+  function rnd(){ seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+
+  // 10 nodes in a circle
+  const N = 10;
+  const R = 180;
+  const nodePositions = [];
+  for (let i = 0; i < N; i++) {
+    const angle = -Math.PI/2 + (i / N) * 2 * Math.PI;
+    nodePositions.push({
+      x: Math.cos(angle) * R,
+      y: Math.sin(angle) * R,
+      id: i,
+      type: i < 7 ? 'honest' : 'faulty',
+      isLeader: i === 2,  // node 2 is current leader
+    });
+  }
+
+  // Draw all edges (full mesh)
+  for (let i = 0; i < N; i++) {
+    for (let j = i + 1; j < N; j++) {
+      const a = nodePositions[i];
+      const b = nodePositions[j];
+      // Skip edges between two faulty nodes
+      if (a.type === 'faulty' && b.type === 'faulty') continue;
+      // Edges involving faulty nodes are dimmer
+      const isFaultyEdge = a.type === 'faulty' || b.type === 'faulty';
+      const line = document.createElementNS(NS, 'line');
+      line.setAttribute('x1', a.x);
+      line.setAttribute('y1', a.y);
+      line.setAttribute('x2', b.x);
+      line.setAttribute('y2', b.y);
+      line.setAttribute('stroke', isFaultyEdge ? '#dc2626' : '#D4D4D4');
+      line.setAttribute('stroke-width', '0.4');
+      line.setAttribute('opacity', isFaultyEdge ? '0.15' : '0.4');
+      edges.appendChild(line);
+    }
+  }
+
+  // Active consensus messages (a few highlighted edges)
+  const leader = nodePositions[2];
+  for (let i = 0; i < N; i++) {
+    if (i === 2) continue;
+    const target = nodePositions[i];
+    if (target.type === 'faulty') continue;
+    // Curve from leader to honest node
+    const midX = (leader.x + target.x) / 2;
+    const midY = (leader.y + target.y) / 2;
+    const perpX = -(target.y - leader.y) * 0.15;
+    const perpY = (target.x - leader.x) * 0.15;
+    const path = document.createElementNS(NS, 'path');
+    path.setAttribute('d', `M ${leader.x} ${leader.y} Q ${midX + perpX} ${midY + perpY} ${target.x} ${target.y}`);
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke', '#9333ea');
+    path.setAttribute('stroke-width', '1');
+    path.setAttribute('opacity', '0.4');
+    edges.appendChild(path);
+  }
+
+  // Nodes
+  nodePositions.forEach((n, i) => {
+    // Glow for leader
+    if (n.isLeader) {
+      const glow = document.createElementNS(NS, 'circle');
+      glow.setAttribute('cx', n.x); glow.setAttribute('cy', n.y); glow.setAttribute('r', '28');
+      glow.setAttribute('fill', '#d97706'); glow.setAttribute('opacity', '0.15');
+      nodes.appendChild(glow);
+    }
+    const c = document.createElementNS(NS, 'circle');
+    c.setAttribute('cx', n.x); c.setAttribute('cy', n.y);
+    c.setAttribute('r', n.isLeader ? '14' : '10');
+    c.setAttribute('fill', n.isLeader ? '#d97706' : (n.type === 'faulty' ? '#dc2626' : '#0891b2'));
+    c.setAttribute('opacity', '0.9');
+    nodes.appendChild(c);
+    // Inner dot
+    const inner = document.createElementNS(NS, 'circle');
+    inner.setAttribute('cx', n.x); inner.setAttribute('cy', n.y);
+    inner.setAttribute('r', '4');
+    inner.setAttribute('fill', '#ffffff');
+    nodes.appendChild(inner);
+    // Label
+    const lbl = document.createElementNS(NS, 'text');
+    lbl.setAttribute('x', n.x);
+    lbl.setAttribute('y', n.y + 35);
+    lbl.setAttribute('fill', n.type === 'faulty' ? '#dc2626' : (n.isLeader ? '#d97706' : '#737373'));
+    lbl.setAttribute('font-family', 'SF Mono,monospace');
+    lbl.setAttribute('font-size', '9');
+    lbl.setAttribute('text-anchor', 'middle');
+    lbl.setAttribute('letter-spacing', '0.1em');
+    lbl.textContent = `N${i}${n.isLeader ? ' (L)' : ''}${n.type === 'faulty' ? ' ✕' : ''}`;
+    labels.appendChild(lbl);
+  });
+})();
+</script>
+</body>
+</html>
