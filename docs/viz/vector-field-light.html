@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1920px;height:800px;background:#ffffff;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif}
+.dots{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(0,0,0,0.03) 1px,transparent 1px);background-size:32px 32px;opacity:0.7}
+.glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(245,158,11,0.04) 0%,transparent 70%);pointer-events:none}
+.grain{position:absolute;inset:0;opacity:0.012;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
+.wrap{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+.title{position:relative;z-index:2;text-align:center;margin-bottom:18px}
+.title h1{font-size:32px;font-weight:700;color:#1A1A1A;letter-spacing:-0.02em;line-height:1}
+.title .line{width:48px;height:1px;background:rgba(245,158,11,0.5);margin:14px auto}
+.title p{font-size:14px;color:#737373;font-weight:400;max-width:780px;margin:0 auto;line-height:1.6}
+.corner{position:absolute;font-size:9px;color:#D4D4D4;letter-spacing:0.2em;font-family:'SF Mono',monospace;z-index:2}
+.tl{top:32px;left:32px}
+.tr{top:32px;right:32px}
+.meta{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);font-size:9px;color:#D4D4D4;letter-spacing:0.2em;font-family:'SF Mono',monospace;z-index:2}
+.legend{position:absolute;bottom:60px;left:50%;transform:translateX(-50%);display:flex;gap:32px;z-index:2}
+.legend-item{display:flex;align-items:center;gap:8px;font-size:10px;color:#737373;font-family:'SF Mono',monospace;letter-spacing:0.15em;text-transform:uppercase}
+.legend-swatch{width:24px;height:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="dots"></div>
+<div class="glow"></div>
+<div class="grain"></div>
+
+<svg width="1400" height="500" viewBox="0 0 1400 500" style="position:relative;z-index:1">
+  <g id="vectors"></g>
+  <!-- Singularity points -->
+  <g id="singularities"></g>
+  <!-- Crosshair center -->
+  <line x1="700" y1="40" x2="700" y2="440" stroke="#e5e5e5" stroke-width="0.5" opacity="0.6"/>
+  <line x1="80" y1="240" x2="1320" y2="240" stroke="#e5e5e5" stroke-width="0.5" opacity="0.6"/>
+  <!-- Annotation -->
+  <text x="100" y="60" fill="#737373" font-family="SF Mono,monospace" font-size="9" letter-spacing="0.15em">VELOCITY FIELD · DRAG COEFFICIENT ∇v</text>
+  <text x="100" y="74" fill="#D4D4D4" font-family="SF Mono,monospace" font-size="9">|v| ∈ [0, 380 m/s]</text>
+  <!-- Singularity labels -->
+  <text x="540" y="172" fill="#d97706" font-family="SF Mono,monospace" font-size="9" letter-spacing="0.1em" text-anchor="end">SOURCE · ∇·v &gt; 0</text>
+  <text x="900" y="324" fill="#d97706" font-family="SF Mono,monospace" font-size="9" letter-spacing="0.1em">SINK · ∇·v &lt; 0</text>
+</svg>
+
+<div class="title">
+<h1>Velocity Field · Drag Coefficient Gradient</h1>
+<div class="line"></div>
+<p>Vector field of the velocity gradient ∇v around two singularities — a source (top-left) where flow diverges, and a sink (bottom-right) where flow converges. Vector color encodes magnitude: cyan = low velocity, amber = moderate, crimson = high. The mesh reveals the underlying aerodynamic structure that the UKF must estimate from sparse sensor samples. Singularities are mathematically the points where the Jacobian loses rank — detection of these points is how the system identifies maneuver onset.</p>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-swatch" style="background:#0891b2"></div>Low |v|</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#d97706"></div>Mid |v|</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#dc2626"></div>High |v|</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#d97706;opacity:0.7;height:8px;width:8px;border-radius:50%"></div>Singularity</div>
+</div>
+
+<div class="corner tl">AEGIS / VECTOR · v1.0</div>
+<div class="corner tr">30×15 GRID · 450 VECTORS</div>
+<div class="meta">AEGIS / FIELD ANALYSIS / SINGULARITY DETECTION</div>
+</div>
+
+<script>
+(function(){
+  const vectors = document.getElementById('vectors');
+  const sing = document.getElementById('singularities');
+  const NS = 'http://www.w3.org/2000/svg';
+
+  // Two singularities: source at (540, 170), sink at (900, 320)
+  const sources = [
+    {x: 540, y: 170, type: 'source', strength: 1.0},
+    {x: 900, y: 320, type: 'sink', strength: 0.9},
+  ];
+
+  const cols = 30, rows = 15;
+  const xStart = 80, yStart = 40;
+  const xStep = (1320 - 80) / cols;
+  const yStep = (440 - 40) / rows;
+
+  for (let i = 0; i < cols; i++) {
+    for (let j = 0; j < rows; j++) {
+      const x = xStart + i * xStep;
+      const y = yStart + j * yStep;
+      // Compute velocity from superposition of sources
+      let vx = 0, vy = 0;
+      sources.forEach(s => {
+        const dx = x - s.x;
+        const dy = y - s.y;
+        const r2 = dx*dx + dy*dy + 100;
+        const r = Math.sqrt(r2);
+        const mag = s.strength * 4000 / r2;
+        if (s.type === 'source') {
+          vx += mag * dx / r;
+          vy += mag * dy / r;
+        } else {
+          vx -= mag * dx / r;
+          vy -= mag * dy / r;
+        }
+      });
+      const mag = Math.sqrt(vx*vx + vy*vy);
+      const scale = Math.min(25, mag) / Math.max(0.1, mag);
+      const x2 = x + vx * scale;
+      const y2 = y + vy * scale;
+
+      // Color by magnitude
+      let color, opacity;
+      if (mag < 5) { color = '#0891b2'; opacity = 0.3; }
+      else if (mag < 15) { color = '#0891b2'; opacity = 0.5; }
+      else if (mag < 25) { color = '#d97706'; opacity = 0.7; }
+      else { color = '#dc2626'; opacity = 0.85; }
+
+      const line = document.createElementNS(NS, 'line');
+      line.setAttribute('x1', x);
+      line.setAttribute('y1', y);
+      line.setAttribute('x2', x2);
+      line.setAttribute('y2', y2);
+      line.setAttribute('stroke', color);
+      line.setAttribute('stroke-width', '0.9');
+      line.setAttribute('opacity', opacity);
+      vectors.appendChild(line);
+
+      // Arrowhead
+      const angle = Math.atan2(y2 - y, x2 - x);
+      const ah1 = document.createElementNS(NS, 'line');
+      ah1.setAttribute('x1', x2);
+      ah1.setAttribute('y1', y2);
+      ah1.setAttribute('x2', x2 - 4 * Math.cos(angle - 0.5));
+      ah1.setAttribute('y2', y2 - 4 * Math.sin(angle - 0.5));
+      ah1.setAttribute('stroke', color);
+      ah1.setAttribute('stroke-width', '0.9');
+      ah1.setAttribute('opacity', opacity);
+      vectors.appendChild(ah1);
+    }
+  }
+
+  // Draw singularities with glow
+  sources.forEach(s => {
+    // Outer glow
+    const g1 = document.createElementNS(NS, 'circle');
+    g1.setAttribute('cx', s.x); g1.setAttribute('cy', s.y); g1.setAttribute('r', '20');
+    g1.setAttribute('fill', '#d97706'); g1.setAttribute('opacity', '0.1');
+    sing.appendChild(g1);
+    const g2 = document.createElementNS(NS, 'circle');
+    g2.setAttribute('cx', s.x); g2.setAttribute('cy', s.y); g2.setAttribute('r', '12');
+    g2.setAttribute('fill', '#d97706'); g2.setAttribute('opacity', '0.25');
+    sing.appendChild(g2);
+    const c = document.createElementNS(NS, 'circle');
+    c.setAttribute('cx', s.x); c.setAttribute('cy', s.y); c.setAttribute('r', '5');
+    c.setAttribute('fill', '#d97706'); c.setAttribute('opacity', '0.9');
+    sing.appendChild(c);
+  });
+})();
+</script>
+</body>
+</html>
