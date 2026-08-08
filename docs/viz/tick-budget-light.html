@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1920px;height:800px;background:#ffffff;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif}
+.dots{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(0,0,0,0.03) 1px,transparent 1px);background-size:32px 32px;opacity:0.7}
+.glow{position:absolute;top:55%;left:50%;transform:translate(-50%,-50%);width:1000px;height:300px;background:radial-gradient(ellipse,rgba(245,158,11,0.04) 0%,transparent 70%);pointer-events:none}
+.grain{position:absolute;inset:0;opacity:0.012;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
+.wrap{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+.title{position:relative;z-index:2;text-align:center;margin-bottom:18px}
+.title h1{font-size:32px;font-weight:700;color:#1A1A1A;letter-spacing:-0.02em;line-height:1}
+.title .line{width:48px;height:1px;background:rgba(245,158,11,0.5);margin:14px auto}
+.title p{font-size:14px;color:#737373;font-weight:400;max-width:820px;margin:0 auto;line-height:1.6}
+.corner{position:absolute;font-size:9px;color:#D4D4D4;letter-spacing:0.2em;font-family:'SF Mono',monospace;z-index:2}
+.tl{top:32px;left:32px}
+.tr{top:32px;right:32px}
+.meta{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);font-size:9px;color:#D4D4D4;letter-spacing:0.2em;font-family:'SF Mono',monospace;z-index:2}
+.legend{position:absolute;bottom:60px;left:50%;transform:translateX(-50%);display:flex;gap:24px;z-index:2}
+.legend-item{display:flex;align-items:center;gap:8px;font-size:10px;color:#737373;font-family:'SF Mono',monospace;letter-spacing:0.15em;text-transform:uppercase}
+.legend-swatch{width:14px;height:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="dots"></div>
+<div class="glow"></div>
+<div class="grain"></div>
+
+<svg width="1400" height="500" viewBox="0 0 1400 500" style="position:relative;z-index:1">
+  <line x1="80" y1="440" x2="1340" y2="440" stroke="#e5e5e5" stroke-width="1"/>
+  <line x1="80" y1="40" x2="80" y2="440" stroke="#e5e5e5" stroke-width="1"/>
+  <g stroke="#e5e5e5" stroke-width="0.5" opacity="0.5">
+    <line x1="80" y1="120" x2="1340" y2="120"/>
+    <line x1="80" y1="200" x2="1340" y2="200"/>
+    <line x1="80" y1="280" x2="1340" y2="280"/>
+    <line x1="80" y1="360" x2="1340" y2="360"/>
+  </g>
+  <g fill="#D4D4D4" font-family="SF Mono,monospace" font-size="10" text-anchor="end">
+    <text x="70" y="444">200ms</text>
+    <text x="70" y="364">150ms</text>
+    <text x="70" y="284">100ms</text>
+    <text x="70" y="204">50ms</text>
+    <text x="70" y="124">0ms</text>
+  </g>
+  <g fill="#D4D4D4" font-family="SF Mono,monospace" font-size="10" text-anchor="middle">
+    <text x="80" y="460">BOOT</text>
+    <text x="186" y="460">EXTRACT</text>
+    <text x="320" y="460">NEURAL</text>
+    <text x="454" y="460">NONLINEAR</text>
+    <text x="588" y="460">SWARM</text>
+    <text x="722" y="460">LIFECYCLE</text>
+    <text x="856" y="460">GOVERN</text>
+    <text x="990" y="460">BLACKSWAN</text>
+    <text x="1124" y="460">PARADIGM</text>
+    <text x="1258" y="460">COMMIT/EMIT</text>
+  </g>
+  <g id="bars"></g>
+  <line x1="80" y1="200" x2="1340" y2="200" stroke="#d97706" stroke-width="0.5" opacity="0.4" stroke-dasharray="4,4"/>
+  <text x="1340" y="196" fill="#d97706" font-family="SF Mono,monospace" font-size="9" text-anchor="end" opacity="0.7">50ms BUDGET PER PHASE</text>
+</svg>
+
+<div class="title">
+<h1>Kernel Tick Budget · Phase Timing Breakdown</h1>
+<div class="line"></div>
+<p>Each bar shows the execution time of one Kernel phase within a single 200ms tick. BOOT (instant), EXTRACT (NLP causal extraction, 18ms), NEURAL (UKF forward pass, 32ms), NONLINEAR (7-layer dynamics, 12ms), SWARM (10,000 agent update, 45ms), LIFECYCLE (population dynamics, 28ms), GOVERN (ministry budget, 14ms), BLACKSWAN (crisis injection, 8ms), PARADIGM (weight matrix, 6ms), COMMIT/EMIT (state persistence + socket emit, 22ms). Total: 185ms — 15ms headroom for jitter. SWARM is the bottleneck at scale.</p>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-swatch" style="background:#059669"></div>Within budget</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#d97706"></div>Heavy phase</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#dc2626"></div>Over budget</div>
+</div>
+
+<div class="corner tl">AEGIS / KERNEL · v1.0</div>
+<div class="corner tr">200ms TICK · 10 PHASES</div>
+<div class="meta">AEGIS / TICK BUDGET / TOTAL 185ms · HEADROOM 15ms</div>
+</div>
+
+<script>
+(function(){
+  const bars = document.getElementById('bars');
+  const NS = 'http://www.w3.org/2000/svg';
+  const phases = [
+    {name: 'BOOT', time: 0.5, color: '#059669'},
+    {name: 'EXTRACT', time: 18, color: '#059669'},
+    {name: 'NEURAL', time: 32, color: '#d97706'},
+    {name: 'NONLINEAR', time: 12, color: '#059669'},
+    {name: 'SWARM', time: 45, color: '#d97706'},
+    {name: 'LIFECYCLE', time: 28, color: '#d97706'},
+    {name: 'GOVERN', time: 14, color: '#059669'},
+    {name: 'BLACKSWAN', time: 8, color: '#059669'},
+    {name: 'PARADIGM', time: 6, color: '#059669'},
+    {name: 'COMMIT', time: 22, color: '#d97706'},
+  ];
+  const xStart = 80, xEnd = 1340;
+  const barW = (xEnd - xStart) / phases.length * 0.7;
+  const gap = (xEnd - xStart) / phases.length * 0.3;
+  phases.forEach((p, i) => {
+    const x = xStart + i * ((xEnd - xStart) / phases.length) + gap / 2;
+    const h = (p.time / 200) * 400;
+    const y = 440 - h;
+    const rect = document.createElementNS(NS, 'rect');
+    rect.setAttribute('x', x);
+    rect.setAttribute('y', y);
+    rect.setAttribute('width', barW);
+    rect.setAttribute('height', h);
+    rect.setAttribute('fill', p.color);
+    rect.setAttribute('opacity', '0.8');
+    bars.appendChild(rect);
+    // Time label
+    const txt = document.createElementNS(NS, 'text');
+    txt.setAttribute('x', x + barW / 2);
+    txt.setAttribute('y', y - 6);
+    txt.setAttribute('fill', '#737373');
+    txt.setAttribute('font-family', 'SF Mono,monospace');
+    txt.setAttribute('font-size', '10');
+    txt.setAttribute('text-anchor', 'middle');
+    txt.textContent = p.time + 'ms';
+    bars.appendChild(txt);
+  });
+})();
+</script>
+</body>
+</html>
