@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1920px;height:800px;background:#ffffff;overflow:hidden;font-family:'DM Sans',sans-serif}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,31,63,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,31,63,0.06) 1px,transparent 1px);background-size:40px 40px;opacity:0.5;pointer-events:none}
+.wrap{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;padding:60px}
+.title{text-align:center;margin-bottom:30px}
+.title h1{font-family:'Syne',sans-serif;font-size:32px;font-weight:700;color:#001F3F;letter-spacing:-0.02em}
+.title .line{width:48px;height:1px;background:#001F3F;margin:12px auto;opacity:0.3}
+.title p{font-family:'DM Sans',sans-serif;font-size:14px;color:#6B7A8D;max-width:760px;line-height:1.6}
+.corner{position:absolute;font-family:'DM Mono',monospace;font-size:9px;color:#8FA3B1;letter-spacing:0.2em;text-transform:uppercase}
+.tl{top:32px;left:32px}
+.tr{top:32px;right:32px}
+.meta{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:9px;color:#8FA3B1;letter-spacing:0.2em}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="title">
+<h1>Kernel Tick Lifecycle · 12 Phases</h1>
+<div class="line"></div>
+<p>Every 200ms, the Kernel runs 12 phases in sequence. Each phase transforms the system state. Total: 185ms, leaving 15ms headroom for jitter.</p>
+</div>
+
+<svg width="1700" height="460" viewBox="0 0 1700 460" style="position:relative">
+  <g id="diagram"></g>
+</svg>
+
+<div class="corner tl">AEGIS / LOGIC · v1.0</div>
+<div class="corner tr">12 PHASES · 200ms TICK · 15ms HEADROOM</div>
+<div class="meta">AEGIS / KERNEL / LIFECYCLE</div>
+</div>
+
+<script>
+(function(){
+  const g = document.getElementById('diagram');
+  const NS = 'http://www.w3.org/2000/svg';
+
+  const phases = [
+    {name:'BOOT', time:'0.5ms', desc:'init state'},
+    {name:'EXTRACT', time:'18ms', desc:'NLP causal'},
+    {name:'NEURAL', time:'32ms', desc:'UKF forward'},
+    {name:'NONLINEAR', time:'12ms', desc:'7-layer dyn.'},
+    {name:'SWARM', time:'45ms', desc:'10K agents'},
+    {name:'LIFECYCLE', time:'28ms', desc:'pop. dynamics'},
+    {name:'GOVERN', time:'14ms', desc:'ministries'},
+    {name:'BLACKSWAN', time:'8ms', desc:'crisis inject'},
+    {name:'PARADIGM', time:'6ms', desc:'weight rewrite'},
+    {name:'COMMIT', time:'12ms', desc:'persist state'},
+    {name:'EMIT', time:'10ms', desc:'socket push'},
+    {name:'HALT', time:'0.5ms', desc:'cleanup'},
+  ];
+
+  // Circular layout
+  const cx = 850, cy = 230, R = 180;
+  const phaseAngles = phases.map((p, i) => -Math.PI/2 + (i / phases.length) * Math.PI * 2);
+
+  // Draw connecting circle
+  const circle = document.createElementNS(NS, 'circle');
+  circle.setAttribute('cx', cx);
+  circle.setAttribute('cy', cy);
+  circle.setAttribute('r', R);
+  circle.setAttribute('fill', 'none');
+  circle.setAttribute('stroke', '#001F3F');
+  circle.setAttribute('stroke-width', '0.5');
+  circle.setAttribute('opacity', '0.15');
+  circle.setAttribute('stroke-dasharray', '4,4');
+  g.appendChild(circle);
+
+  // Center label
+  const centerLabel = document.createElementNS(NS, 'text');
+  centerLabel.setAttribute('x', cx);
+  centerLabel.setAttribute('y', cy - 8);
+  centerLabel.setAttribute('font-family', 'Syne,sans-serif');
+  centerLabel.setAttribute('font-size', '24');
+  centerLabel.setAttribute('font-weight', '700');
+  centerLabel.setAttribute('fill', '#001F3F');
+  centerLabel.setAttribute('text-anchor', 'middle');
+  centerLabel.textContent = '200ms';
+  g.appendChild(centerLabel);
+  const centerSub = document.createElementNS(NS, 'text');
+  centerSub.setAttribute('x', cx);
+  centerSub.setAttribute('y', cy + 14);
+  centerSub.setAttribute('font-family', 'DM Mono,monospace');
+  centerSub.setAttribute('font-size', '10');
+  centerSub.setAttribute('fill', '#8FA3B1');
+  centerSub.setAttribute('text-anchor', 'middle');
+  centerSub.setAttribute('letter-spacing', '0.15em');
+  centerSub.textContent = 'TICK BUDGET';
+  g.appendChild(centerSub);
+  const centerTotal = document.createElementNS(NS, 'text');
+  centerTotal.setAttribute('x', cx);
+  centerTotal.setAttribute('y', cy + 34);
+  centerSub.setAttribute('font-family', 'DM Mono,monospace');
+  centerTotal.setAttribute('font-family', 'DM Mono,monospace');
+  centerTotal.setAttribute('font-size', '11');
+  centerTotal.setAttribute('fill', '#001F3F');
+  centerTotal.setAttribute('text-anchor', 'middle');
+  centerTotal.textContent = '185ms used';
+  g.appendChild(centerTotal);
+
+  phases.forEach((p, i) => {
+    const angle = phaseAngles[i];
+    const px = cx + Math.cos(angle) * R;
+    const py = cy + Math.sin(angle) * R;
+    const labelX = cx + Math.cos(angle) * (R + 60);
+    const labelY = cy + Math.sin(angle) * (R + 60);
+
+    // Node
+    const c = document.createElementNS(NS, 'circle');
+    c.setAttribute('cx', px);
+    c.setAttribute('cy', py);
+    c.setAttribute('r', 8);
+    c.setAttribute('fill', '#FFFFFF');
+    c.setAttribute('stroke', '#001F3F');
+    c.setAttribute('stroke-width', '1.5');
+    g.appendChild(c);
+    // Phase number inside
+    const num = document.createElementNS(NS, 'text');
+    num.setAttribute('x', px);
+    num.setAttribute('y', py + 3);
+    num.setAttribute('font-family', 'DM Mono,monospace');
+    num.setAttribute('font-size', '8');
+    num.setAttribute('fill', '#001F3F');
+    num.setAttribute('text-anchor', 'middle');
+    num.setAttribute('font-weight', '500');
+    num.textContent = i + 1;
+    g.appendChild(num);
+
+    // Label (phase name)
+    const lbl = document.createElementNS(NS, 'text');
+    lbl.setAttribute('x', labelX);
+    lbl.setAttribute('y', labelY);
+    lbl.setAttribute('font-family', 'Syne,sans-serif');
+    lbl.setAttribute('font-size', '13');
+    lbl.setAttribute('font-weight', '600');
+    lbl.setAttribute('fill', '#001F3F');
+    lbl.setAttribute('text-anchor', Math.cos(angle) > 0.1 ? 'start' : (Math.cos(angle) < -0.1 ? 'end' : 'middle'));
+    lbl.textContent = p.name;
+    g.appendChild(lbl);
+    // Time
+    const tm = document.createElementNS(NS, 'text');
+    tm.setAttribute('x', labelX);
+    tm.setAttribute('y', labelY + 14);
+    tm.setAttribute('font-family', 'DM Mono,monospace');
+    tm.setAttribute('font-size', '10');
+    tm.setAttribute('fill', '#001F3F');
+    tm.setAttribute('text-anchor', Math.cos(angle) > 0.1 ? 'start' : (Math.cos(angle) < -0.1 ? 'end' : 'middle'));
+    tm.textContent = p.time;
+    g.appendChild(tm);
+    // Description
+    const desc = document.createElementNS(NS, 'text');
+    desc.setAttribute('x', labelX);
+    desc.setAttribute('y', labelY + 28);
+    desc.setAttribute('font-family', 'DM Sans,sans-serif');
+    desc.setAttribute('font-size', '11');
+    desc.setAttribute('fill', '#8FA3B1');
+    desc.setAttribute('text-anchor', Math.cos(angle) > 0.1 ? 'start' : (Math.cos(angle) < -0.1 ? 'end' : 'middle'));
+    desc.textContent = p.desc;
+    g.appendChild(desc);
+  });
+
+  // Arrow showing direction
+  const arrowStart = phaseAngles[0];
+  const arrowEnd = phaseAngles[1];
+  const ax1 = cx + Math.cos(arrowStart) * R;
+  const ay1 = cy + Math.sin(arrowStart) * R;
+  const ax2 = cx + Math.cos(arrowEnd) * R;
+  const ay2 = cy + Math.sin(arrowEnd) * R;
+  // Curved arrow
+  const arc = document.createElementNS(NS, 'path');
+  arc.setAttribute('d', `M ${ax1} ${ay1} A ${R} ${R} 0 0 1 ${ax2} ${ay2}`);
+  arc.setAttribute('fill', 'none');
+  arc.setAttribute('stroke', '#001F3F');
+  arc.setAttribute('stroke-width', '1.5');
+  arc.setAttribute('opacity', '0.6');
+  g.appendChild(arc);
+})();
+</script>
+</body>
+</html>

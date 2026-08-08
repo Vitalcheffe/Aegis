@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1920px;height:800px;background:#ffffff;overflow:hidden;font-family:'DM Sans',sans-serif}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,31,63,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,31,63,0.06) 1px,transparent 1px);background-size:40px 40px;opacity:0.5;pointer-events:none}
+.wrap{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;padding:60px}
+.title{text-align:center;margin-bottom:30px}
+.title h1{font-family:'Syne',sans-serif;font-size:32px;font-weight:700;color:#001F3F;letter-spacing:-0.02em}
+.title .line{width:48px;height:1px;background:#001F3F;margin:12px auto;opacity:0.3}
+.title p{font-family:'DM Sans',sans-serif;font-size:14px;color:#6B7A8D;max-width:760px;line-height:1.6}
+.corner{position:absolute;font-family:'DM Mono',monospace;font-size:9px;color:#8FA3B1;letter-spacing:0.2em;text-transform:uppercase}
+.tl{top:32px;left:32px}
+.tr{top:32px;right:32px}
+.meta{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:9px;color:#8FA3B1;letter-spacing:0.2em}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="title">
+<h1>BFT Consensus Protocol · Sequence</h1>
+<div class="line"></div>
+<p>How 10 nodes reach agreement in 20 rounds. Three phases per round: pre-prepare (leader proposes), prepare (nodes verify), commit (nodes sign). Faulty nodes are detected and excluded.</p>
+</div>
+
+<svg width="1700" height="440" viewBox="0 0 1700 440" style="position:relative">
+  <g id="diagram"></g>
+</svg>
+
+<div class="corner tl">AEGIS / LOGIC · v1.0</div>
+<div class="corner tr">PBFT · 3 PHASES · 10 NODES</div>
+<div class="meta">AEGIS / CONSENSUS / SEQUENCE DIAGRAM</div>
+</div>
+
+<script>
+(function(){
+  const g = document.getElementById('diagram');
+  const NS = 'http://www.w3.org/2000/svg';
+
+  // Node lifelines (simplified to 4 for clarity: Leader, Honest, Honest, Faulty)
+  const nodes = [
+    {x:200, label:'LEADER', sub:'rotating'},
+    {x:600, label:'NODE A', sub:'honest'},
+    {x:1000, label:'NODE B', sub:'honest'},
+    {x:1400, label:'NODE X', sub:'faulty'},
+  ];
+
+  // Lifelines
+  nodes.forEach(n => {
+    const line = document.createElementNS(NS, 'line');
+    line.setAttribute('x1', n.x);
+    line.setAttribute('y1', 110);
+    line.setAttribute('x2', n.x);
+    line.setAttribute('y2', 400);
+    line.setAttribute('stroke', '#001F3F');
+    line.setAttribute('stroke-width', '1');
+    line.setAttribute('opacity', '0.2');
+    line.setAttribute('stroke-dasharray', '4,4');
+    g.appendChild(line);
+    // Node box
+    const box = document.createElementNS(NS, 'rect');
+    box.setAttribute('x', n.x - 70);
+    box.setAttribute('y', 60);
+    box.setAttribute('width', 140);
+    box.setAttribute('height', 44);
+    box.setAttribute('fill', '#FFFFFF');
+    box.setAttribute('stroke', '#001F3F');
+    box.setAttribute('stroke-width', '1.5');
+    g.appendChild(box);
+    const lbl = document.createElementNS(NS, 'text');
+    lbl.setAttribute('x', n.x);
+    lbl.setAttribute('y', 80);
+    lbl.setAttribute('font-family', 'Syne,sans-serif');
+    lbl.setAttribute('font-size', '14');
+    lbl.setAttribute('font-weight', '700');
+    lbl.setAttribute('fill', n.label === 'NODE X' ? '#8B1A1A' : '#001F3F');
+    lbl.setAttribute('text-anchor', 'middle');
+    lbl.textContent = n.label;
+    g.appendChild(lbl);
+    const sub = document.createElementNS(NS, 'text');
+    sub.setAttribute('x', n.x);
+    sub.setAttribute('y', 96);
+    sub.setAttribute('font-family', 'DM Mono,monospace');
+    sub.setAttribute('font-size', '9');
+    sub.setAttribute('fill', '#8FA3B1');
+    sub.setAttribute('text-anchor', 'middle');
+    sub.setAttribute('letter-spacing', '0.1em');
+    sub.textContent = n.sub;
+    g.appendChild(sub);
+  });
+
+  // Messages (arrows between lifelines)
+  const messages = [
+    {from:0, to:1, y:150, label:'PRE-PREPARE', style:'solid'},
+    {from:0, to:2, y:165, label:'(propose)', style:'solid'},
+    {from:0, to:3, y:180, label:'', style:'solid'},
+    {from:1, to:2, y:220, label:'PREPARE', style:'solid'},
+    {from:2, to:1, y:235, label:'(verify)', style:'solid'},
+    {from:3, to:1, y:255, label:'false data', style:'dashed'},
+    {from:1, to:0, y:290, label:'COMMIT', style:'solid'},
+    {from:2, to:0, y:305, label:'(sign)', style:'solid'},
+    {from:3, to:0, y:320, label:'✕ rejected', style:'dashed'},
+  ];
+
+  messages.forEach(m => {
+    const fromNode = nodes[m.from];
+    const toNode = nodes[m.to];
+    const arrow = document.createElementNS(NS, 'line');
+    arrow.setAttribute('x1', fromNode.x);
+    arrow.setAttribute('y1', m.y);
+    arrow.setAttribute('x2', toNode.x - 8);
+    arrow.setAttribute('y2', m.y);
+    arrow.setAttribute('stroke', m.style === 'dashed' ? '#8B1A1A' : '#001F3F');
+    arrow.setAttribute('stroke-width', '1.5');
+    arrow.setAttribute('opacity', m.style === 'dashed' ? '0.5' : '0.6');
+    if(m.style === 'dashed') arrow.setAttribute('stroke-dasharray', '4,3');
+    g.appendChild(arrow);
+    // Arrowhead
+    const head = document.createElementNS(NS, 'path');
+    const dir = toNode.x > fromNode.x ? 1 : -1;
+    head.setAttribute('d', `M ${toNode.x - 12*dir} ${m.y-4} L ${toNode.x - 4*dir} ${m.y} L ${toNode.x - 12*dir} ${m.y+4}`);
+    head.setAttribute('stroke', m.style === 'dashed' ? '#8B1A1A' : '#001F3F');
+    head.setAttribute('stroke-width', '1.5');
+    head.setAttribute('fill', 'none');
+    head.setAttribute('opacity', m.style === 'dashed' ? '0.5' : '0.6');
+    g.appendChild(head);
+    // Label
+    if(m.label){
+      const lbl = document.createElementNS(NS, 'text');
+      const midX = (fromNode.x + toNode.x) / 2;
+      lbl.setAttribute('x', midX);
+      lbl.setAttribute('y', m.y - 6);
+      lbl.setAttribute('font-family', 'DM Mono,monospace');
+      lbl.setAttribute('font-size', '9');
+      lbl.setAttribute('fill', m.style === 'dashed' ? '#8B1A1A' : '#6B7A8D');
+      lbl.setAttribute('text-anchor', 'middle');
+      lbl.setAttribute('letter-spacing', '0.1em');
+      lbl.textContent = m.label;
+      g.appendChild(lbl);
+    }
+  });
+
+  // Phase labels (left side)
+  const phases = [
+    {y:170, label:'PHASE 1', name:'PRE-PREPARE'},
+    {y:240, label:'PHASE 2', name:'PREPARE'},
+    {y:305, label:'PHASE 3', name:'COMMIT'},
+  ];
+  phases.forEach(p => {
+    const lbl = document.createElementNS(NS, 'text');
+    lbl.setAttribute('x', 60);
+    lbl.setAttribute('y', p.y);
+    lbl.setAttribute('font-family', 'DM Mono,monospace');
+    lbl.setAttribute('font-size', '10');
+    lbl.setAttribute('fill', '#8FA3B1');
+    lbl.setAttribute('letter-spacing', '0.15em');
+    lbl.textContent = p.label;
+    g.appendChild(lbl);
+    const nm = document.createElementNS(NS, 'text');
+    nm.setAttribute('x', 60);
+    nm.setAttribute('y', p.y + 14);
+    nm.setAttribute('font-family', 'Syne,sans-serif');
+    nm.setAttribute('font-size', '12');
+    nm.setAttribute('font-weight', '600');
+    nm.setAttribute('fill', '#001F3F');
+    nm.textContent = p.name;
+    g.appendChild(nm);
+  });
+
+  // Result annotation
+  const res = document.createElementNS(NS, 'text');
+  res.setAttribute('x', 850);
+  res.setAttribute('y', 380);
+  res.setAttribute('font-family', 'DM Sans,sans-serif');
+  res.setAttribute('font-size', '13');
+  res.setAttribute('fill', '#6B7A8D');
+  res.setAttribute('text-anchor', 'middle');
+  res.setAttribute('font-style', 'italic');
+  res.textContent = 'After 20 rounds: 7 honest nodes agree, 3 faulty nodes isolated. Consensus reached.';
+  g.appendChild(res);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1920px;height:800px;background:#ffffff;overflow:hidden;font-family:'DM Sans',sans-serif}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,31,63,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,31,63,0.06) 1px,transparent 1px);background-size:40px 40px;opacity:0.5;pointer-events:none}
+.wrap{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;padding:60px}
+.title{text-align:center;margin-bottom:30px}
+.title h1{font-family:'Syne',sans-serif;font-size:32px;font-weight:700;color:#001F3F;letter-spacing:-0.02em}
+.title .line{width:48px;height:1px;background:#001F3F;margin:12px auto;opacity:0.3}
+.title p{font-family:'DM Sans',sans-serif;font-size:14px;color:#6B7A8D;max-width:760px;line-height:1.6}
+.corner{position:absolute;font-family:'DM Mono',monospace;font-size:9px;color:#8FA3B1;letter-spacing:0.2em;text-transform:uppercase}
+.tl{top:32px;left:32px}
+.tr{top:32px;right:32px}
+.meta{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:9px;color:#8FA3B1;letter-spacing:0.2em}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="title">
+<h1>Agent Behavior State Machine</h1>
+<div class="line"></div>
+<p>Each of the 10,000 agents transitions between 9 behavioral states based on stress, trust, and macro indicators. Threshold crossings trigger transitions. Aggregation produces political threat signals.</p>
+</div>
+
+<svg width="1600" height="460" viewBox="0 0 1600 460" style="position:relative">
+  <g id="diagram"></g>
+</svg>
+
+<div class="corner tl">AEGIS / LOGIC · v1.0</div>
+<div class="corner tr">9 STATES · 8 FACTIONS · 10K AGENTS</div>
+<div class="meta">AEGIS / AGENT / STATE MACHINE</div>
+</div>
+
+<script>
+(function(){
+  const g = document.getElementById('diagram');
+  const NS = 'http://www.w3.org/2000/svg';
+
+  // State positions (radial layout)
+  const cx = 800, cy = 230;
+  const states = [
+    {name:'NORMAL', x:cx, y:cy-160, stress:0.0, color:'#001F3F'},
+    {name:'ANXIOUS', x:cx+140, y:cy-100, stress:0.3, color:'#001F3F'},
+    {name:'PANICKING', x:cx+180, y:cy+30, stress:0.5, color:'#001F3F'},
+    {name:'SPECULATING', x:cx+140, y:cy+150, stress:0.4, color:'#001F3F'},
+    {name:'BLACKMARKET', x:cx, y:cy+180, stress:0.5, color:'#001F3F'},
+    {name:'FLEEING', x:cx-140, y:cy+150, stress:0.7, color:'#001F3F'},
+    {name:'STRIKING', x:cx-180, y:cy+30, stress:0.8, color:'#8B1A1A'},
+    {name:'RIOTING', x:cx-140, y:cy-100, stress:0.85, color:'#8B1A1A'},
+    {name:'REBELLING', x:cx-80, y:cy-160, stress:0.9, color:'#8B1A1A'},
+  ];
+
+  // Transitions (simplified — show key paths)
+  const transitions = [
+    [0,1],[1,2],[1,3],[2,4],[3,4],[4,5],[5,6],[6,7],[7,8],
+    [2,5],[3,5],[0,3],[1,4]
+  ];
+
+  // Draw transitions first (behind nodes)
+  transitions.forEach(([from, to]) => {
+    const a = states[from], b = states[to];
+    const path = document.createElementNS(NS, 'path');
+    const mx = (a.x + b.x) / 2;
+    const my = (a.y + b.y) / 2 - 20;
+    path.setAttribute('d', `M ${a.x} ${a.y} Q ${mx} ${my} ${b.x} ${b.y}`);
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke', '#001F3F');
+    path.setAttribute('stroke-width', '1');
+    path.setAttribute('opacity', '0.2');
+    g.appendChild(path);
+  });
+
+  // Draw nodes
+  states.forEach((s, i) => {
+    const r = 45;
+    // Outer circle
+    const c = document.createElementNS(NS, 'circle');
+    c.setAttribute('cx', s.x);
+    c.setAttribute('cy', s.y);
+    c.setAttribute('r', r);
+    c.setAttribute('fill', '#FFFFFF');
+    c.setAttribute('stroke', s.color);
+    c.setAttribute('stroke-width', '1.5');
+    g.appendChild(c);
+    // State name
+    const t = document.createElementNS(NS, 'text');
+    t.setAttribute('x', s.x);
+    t.setAttribute('y', s.y - 2);
+    t.setAttribute('font-family', 'Syne,sans-serif');
+    t.setAttribute('font-size', '12');
+    t.setAttribute('font-weight', '700');
+    t.setAttribute('fill', s.color);
+    t.setAttribute('text-anchor', 'middle');
+    t.textContent = s.name;
+    g.appendChild(t);
+    // Stress level
+    const st = document.createElementNS(NS, 'text');
+    st.setAttribute('x', s.x);
+    st.setAttribute('y', s.y + 14);
+    st.setAttribute('font-family', 'DM Mono,monospace');
+    st.setAttribute('font-size', '9');
+    st.setAttribute('fill', '#8FA3B1');
+    st.setAttribute('text-anchor', 'middle');
+    st.textContent = `σ ${s.stress.toFixed(1)}`;
+    g.appendChild(st);
+    // State number
+    const num = document.createElementNS(NS, 'text');
+    num.setAttribute('x', s.x);
+    num.setAttribute('y', s.y - 60);
+    num.setAttribute('font-family', 'DM Mono,monospace');
+    num.setAttribute('font-size', '9');
+    num.setAttribute('fill', '#8FA3B1');
+    num.setAttribute('text-anchor', 'middle');
+    num.setAttribute('letter-spacing', '0.1em');
+    num.textContent = `0${i+1}`;
+    g.appendChild(num);
+  });
+
+  // Legend
+  const legend = [
+    {x:200, y:400, label:'STABLE BEHAVIORS', color:'#001F3F'},
+    {x:1100, y:400, label:'UNSTABLE BEHAVIORS', color:'#8B1A1A'},
+  ];
+  legend.forEach(l => {
+    const dot = document.createElementNS(NS, 'circle');
+    dot.setAttribute('cx', l.x);
+    dot.setAttribute('cy', l.y);
+    dot.setAttribute('r', 6);
+    dot.setAttribute('fill', '#FFFFFF');
+    dot.setAttribute('stroke', l.color);
+    dot.setAttribute('stroke-width', '1.5');
+    g.appendChild(dot);
+    const t = document.createElementNS(NS, 'text');
+    t.setAttribute('x', l.x + 16);
+    t.setAttribute('y', l.y + 4);
+    t.setAttribute('font-family', 'DM Mono,monospace');
+    t.setAttribute('font-size', '10');
+    t.setAttribute('fill', '#6B7A8D');
+    t.setAttribute('letter-spacing', '0.15em');
+    t.textContent = l.label;
+    g.appendChild(t);
+  });
+
+  // Annotation
+  const ann = document.createElementNS(NS, 'text');
+  ann.setAttribute('x', 800);
+  ann.setAttribute('y', 430);
+  ann.setAttribute('font-family', 'DM Sans,sans-serif');
+  ann.setAttribute('font-size', '13');
+  ann.setAttribute('fill', '#6B7A8D');
+  ann.setAttribute('text-anchor', 'middle');
+  ann.setAttribute('font-style', 'italic');
+  ann.textContent = 'Stress > 0.7 triggers political threat signals: coup risk, civil war, revolution.';
+  g.appendChild(ann);
+})();
+</script>
+</body>
+</html>

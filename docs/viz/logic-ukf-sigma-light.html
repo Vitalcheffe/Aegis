@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1920px;height:800px;background:#ffffff;overflow:hidden;font-family:'DM Sans',sans-serif}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,31,63,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,31,63,0.06) 1px,transparent 1px);background-size:40px 40px;opacity:0.5;pointer-events:none}
+.wrap{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;padding:60px}
+.title{text-align:center;margin-bottom:30px}
+.title h1{font-family:'Syne',sans-serif;font-size:32px;font-weight:700;color:#001F3F;letter-spacing:-0.02em}
+.title .line{width:48px;height:1px;background:#001F3F;margin:12px auto;opacity:0.3}
+.title p{font-family:'DM Sans',sans-serif;font-size:14px;color:#6B7A8D;max-width:760px;line-height:1.6}
+.corner{position:absolute;font-family:'DM Mono',monospace;font-size:9px;color:#8FA3B1;letter-spacing:0.2em;text-transform:uppercase}
+.tl{top:32px;left:32px}
+.tr{top:32px;right:32px}
+.meta{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:9px;color:#8FA3B1;letter-spacing:0.2em}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="title">
+<h1>UKF Sigma Point Propagation</h1>
+<div class="line"></div>
+<p>How the Unscented Kalman Filter estimates state through nonlinearity. 7 sigma points sample the prior distribution, propagate through f(x), and reconstruct the posterior. No linearization — pure sampling.</p>
+</div>
+
+<svg width="1600" height="440" viewBox="0 0 1600 440" style="position:relative">
+  <g id="diagram"></g>
+</svg>
+
+<div class="corner tl">AEGIS / LOGIC · v1.0</div>
+<div class="corner tr">UKF · 7 SIGMA POINTS · 47D STATE</div>
+<div class="meta">AEGIS / ESTIMATION / UNSCENTED TRANSFORM</div>
+</div>
+
+<script>
+(function(){
+  const g = document.getElementById('diagram');
+  const NS = 'http://www.w3.org/2000/svg';
+
+  // Three columns: Prior → Propagate → Posterior
+  const cols = [
+    {x: 200, label: 'PRIOR', sublabel: 'mean + covariance'},
+    {x: 800, label: 'PROPAGATE', sublabel: 'f(x) — nonlinear dynamics'},
+    {x: 1400, label: 'POSTERIOR', sublabel: 'reconstructed estimate'},
+  ];
+
+  // Draw columns
+  cols.forEach(c => {
+    const lbl = document.createElementNS(NS, 'text');
+    lbl.setAttribute('x', c.x);
+    lbl.setAttribute('y', 60);
+    lbl.setAttribute('font-family', 'Syne,sans-serif');
+    lbl.setAttribute('font-size', '16');
+    lbl.setAttribute('font-weight', '700');
+    lbl.setAttribute('fill', '#001F3F');
+    lbl.setAttribute('text-anchor', 'middle');
+    lbl.textContent = c.label;
+    g.appendChild(lbl);
+    const sub = document.createElementNS(NS, 'text');
+    sub.setAttribute('x', c.x);
+    sub.setAttribute('y', 80);
+    sub.setAttribute('font-family', 'DM Mono,monospace');
+    sub.setAttribute('font-size', '10');
+    sub.setAttribute('fill', '#8FA3B1');
+    sub.setAttribute('text-anchor', 'middle');
+    sub.setAttribute('letter-spacing', '0.1em');
+    sub.textContent = c.sublabel;
+    g.appendChild(sub);
+  });
+
+  // Prior: mean (large dot) + covariance ellipse + 7 sigma points
+  const priorCx = 200, priorCy = 240;
+  // Covariance ellipse
+  const ell = document.createElementNS(NS, 'ellipse');
+  ell.setAttribute('cx', priorCx);
+  ell.setAttribute('cy', priorCy);
+  ell.setAttribute('rx', 90);
+  ell.setAttribute('ry', 60);
+  ell.setAttribute('fill', 'rgba(0,31,63,0.04)');
+  ell.setAttribute('stroke', '#001F3F');
+  ell.setAttribute('stroke-width', '1');
+  ell.setAttribute('stroke-dasharray', '3,3');
+  ell.setAttribute('opacity', '0.5');
+  g.appendChild(ell);
+  // Mean
+  const mean = document.createElementNS(NS, 'circle');
+  mean.setAttribute('cx', priorCx);
+  mean.setAttribute('cy', priorCy);
+  mean.setAttribute('r', 8);
+  mean.setAttribute('fill', '#001F3F');
+  g.appendChild(mean);
+  // 7 sigma points
+  const sigmaOffsets = [
+    [0,-55],[0,55],[-75,0],[75,0],[-55,-35],[55,-35],[0,0]
+  ];
+  const sigmaPoints = sigmaOffsets.map(([dx,dy]) => ({
+    prior: {x: priorCx+dx, y: priorCy+dy},
+    posterior: {x: 1400+dx*1.3, y: 240+dy*1.3}
+  }));
+  sigmaPoints.forEach((sp, i) => {
+    const c = document.createElementNS(NS, 'circle');
+    c.setAttribute('cx', sp.prior.x);
+    c.setAttribute('cy', sp.prior.y);
+    c.setAttribute('r', 5);
+    c.setAttribute('fill', '#FFFFFF');
+    c.setAttribute('stroke', '#001F3F');
+    c.setAttribute('stroke-width', '1.5');
+    g.appendChild(c);
+  });
+
+  // Propagation arrows (curved, through nonlinear f)
+  sigmaPoints.forEach((sp, i) => {
+    const path = document.createElementNS(NS, 'path');
+    const mx = 800, my = 240 + (i - 3) * 25;
+    path.setAttribute('d', `M ${sp.prior.x+8} ${sp.prior.y} Q ${mx} ${my} ${sp.posterior.x-8} ${sp.posterior.y}`);
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke', '#001F3F');
+    path.setAttribute('stroke-width', '1');
+    path.setAttribute('opacity', '0.3');
+    g.appendChild(path);
+  });
+
+  // f(x) box in the middle
+  const fbox = document.createElementNS(NS, 'rect');
+  fbox.setAttribute('x', 740);
+  fbox.setAttribute('y', 200);
+  fbox.setAttribute('width', 120);
+  fbox.setAttribute('height', 80);
+  fbox.setAttribute('fill', '#FFFFFF');
+  fbox.setAttribute('stroke', '#001F3F');
+  fbox.setAttribute('stroke-width', '1.5');
+  g.appendChild(fbox);
+  const ftext = document.createElementNS(NS, 'text');
+  ftext.setAttribute('x', 800);
+  ftext.setAttribute('y', 235);
+  ftext.setAttribute('font-family', 'Syne,sans-serif');
+  ftext.setAttribute('font-size', '22');
+  ftext.setAttribute('font-weight', '700');
+  ftext.setAttribute('fill', '#001F3F');
+  ftext.setAttribute('text-anchor', 'middle');
+  ftext.textContent = 'f(x)';
+  g.appendChild(ftext);
+  const fsub = document.createElementNS(NS, 'text');
+  fsub.setAttribute('x', 800);
+  fsub.setAttribute('y', 258);
+  fsub.setAttribute('font-family', 'DM Mono,monospace');
+  fsub.setAttribute('font-size', '10');
+  fsub.setAttribute('fill', '#8FA3B1');
+  fsub.setAttribute('text-anchor', 'middle');
+  fsub.textContent = 'nonlinear';
+  g.appendChild(fsub);
+
+  // Posterior: transformed sigma points + new mean + new covariance
+  const postCx = 1400, postCy = 240;
+  // New covariance (larger, rotated)
+  const ell2 = document.createElementNS(NS, 'ellipse');
+  ell2.setAttribute('cx', postCx);
+  ell2.setAttribute('cy', postCy);
+  ell2.setAttribute('rx', 110);
+  ell2.setAttribute('ry', 75);
+  ell2.setAttribute('transform', `rotate(15 ${postCx} ${postCy})`);
+  ell2.setAttribute('fill', 'rgba(0,31,63,0.06)');
+  ell2.setAttribute('stroke', '#001F3F');
+  ell2.setAttribute('stroke-width', '1');
+  ell2.setAttribute('stroke-dasharray', '3,3');
+  ell2.setAttribute('opacity', '0.6');
+  g.appendChild(ell2);
+  // Transformed sigma points
+  sigmaPoints.forEach(sp => {
+    const c = document.createElementNS(NS, 'circle');
+    c.setAttribute('cx', sp.posterior.x);
+    c.setAttribute('cy', sp.posterior.y);
+    c.setAttribute('r', 5);
+    c.setAttribute('fill', '#001F3F');
+    g.appendChild(c);
+  });
+  // New mean
+  const mean2 = document.createElementNS(NS, 'circle');
+  mean2.setAttribute('cx', postCx);
+  mean2.setAttribute('cy', postCy);
+  mean2.setAttribute('r', 8);
+  mean2.setAttribute('fill', '#001F3F');
+  g.appendChild(mean2);
+
+  // Step labels
+  const steps = [
+    {x:200, y:380, t:'1. Sample 7 sigma points from prior'},
+    {x:800, y:380, t:'2. Propagate each through f(x)'},
+    {x:1400, y:380, t:'3. Reconstruct mean + covariance'},
+  ];
+  steps.forEach(s => {
+    const t = document.createElementNS(NS, 'text');
+    t.setAttribute('x', s.x);
+    t.setAttribute('y', s.y);
+    t.setAttribute('font-family', 'DM Sans,sans-serif');
+    t.setAttribute('font-size', '13');
+    t.setAttribute('fill', '#6B7A8D');
+    t.setAttribute('text-anchor', 'middle');
+    t.setAttribute('font-style', 'italic');
+    t.textContent = s.t;
+    g.appendChild(t);
+  });
+})();
+</script>
+</body>
+</html>

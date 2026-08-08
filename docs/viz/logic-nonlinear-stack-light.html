@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1920px;height:800px;background:#ffffff;overflow:hidden;font-family:'DM Sans',sans-serif}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,31,63,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,31,63,0.06) 1px,transparent 1px);background-size:40px 40px;opacity:0.5;pointer-events:none}
+.wrap{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;padding:60px}
+.title{text-align:center;margin-bottom:30px}
+.title h1{font-family:'Syne',sans-serif;font-size:32px;font-weight:700;color:#001F3F;letter-spacing:-0.02em}
+.title .line{width:48px;height:1px;background:#001F3F;margin:12px auto;opacity:0.3}
+.title p{font-family:'DM Sans',sans-serif;font-size:14px;color:#6B7A8D;max-width:760px;line-height:1.6}
+.corner{position:absolute;font-family:'DM Mono',monospace;font-size:9px;color:#8FA3B1;letter-spacing:0.2em;text-transform:uppercase}
+.tl{top:32px;left:32px}
+.tr{top:32px;right:32px}
+.meta{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:9px;color:#8FA3B1;letter-spacing:0.2em}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="title">
+<h1>7-Layer Nonlinear Dynamics Stack</h1>
+<div class="line"></div>
+<p>The signal descends through seven transformations between the neural network output and the final indicator. Each layer implements a documented phenomenon from complexity economics.</p>
+</div>
+
+<svg width="1400" height="480" viewBox="0 0 1400 480" style="position:relative">
+  <g id="diagram"></g>
+</svg>
+
+<div class="corner tl">AEGIS / LOGIC · v1.0</div>
+<div class="corner tr">7 LAYERS · COMPLEXITY ECONOMICS</div>
+<div class="meta">AEGIS / NONLINEAR / TRANSFORM STACK</div>
+</div>
+
+<script>
+(function(){
+  const g = document.getElementById('diagram');
+  const NS = 'http://www.w3.org/2000/svg';
+
+  const layers = [
+    {name:'NEURAL OUTPUT', desc:'raw indicator from MLP', threshold:'—', effect:'linear baseline'},
+    {name:'CRITICAL THRESHOLD', desc:'debt > 80% GDP', threshold:'80%', effect:'exponential risk'},
+    {name:'BIFURCATION', desc:'unemployment > 15%', threshold:'15%', effect:'regime jump'},
+    {name:'INFLATION RUNAWAY', desc:'inflation > 8%', threshold:'8%', effect:'self-reinforcing spiral'},
+    {name:'HYSTERESIS', desc:'post-crisis memory', threshold:'always', effect:'recovery scar'},
+    {name:'FEEDBACK LOOP', desc:'revolution risk > 50%', threshold:'50%', effect:'amplification to saturation'},
+    {name:'CASCADE', desc:'revolution risk > 60%', threshold:'60%', effect:'secondary collapses'},
+    {name:'THERMODYNAMIC', desc:'over-optimization', threshold:'var > 0.1', effect:'system-wide penalty'},
+  ];
+
+  const x = 200, startY = 50, layerH = 48, gap = 4;
+
+  layers.forEach((l, i) => {
+    const y = startY + i * (layerH + gap);
+    // Box
+    const rect = document.createElementNS(NS, 'rect');
+    rect.setAttribute('x', x);
+    rect.setAttribute('y', y);
+    rect.setAttribute('width', 1000);
+    rect.setAttribute('height', layerH);
+    rect.setAttribute('fill', i === 0 ? 'rgba(0,31,63,0.06)' : '#FFFFFF');
+    rect.setAttribute('stroke', '#001F3F');
+    rect.setAttribute('stroke-width', '1');
+    rect.setAttribute('opacity', i === 0 ? '1' : '0.8');
+    g.appendChild(rect);
+    // Layer number
+    const num = document.createElementNS(NS, 'text');
+    num.setAttribute('x', x + 20);
+    num.setAttribute('y', y + 30);
+    num.setAttribute('font-family', 'DM Mono,monospace');
+    num.setAttribute('font-size', '11');
+    num.setAttribute('fill', '#8FA3B1');
+    num.setAttribute('letter-spacing', '0.15em');
+    num.textContent = `L${i}`;
+    g.appendChild(num);
+    // Name
+    const nm = document.createElementNS(NS, 'text');
+    nm.setAttribute('x', x + 80);
+    nm.setAttribute('y', y + 30);
+    nm.setAttribute('font-family', 'Syne,sans-serif');
+    nm.setAttribute('font-size', '14');
+    nm.setAttribute('font-weight', '700');
+    nm.setAttribute('fill', '#001F3F');
+    nm.textContent = l.name;
+    g.appendChild(nm);
+    // Description
+    const desc = document.createElementNS(NS, 'text');
+    desc.setAttribute('x', x + 360);
+    desc.setAttribute('y', y + 30);
+    desc.setAttribute('font-family', 'DM Sans,sans-serif');
+    desc.setAttribute('font-size', '12');
+    desc.setAttribute('fill', '#6B7A8D');
+    desc.textContent = l.desc;
+    g.appendChild(desc);
+    // Threshold
+    const thr = document.createElementNS(NS, 'text');
+    thr.setAttribute('x', x + 680);
+    thr.setAttribute('y', y + 30);
+    thr.setAttribute('font-family', 'DM Mono,monospace');
+    thr.setAttribute('font-size', '11');
+    thr.setAttribute('fill', '#001F3F');
+    thr.setAttribute('text-anchor', 'middle');
+    thr.textContent = l.threshold;
+    g.appendChild(thr);
+    // Effect
+    const eff = document.createElementNS(NS, 'text');
+    eff.setAttribute('x', x + 980);
+    eff.setAttribute('y', y + 30);
+    eff.setAttribute('font-family', 'DM Sans,sans-serif');
+    eff.setAttribute('font-size', '12');
+    eff.setAttribute('fill', '#6B7A8D');
+    eff.setAttribute('font-style', 'italic');
+    eff.setAttribute('text-anchor', 'end');
+    eff.textContent = l.effect;
+    g.appendChild(eff);
+
+    // Arrow down to next
+    if(i < layers.length - 1){
+      const arrow = document.createElementNS(NS, 'line');
+      arrow.setAttribute('x1', x + 500);
+      arrow.setAttribute('y1', y + layerH);
+      arrow.setAttribute('x2', x + 500);
+      arrow.setAttribute('y2', y + layerH + gap);
+      arrow.setAttribute('stroke', '#001F3F');
+      arrow.setAttribute('stroke-width', '1');
+      arrow.setAttribute('opacity', '0.3');
+      g.appendChild(arrow);
+    }
+  });
+
+  // Column headers
+  const headers = [
+    {x: x + 80, t: 'LAYER'},
+    {x: x + 360, t: 'TRIGGER'},
+    {x: x + 680, t: 'THRESHOLD'},
+    {x: x + 980, t: 'EFFECT'},
+  ];
+  headers.forEach(h => {
+    const t = document.createElementNS(NS, 'text');
+    t.setAttribute('x', h.x);
+    t.setAttribute('y', 35);
+    t.setAttribute('font-family', 'DM Mono,monospace');
+    t.setAttribute('font-size', '9');
+    t.setAttribute('fill', '#8FA3B1');
+    t.setAttribute('letter-spacing', '0.15em');
+    t.setAttribute('text-anchor', h.x > 600 ? 'middle' : 'start');
+    if(h.x > 900) t.setAttribute('text-anchor', 'end');
+    t.textContent = h.t;
+    g.appendChild(t);
+  });
+})();
+</script>
+</body>
+</html>
