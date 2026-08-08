@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>AEGIS — Visual Gallery</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0d1117;color:#f0f6fc;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;padding:40px}
+h1{font-size:48px;font-weight:700;letter-spacing:-0.03em;margin-bottom:8px}
+.subtitle{color:#8b949e;font-size:15px;margin-bottom:40px;max-width:720px;line-height:1.6}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(900px,1fr));gap:32px;max-width:1920px}
+.viz{background:#0d1117;position:relative}
+.viz img{width:100%;display:block}
+.viz-meta{padding:16px 0;border-top:1px solid #21262d;margin-top:8px}
+.viz-title{font-size:14px;font-weight:600;color:#f0f6fc;letter-spacing:-0.01em}
+.viz-desc{font-size:12px;color:#8b949e;margin-top:4px;line-height:1.5}
+.viz-tag{display:inline-block;font-family:'SF Mono',monospace;font-size:9px;color:#f59e0b;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:4px}
+</style>
+</head>
+<body>
+<h1>AEGIS — Visual Gallery</h1>
+<p class="subtitle">14 visualizations covering UKF estimation, BFT consensus, sensor fusion, airflow dynamics, mesh topology, and system performance. All generated procedurally from the simulation engine. Dark/light adaptive via prefers-color-scheme.</p>
+<div class="grid">
+  <div class="viz">
+    <img src="ukf-trajectory-dark.png" alt="UKF Trajectory">
+    <div class="viz-meta">
+      <div class="viz-tag">Estimation</div>
+      <div class="viz-title">UKF State Estimation · Live Trajectory</div>
+      <div class="viz-desc">True target position vs Unscented Kalman Filter estimate over 6 seconds, with 3σ covariance band and maneuver recovery.</div>
+    </div>
+  </div>
+  <div class="viz">
+    <img src="bft-convergence-dark.png" alt="BFT Convergence">
+    <div class="viz-meta">
+      <div class="viz-tag">Consensus</div>
+      <div class="viz-title">BFT Consensus Convergence · 10-Node Network</div>
+      <div class="viz-desc">7 honest nodes converge to agreement by round 20. 3 Byzantine nodes are detected and excluded.</div>
+    </div>
+  </div>
+  <div class="viz">
+    <img src="sensor-heatmap-dark.png" alt="Sensor Heatmap">
+    <div class="viz-meta">
+      <div class="viz-tag">Fusion</div>
+      <div class="viz-title">Sensor Reliability Matrix · Multi-Modal Coverage</div>
+      <div class="viz-desc">Reliability score for 5 sensor modalities across 6 range buckets. Shows complementary coverage enabling BFT guarantees.</div>
+    </div>
+  </div>
+  <div class="viz">
+    <img src="scale-bar-dark.png" alt="Scale Bar">
+    <div class="viz-meta">
+      <div class="viz-tag">Benchmark</div>
+      <div class="viz-title">UKF Accuracy vs Target Count · Scalability</div>
+      <div class="viz-desc">RMSE as target count scales 1 to 30. Below 15 targets = within budget. Above 25 = non-linear degradation.</div>
+    </div>
+  </div>
+  <div class="viz">
+    <img src="performance-radar-dark.png" alt="Performance Radar">
+    <div class="viz-meta">
+      <div class="viz-tag">Performance</div>
+      <div class="viz-title">Multi-Modal Performance · Radar Comparison</div>
+      <div class="viz-desc">5-axis comparison: Aegis with fusion vs baseline vs theoretical limit. 78% of theoretical max on detection.</div>
+    </div>
+  </div>
+  <div class="viz">
+    <img src="signal-sankey-dark.png" alt="Signal Sankey">
+    <div class="viz-meta">
+      <div class="viz-tag">Flow</div>
+      <div class="viz-title">Sensor-to-Classification Flow · Sankey</div>
+      <div class="viz-desc">11,915 signals through fusion and consensus layers to 4 classification outcomes. Width = volume.</div>
+    </div>
+  </div>
+  <div class="viz">
+    <img src="vector-field-dark.png" alt="Vector Field">
+    <div class="viz-meta">
+      <div class="viz-tag">Field Analysis</div>
+      <div class="viz-title">Velocity Field · Drag Coefficient Gradient</div>
+      <div class="viz-desc">30×15 vector field showing source and sink singularities. Color encodes magnitude. Singularities = maneuver onset.</div>
+    </div>
+  </div>
+  <div class="viz">
+    <img src="prediction-scatter-dark.png" alt="Prediction Scatter">
+    <div class="viz-meta">
+      <div class="viz-tag">Prediction</div>
+      <div class="viz-title">Trajectory Prediction Error vs Horizon</div>
+      <div class="viz-desc">500 trials showing error growth with prediction horizon. Crossover at 1.8s — beyond this, error exceeds 20m threshold.</div>
+    </div>
+  </div>
+  <div class="viz">
+    <img src="latency-density-dark.png" alt="Latency Density">
+    <div class="viz-meta">
+      <div class="viz-tag">Latency</div>
+      <div class="viz-title">End-to-End Response Latency · Density</div>
+      <div class="viz-desc">Right-skewed distribution. Median 1124ms, P95 2103ms. Long tail = rare high-target-count scenarios.</div>
+    </div>
+  </div>
+  <div class="viz">
+    <img src="latency-stacked-dark.png" alt="Latency Stacked">
+    <div class="viz-meta">
+      <div class="viz-tag">Profiling</div>
+      <div class="viz-title">Latency Breakdown by Phase · Stacked Bars</div>
+      <div class="viz-desc">4-phase breakdown across target counts. Coordination grows non-linearly past 20 targets. 2000ms budget exceeded at 25+.</div>
+    </div>
+  </div>
+  <div class="viz">
+    <img src="airflow-dark.png" alt="Airflow">
+    <div class="viz-meta">
+      <div class="viz-tag">CFD</div>
+      <div class="viz-title">Airflow Simulation · Streamlines Around Airfoil</div>
+      <div class="viz-desc">Procedural streamlines around NACA airfoil at Re 1.2e6. Color = velocity. Wake turbulence shown downstream.</div>
+    </div>
+  </div>
+  <div class="viz">
+    <img src="mesh-topology-dark.png" alt="Mesh Topology">
+    <div class="viz-meta">
+      <div class="viz-tag">Topology</div>
+      <div class="viz-title">BFT Mesh Topology · 10-Node Network</div>
+      <div class="viz-desc">Full mesh with rotating leader. 3 faulty nodes isolated. Violet edges show active consensus messages.</div>
+    </div>
+  </div>
+  <div class="viz">
+    <img src="phase-portrait-dark.png" alt="Phase Portrait">
+    <div class="viz-meta">
+      <div class="viz-tag">Dynamics</div>
+      <div class="viz-title">Phase Portrait · Target Dynamics</div>
+      <div class="viz-desc">25 trajectories in position-velocity phase space. Stable attractor (amber) and saddle point (crimson) marked.</div>
+    </div>
+  </div>
+  <div class="viz">
+    <img src="tick-budget-dark.png" alt="Tick Budget">
+    <div class="viz-meta">
+      <div class="viz-tag">Kernel</div>
+      <div class="viz-title">Kernel Tick Budget · Phase Timing</div>
+      <div class="viz-desc">10-phase breakdown of a single 200ms tick. Total 185ms. SWARM is the bottleneck at scale.</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
