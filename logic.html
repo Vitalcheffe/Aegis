@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Logic — AEGIS</title>
+<meta name="description" content="How AEGIS thinks. The decision pipeline, algorithm internals, state machines, and protocol sequences that turn sensor signals into classified threats.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%23001F3F'>⌬</text></svg>">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">A._ / 001</a>
+    <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="index.html">Overview</a></li>
+      <li><a href="research.html">Research</a></li>
+      <li><a href="systems.html">Systems</a></li>
+      <li><a href="logic.html" class="active">Logic</a></li>
+      <li><a href="visualizations.html">Visualizations</a></li>
+      <li><a href="ethics.html">Ethics</a></li>
+    </ul>
+    <a href="https://github.com/Vitalcheffe/Aegis" class="nav-cta">GitHub ↗</a>
+  </div>
+</nav>
+
+<section class="page-header">
+  <div class="container">
+    <div class="hero-eyebrow">Logic · How AEGIS Thinks</div>
+    <h1 style="font-size:clamp(48px,7vw,80px);margin-bottom:24px">The intelligence,<br><span class="dim">made structural.</span></h1>
+    <p style="font-size:18px;color:var(--muted);max-width:680px;margin:0 auto;font-weight:300;line-height:1.7">Six diagrams that decode how AEGIS turns raw sensor signals into classified threats. The pipeline, the algorithms, the state machines, the protocol sequences. No black boxes — every transformation is documented.</p>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">001 / PIPELINE</span>
+      <h2>Signal to decision.</h2>
+    </div>
+    <p style="font-size:17px;color:var(--muted);line-height:1.7;max-width:680px;margin-bottom:32px;font-weight:300">A raw sensor signal enters at the left. Six stages transform it. A classified threat with a confidence score exits at the right. Total median latency: 1124ms. Each stage is independent and modular.</p>
+    <img src="docs/viz/logic-pipeline-light.png" alt="Signal-to-Decision Pipeline" style="width:100%;border:1px solid var(--rule)">
+    <div class="narrative" style="margin-top:32px">
+      <p>The pipeline is deliberately linear. No stage can skip ahead. No stage can call back to a previous one. This is a design constraint, not a limitation — it means each stage can be optimized, swapped, or parallelized independently, without touching the others. The <strong>ESTIMATE</strong> stage (UKF) is the algorithmic bottleneck. The <strong>DETECT</strong> stage (CV + signal threshold) is the I/O bottleneck.</p>
+    </div>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">002 / ESTIMATION</span>
+      <h2>UKF sigma point propagation.</h2>
+    </div>
+    <p style="font-size:17px;color:var(--muted);line-height:1.7;max-width:680px;margin-bottom:32px;font-weight:300">The Unscented Kalman Filter does not linearize. It samples. Seven sigma points are drawn from the prior distribution, propagated through the nonlinear dynamics f(x), and the posterior is reconstructed from the transformed points.</p>
+    <img src="docs/viz/logic-ukf-sigma-light.png" alt="UKF Sigma Point Propagation" style="width:100%;border:1px solid var(--rule)">
+    <div class="narrative" style="margin-top:32px">
+      <p>The left ellipse is the prior — the current state estimate with its uncertainty. Seven points sample this distribution. Each point is pushed through <strong>f(x)</strong>, the nonlinear dynamics function (in AEGIS, this is the 47→32→32→15 MLP). The points arrive at new positions, forming a new distribution — the posterior. The mean and covariance of the posterior are computed from the transformed points.</p>
+      <p>This is more accurate than the Extended Kalman Filter because it does not assume the dynamics are locally linear. A high-g maneuver — where the trajectory curves sharply — is exactly where linearization fails and sampling succeeds.</p>
+    </div>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">003 / CONSENSUS</span>
+      <h2>BFT protocol sequence.</h2>
+    </div>
+    <p style="font-size:17px;color:var(--muted);line-height:1.7;max-width:680px;margin-bottom:32px;font-weight:300">When sensors disagree, the Byzantine Fault Tolerant consensus protocol reconciles them. Three phases per round: pre-prepare (leader proposes), prepare (nodes verify), commit (nodes sign). Faulty nodes are detected and excluded.</p>
+    <img src="docs/viz/logic-bft-sequence-light.png" alt="BFT Protocol Sequence" style="width:100%;border:1px solid var(--rule)">
+    <div class="narrative" style="margin-top:32px">
+      <p>The leader (rotating role) broadcasts a proposed state. Honest nodes verify the proposal against their own estimates. If a node's estimate diverges by more than 3σ, it is flagged. In the sequence above, <strong>NODE X</strong> (faulty) attempts to inject false data — its message is rejected by the honest nodes. After 20 rounds, 7 honest nodes have agreed, 3 faulty nodes are isolated.</p>
+      <p>The protocol overhead is fixed — it does not grow with target count, only with node count. This is why BFT scales: the consensus cost is O(N²) in messages but O(1) in target count.</p>
+    </div>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">004 / AGENTS</span>
+      <h2>Agent behavior state machine.</h2>
+    </div>
+    <p style="font-size:17px;color:var(--muted);line-height:1.7;max-width:680px;margin-bottom:32px;font-weight:300">Each of the 10,000 agents transitions between 9 behavioral states based on stress, trust, and macro indicators. Threshold crossings trigger transitions. When stress exceeds 0.7, political threat signals fire.</p>
+    <img src="docs/viz/logic-agent-states-light.png" alt="Agent Behavior State Machine" style="width:100%;border:1px solid var(--rule)">
+    <div class="narrative" style="margin-top:32px">
+      <p>Agents start in <strong>NORMAL</strong>. As economic indicators degrade — unemployment rises, inflation spikes, debt crosses thresholds — stress accumulates. Agents move through ANXIOUS, PANICKING, SPECULATING. If conditions worsen, they enter BLACKMARKET or FLEEING. Beyond stress 0.7, they enter the unstable states: STRIKING, RIOTING, REBELLING.</p>
+      <p>The aggregation of these states across 10,000 agents produces the political threat signals: coup risk, civil war probability, revolution likelihood. A system with 30% of agents in unstable states is already in crisis — the math just makes it visible before the streets do.</p>
+    </div>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">005 / NONLINEAR</span>
+      <h2>The 7-layer transform stack.</h2>
+    </div>
+    <p style="font-size:17px;color:var(--muted);line-height:1.7;max-width:680px;margin-bottom:32px;font-weight:300">Between the neural network's linear output and the final indicator a policymaker reads, seven transformations sit. Each implements a documented phenomenon from complexity economics — debt cliffs, bifurcations, hysteresis, feedback loops, cascades, runaway, thermodynamic equilibrium.</p>
+    <img src="docs/viz/logic-nonlinear-stack-light.png" alt="7-Layer Nonlinear Stack" style="width:100%;border:1px solid var(--rule)">
+    <div class="narrative" style="margin-top:32px">
+      <p>Each layer has a threshold. Below the threshold, the layer is transparent — the signal passes through unchanged. Above the threshold, the layer transforms the signal non-linearly. Debt below 80% of GDP is just debt. Debt above 80% triggers exponential risk amplification. The system does not smooth over this discontinuity — it makes it visible.</p>
+      <p>The final layer — <strong>THERMODYNAMIC</strong> — is the system's anti-hubris mechanism. If you push too many levers to their maximum (over-optimization), the system penalizes itself. You cannot maximize one sector without paying for it elsewhere. This is not a bug. It is a design principle borrowed from physics.</p>
+    </div>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">006 / KERNEL</span>
+      <h2>The 12-phase tick lifecycle.</h2>
+    </div>
+    <p style="font-size:17px;color:var(--muted);line-height:1.7;max-width:680px;margin-bottom:32px;font-weight:300">Every 200ms, the Kernel runs 12 phases in sequence. Each phase transforms the system state. The total budget is 185ms, leaving 15ms headroom for jitter. SWARM (10,000 agent update) is the bottleneck at 45ms.</p>
+    <img src="docs/viz/logic-kernel-cycle-light.png" alt="Kernel Tick Lifecycle" style="width:100%;border:1px solid var(--rule)">
+    <div class="narrative" style="margin-top:32px">
+      <p>The Kernel is not a loop — it is an operating system. Subsystems register for phases. A syscall surface exposes <code style="font-family:var(--font-mono);color:var(--navy)">read_state</code>, <code style="font-family:var(--font-mono);color:var(--navy)">set_lever</code>, <code style="font-family:var(--font-mono);color:var(--navy)">register_subsystem</code>. The engine that does the work has a structure that can be reasoned about, extended, and observed.</p>
+      <p>The 15ms headroom is not slack — it is the system's immune system. If any phase overruns (a spike in target count, a cascade of black swan events), the headroom absorbs it. When the headroom is consumed, the system enters graceful degradation: non-critical phases are skipped, tick rate drops to 25Hz, and the operator is alerted.</p>
+    </div>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">007 / METHOD</span>
+      <h2>Diagrams, not black boxes.</h2>
+    </div>
+    <div class="narrative">
+      <p>Every diagram on this page is generated from the actual codebase. The pipeline stages map to functions in <code style="font-family:var(--font-mono);color:var(--navy)">engine.ts</code>. The UKF sigma points map to <code style="font-family:var(--font-mono);color:var(--navy)">neural-network.ts</code>. The BFT sequence maps to <code style="font-family:var(--font-mono);color:var(--navy)">kernel.ts</code>. The agent state machine maps to <code style="font-family:var(--font-mono);color:var(--navy)">agent-swarm.ts</code>. The 7-layer stack maps to <code style="font-family:var(--font-mono);color:var(--navy)">nonlinear.ts</code>.</p>
+      <p>Nothing here is invented for the website. Every threshold, every transition, every phase is in the code. If you want to verify a claim, open the file. If you want to challenge a design decision, open an issue. The system is open source precisely so that the logic can be inspected.</p>
+      <p class="quote">The intelligence is not in the marketing. The intelligence is in the structure, and the structure is in the code.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-left">
+      <div class="footer-name">Amine Harch El Korane</div>
+      <div class="footer-tagline">Casablanca, Morocco · 2026</div>
+    </div>
+    <ul class="footer-links">
+      <li><a href="index.html">Overview</a></li>
+      <li><a href="research.html">Research</a></li>
+      <li><a href="systems.html">Systems</a></li>
+      <li><a href="visualizations.html">Visualizations</a></li>
+      <li><a href="ethics.html">Ethics</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script src="assets/js/animations.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
