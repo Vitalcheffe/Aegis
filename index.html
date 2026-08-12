@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AEGIS — Multi-Agent Aerial Coordination Framework</title>
+<meta name="description" content="A research framework for real-time multi-agent coordination, sensor fusion, and trajectory prediction. UKF estimation, BFT consensus, spectral fusion, 50Hz hard real-time. Built at 15 in Casablanca.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%23001F3F'>⌬</text></svg>">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/home.css">
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">A._ / 001</a>
+    <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Overview</a></li>
+      <li><a href="research.html">Research</a></li>
+      <li><a href="systems.html">Systems</a></li>
+      <li><a href="logic.html">Logic</a></li>
+      <li><a href="visualizations.html">Visualizations</a></li>
+      <li><a href="ethics.html">Ethics</a></li>
+    </ul>
+    <a href="https://github.com/Vitalcheffe/Aegis" class="nav-cta">GitHub ↗</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" style="position:relative;overflow:hidden">
+  <div class="hero-canvas"><canvas data-canvas="vector-field"></canvas></div>
+  <div class="container" style="position:relative;z-index:2">
+    <div class="hero-eyebrow">Research Framework · Casablanca 2026</div>
+    <h1>AEG<span class="dim">IS</span></h1>
+    <p class="hero-title">Multi-Agent Aerial Coordination — Research Testbed</p>
+    <p class="hero-bio">
+      A research framework for real-time multi-agent coordination, sensor fusion, and trajectory prediction in contested aerial environments. <strong>Not a product. Not a weapon. A testbed for the math.</strong> Built at 15, in Casablanca, to explore the math behind cooperative estimation under uncertainty — UKF, BFT consensus, spectral fusion, 50Hz hard real-time.
+    </p>
+    <div class="hero-cta">
+      <a href="#systems" class="btn-primary">Explore the systems <span>↓</span></a>
+      <a href="logic.html" class="btn-ghost">How it thinks</a>
+      <a href="https://github.com/Vitalcheffe/Aegis" class="btn-ghost">View GitHub</a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="reveal" style="padding:60px 0">
+  <div class="container">
+    <div class="stats-row" style="margin-bottom:0">
+      <div class="stat-cell"><div class="stat-value">50Hz</div><div class="stat-label">Tick rate</div></div>
+      <div class="stat-cell"><div class="stat-value">47→32→32→15</div><div class="stat-label">UKF arch</div></div>
+      <div class="stat-cell"><div class="stat-value">10,000</div><div class="stat-label">Agents</div></div>
+      <div class="stat-cell"><div class="stat-value">3-node</div><div class="stat-label">BFT tolerance</div></div>
+      <div class="stat-cell"><div class="stat-value">4.2m</div><div class="stat-label">RMSE @ 10 targets</div></div>
+      <div class="stat-cell"><div class="stat-value">1124ms</div><div class="stat-label">Median latency</div></div>
+      <div class="stat-cell"><div class="stat-value">20</div><div class="stat-label">Procedural diagrams</div></div>
+      <div class="stat-cell"><div class="stat-value">11</div><div class="stat-label">Documentation files</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 01 / SYSTEMS -->
+<section class="reveal" id="systems">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">01 / SYSTEMS</span>
+      <h2>Four systems. One controller.</h2>
+    </div>
+    <p style="font-size:17px;color:var(--muted);line-height:1.7;max-width:680px;margin-bottom:16px;font-weight:300">Each system solves a specific problem in the multi-agent coordination stack. Each is documented to the level of math and code. No black boxes — every equation, every design decision, every trade-off is written down.</p>
+
+    <div class="systems-showcase">
+      <a href="systems.html" class="showcase-card">
+        <div class="showcase-top">
+          <div class="showcase-num">S.01</div>
+          <div class="showcase-badge estimation">ESTIMATION</div>
+        </div>
+        <div class="showcase-title">Unscented Kalman Filter</div>
+        <div class="showcase-rule"></div>
+        <div class="showcase-obj"><strong>Objective:</strong> Nonlinear state estimation for fast-moving aerial targets. Propagates 7 sigma points through the dynamics function, reconstructs mean and covariance from the transformed points. No linearization — pure sampling.</div>
+        <div class="showcase-stack">
+          <span class="stack-tag">Python</span>
+          <span class="stack-tag">47→32→32→15 MLP</span>
+          <span class="stack-tag">3,008 weights</span>
+          <span class="stack-tag">ReLU + He init</span>
+        </div>
+        <div class="showcase-footer">
+          <span class="showcase-link">DEEP DIVE <span>↓</span></span>
+          <span class="showcase-cta">4.2m RMSE</span>
+        </div>
+      </a>
+
+      <a href="systems.html" class="showcase-card">
+        <div class="showcase-top">
+          <div class="showcase-num">S.02</div>
+          <div class="showcase-badge consensus">CONSENSUS</div>
+        </div>
+        <div class="showcase-title">BFT Consensus Protocol</div>
+        <div class="showcase-rule"></div>
+        <div class="showcase-obj"><strong>Objective:</strong> Reconcile disagreeing sensors in real time. PBFT variant tolerates up to 3 faulty nodes in a 10-node network. Leader rotates every 100 ticks. Faulty nodes detected by 3σ cross-validation and excluded.</div>
+        <div class="showcase-stack">
+          <span class="stack-tag">TypeScript</span>
+          <span class="stack-tag">PBFT variant</span>
+          <span class="stack-tag">N ≥ 3f+1</span>
+          <span class="stack-tag">Rotating leader</span>
+        </div>
+        <div class="showcase-footer">
+          <span class="showcase-link">DEEP DIVE <span>↓</span></span>
+          <span class="showcase-cta">R20 convergence</span>
+        </div>
+      </a>
+
+      <a href="systems.html" class="showcase-card">
+        <div class="showcase-top">
+          <div class="showcase-num">S.03</div>
+          <div class="showcase-badge fusion">FUSION</div>
+        </div>
+        <div class="showcase-title">Spectral Multi-Modal Fusion</div>
+        <div class="showcase-rule"></div>
+        <div class="showcase-obj"><strong>Objective:</strong> Combine 5 sensor modalities (optical, RF, acoustic, radar, IR) across 6 range buckets. Eigenvector decomposition of the reliability matrix. Captures correlated failures that weighted-averaging misses.</div>
+        <div class="showcase-stack">
+          <span class="stack-tag">Python</span>
+          <span class="stack-tag">5 sensors</span>
+          <span class="stack-tag">6 range buckets</span>
+          <span class="stack-tag">Eigenvector</span>
+        </div>
+        <div class="showcase-footer">
+          <span class="showcase-link">DEEP DIVE <span>↓</span></span>
+          <span class="showcase-cta">84% of max</span>
+        </div>
+      </a>
+
+      <a href="systems.html" class="showcase-card">
+        <div class="showcase-top">
+          <div class="showcase-num">S.04</div>
+          <div class="showcase-badge coordination">COORDINATION</div>
+        </div>
+        <div class="showcase-title">Mesh Coordination Protocol</div>
+        <div class="showcase-rule"></div>
+        <div class="showcase-obj"><strong>Objective:</strong> Full mesh network of sensing agents. No central coordinator to jam. Handles consensus, leader election, conflict resolution, and fault detection. Gossip-based broadcast, O(N²) edges.</div>
+        <div class="showcase-stack">
+          <span class="stack-tag">TypeScript</span>
+          <span class="stack-tag">Full mesh</span>
+          <span class="stack-tag">Gossip</span>
+          <span class="stack-tag">Leader rotation</span>
+        </div>
+        <div class="showcase-footer">
+          <span class="showcase-link">DEEP DIVE <span>↓</span></span>
+          <span class="showcase-cta">~25ms overhead</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 02 / DEEP DIVES -->
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">02 / DEEP DIVES</span>
+      <h2>Engineering deep dives.</h2>
+    </div>
+
+    <div class="deep-dive">
+      <div class="deep-dive-header">
+        <span class="deep-dive-num">01. THE ECONOMIC ASYMMETRY</span>
+      </div>
+      <div class="deep-dive-body">
+        <div class="deep-dive-sidebar">
+          <a class="deep-dive-sidebar-link" href="research.html">01. The economic asymmetry</a>
+          <a class="deep-dive-sidebar-link" href="research.html">02. Spectral fusion &amp; consensus</a>
+          <a class="deep-dive-sidebar-link" href="research.html">03. Unscented Kalman filtering</a>
+          <a class="deep-dive-sidebar-link" href="research.html">04. The 7-layer nonlinear stack</a>
+        </div>
+        <div class="deep-dive-content">
+          <h3>The cost asymmetry is inverted</h3>
+          <p>I built AEGIS at 15, in Casablanca, after reading about the cost asymmetry in modern air defense: a <strong>$20,000 commercial drone can require a $2 million interceptor</strong> to bring down. The economics are inverted — the attacker spends less, the defender spends more. This is not sustainable for civil airspace protection at scale.</p>
+          <p>The interesting math is not in the interceptor. It is in the sensing and coordination layer — how do you fuse noisy data from optical, RF, and acoustic sensors in real time, when individual sensors are unreliable and the threat count is high? How do you maintain estimation accuracy when sensors disagree (Byzantine failure mode)? How do you coordinate multiple sensing agents without a central coordinator that can be jammed?</p>
+          <div class="deep-dive-quote">AEGIS is my attempt to build a research testbed for these questions. The UKF handles nonlinear state estimation. BFT consensus handles sensor disagreement. Spectral fusion handles multi-modal combination. The 50Hz real-time budget handles the engineering constraint.</div>
+          <p>The trade-off — no formal validation against real-world data, simulation-only testbed, no hardware deployment — is stated explicitly in the limitations. This is not a finished system. It is a question, made executable.</p>
+
+          <h3>Spectral fusion &amp; Byzantine consensus</h3>
+          <p>A single sensor's data is just noise. AEGIS fuses optical (EO), thermal (LWIR), and Doppler radar. But sensors lie, get jammed, or track flares. To solve this, I implemented distributed consensus models based on research from MIT CSAIL and Harvard.</p>
+          <p>The system uses Median Absolute Deviation (MAD) to reject anomalous sensor data — Byzantine fault tolerance. A target only hits "CONFIRMED" status when a 2/3 network quorum mathematically agrees on its spatial centroid and thermal signature against the background sky, natively filtering out decoys.</p>
+          <div class="deep-dive-code">// 6-Dimensional Convergence Score
+total_score = (spatial × 0.18) + (temporal × 0.16) + (semantic × 0.18)
+            + (behavioral × 0.14) + (historical × 0.14)
+            + (source_diversity × 0.12) + (confidence × 0.08)</div>
+          <img src="docs/viz/bft-convergence-light.png" alt="BFT Convergence" class="deep-dive-img">
+
+          <h3>Unscented Kalman filtering</h3>
+          <p>Linear predictions fail completely when you're trying to estimate a maneuvering target at high speed. I implemented a 9-state Unscented Kalman Filter relying entirely on estimation theory and sigma-point propagation developed at Imperial College London.</p>
+          <p>By propagating non-linear kinematic uncertainty, the UKF collapses the interception error margin from ±50m down to <strong>±1.5m</strong> in under two seconds. The implementation is custom Python — no SciPy, no filterpy. 47 input dimensions, two hidden layers of 32 neurons each, 15 outputs. 3,008 learnable weights.</p>
+          <div class="deep-dive-quote">I didn't use standard robotics frameworks. They are bloated, non-deterministic, and hide the math. I rewrote the entire core from scratch.</div>
+          <img src="docs/viz/ukf-trajectory-light.png" alt="UKF Trajectory" class="deep-dive-img">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 / ACADEMIC FOUNDATION -->
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">03 / FOUNDATION</span>
+      <h2>Academic foundation.</h2>
+    </div>
+    <p style="font-size:17px;color:var(--muted);line-height:1.7;max-width:680px;margin-bottom:16px;font-weight:300">If a system isn't strictly bounded by physics and academic literature, it's a toy. Below is the unedited bibliography of the papers, mathematics, and research that form the foundation of AEGIS.</p>
+
+    <div class="library-grid">
+      <div class="library-card">
+        <div class="paper-authors">VAN DER MERWE, R., WAN, E. A. (2001)</div>
+        <div class="paper-title">The square-root unscented Kalman filter for state and parameter-estimation.</div>
+        <div class="paper-journal">ICASSP</div>
+        <div class="paper-usage">AEGIS: Foundation for the 9-state tracking model to collapse high-G kinematic uncertainty.</div>
+      </div>
+      <div class="library-card">
+        <div class="paper-authors">OLFATI-SABER, R. (2006)</div>
+        <div class="paper-title">Flocking for multi-agent dynamic systems: Algorithms and theory.</div>
+        <div class="paper-journal">IEEE Trans. Automatic Control, 51(3)</div>
+        <div class="paper-usage">AEGIS: Core logic for the mesh coordination and distributed consensus.</div>
+      </div>
+      <div class="library-card">
+        <div class="paper-authors">LAMPORT, L., SHOSTAK, R., PEASE, M. (1982)</div>
+        <div class="paper-title">The Byzantine Generals Problem.</div>
+        <div class="paper-journal">ACM TOPLAS</div>
+        <div class="paper-usage">AEGIS: Theoretical basis for the BFT consensus protocol and fault tolerance.</div>
+      </div>
+      <div class="library-card">
+        <div class="paper-authors">CASTRO, M., LISKOV, B. (1999)</div>
+        <div class="paper-title">Practical Byzantine Fault Tolerance.</div>
+        <div class="paper-journal">OSDI</div>
+        <div class="paper-usage">AEGIS: PBFT variant implementation for real-time sensor consensus.</div>
+      </div>
+      <div class="library-card">
+        <div class="paper-authors">JULIER, S. J., UHLMANN, J. K. (1997)</div>
+        <div class="paper-title">A new extension of the Kalman filter to nonlinear systems.</div>
+        <div class="paper-journal">SPIE AeroSense</div>
+        <div class="paper-usage">AEGIS: Sigma point propagation method for the UKF implementation.</div>
+      </div>
+      <div class="library-card">
+        <div class="paper-authors">VOSOUGHI, S., ROY, D., ARAL, S. (2018)</div>
+        <div class="paper-title">The spread of true and false news online.</div>
+        <div class="paper-journal">Science, 359(6380)</div>
+        <div class="paper-usage">AEGIS: Velocity penalty for down-weighting signals spreading unnaturally fast.</div>
+      </div>
+      <div class="library-card">
+        <div class="paper-authors">HASBROUCK, J. (1991)</div>
+        <div class="paper-title">Measuring the information content of stock trades.</div>
+        <div class="paper-journal">Journal of Finance, 46(1)</div>
+        <div class="paper-usage">AEGIS: Framework for scoring information content of sensor signals.</div>
+      </div>
+      <div class="library-card">
+        <div class="paper-authors">WELFORD, B. P. (1962)</div>
+        <div class="paper-title">Note on a method for calculating corrected sums of squares and products.</div>
+        <div class="paper-journal">Technometrics, 4(3)</div>
+        <div class="paper-usage">AEGIS: Online variance calculation for real-time anomaly detection.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 / LOGIC -->
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">04 / LOGIC</span>
+      <h2>How AEGIS thinks.</h2>
+    </div>
+    <p style="font-size:17px;color:var(--muted);line-height:1.7;max-width:680px;margin-bottom:16px;font-weight:300">Six diagrams decode the intelligence: the signal-to-decision pipeline, the UKF sigma point propagation, the BFT consensus sequence, the agent state machine, the 7-layer nonlinear stack, and the 12-phase kernel lifecycle. No black boxes — every transformation is documented to the level of code.</p>
+    <img src="docs/viz/logic-pipeline-light.png" alt="Signal-to-Decision Pipeline" style="width:100%;border:1px solid var(--rule);margin-bottom:32px">
+    <div style="text-align:center">
+      <a href="logic.html" class="btn-primary">Explore the logic <span>→</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- 05 / ARCHITECTURE -->
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">05 / ARCHITECTURE</span>
+      <h2>Three layers, one controller.</h2>
+    </div>
+    <p style="font-size:17px;color:var(--muted);line-height:1.7;max-width:680px;margin-bottom:48px;font-weight:300">The AEGIS controller orchestrates three independent layers: perception (sensors), estimation (UKF + fusion), and coordination (BFT mesh). Each layer is modular — sensors can be added without touching estimation logic; estimation algorithms can be swapped without touching coordination.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)">
+      <div style="padding:36px 32px;border-right:1px solid var(--rule)">
+        <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.14em;color:var(--label);text-transform:uppercase;margin-bottom:20px">L.01 / Perception</div>
+        <h3 style="font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--navy);letter-spacing:-0.01em;margin-bottom:24px">Sensors</h3>
+        <ul style="list-style:none;margin-bottom:24px">
+          <li style="font-size:14px;color:var(--muted);padding:8px 0;border-bottom:1px solid var(--rule);font-weight:300">Optical CV</li>
+          <li style="font-size:14px;color:var(--muted);padding:8px 0;border-bottom:1px solid var(--rule);font-weight:300">RF Sensing</li>
+          <li style="font-size:14px;color:var(--muted);padding:8px 0;border-bottom:1px solid var(--rule);font-weight:300">Acoustic Analysis</li>
+          <li style="font-size:14px;color:var(--muted);padding:8px 0;border-bottom:1px solid var(--rule);font-weight:300">Radar (mmW)</li>
+          <li style="font-size:14px;color:var(--muted);padding:8px 0;font-weight:300">Infrared</li>
+        </ul>
+        <div style="font-family:var(--font-mono);font-size:11px;color:var(--navy);line-height:1.7">
+          5 modalities<br>
+          Pluggable architecture
+        </div>
+      </div>
+      <div style="padding:36px 32px;border-right:1px solid var(--rule)">
+        <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.14em;color:var(--label);text-transform:uppercase;margin-bottom:20px">L.02 / Estimation</div>
+        <h3 style="font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--navy);letter-spacing:-0.01em;margin-bottom:24px">Algorithms</h3>
+        <ul style="list-style:none;margin-bottom:24px">
+          <li style="font-size:14px;color:var(--muted);padding:8px 0;border-bottom:1px solid var(--rule);font-weight:300">UKF State Estimation</li>
+          <li style="font-size:14px;color:var(--muted);padding:8px 0;border-bottom:1px solid var(--rule);font-weight:300">Trajectory Prediction</li>
+          <li style="font-size:14px;color:var(--muted);padding:8px 0;border-bottom:1px solid var(--rule);font-weight:300">Spectral Fusion</li>
+          <li style="font-size:14px;color:var(--muted);padding:8px 0;border-bottom:1px solid var(--rule);font-weight:300">7-Layer Nonlinear</li>
+          <li style="font-size:14px;color:var(--muted);padding:8px 0;font-weight:300">Hysteresis</li>
+        </ul>
+        <div style="font-family:var(--font-mono);font-size:11px;color:var(--navy);line-height:1.7">
+          47→32→32→15 MLP<br>
+          3,008 weights
+        </div>
+      </div>
+      <div style="padding:36px 32px">
+        <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.14em;color:var(--label);text-transform:uppercase;margin-bottom:20px">L.03 / Coordination</div>
+        <h3 style="font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--navy);letter-spacing:-0.01em;margin-bottom:24px">Mesh</h3>
+        <ul style="list-style:none;margin-bottom:24px">
+          <li style="font-size:14px;color:var(--muted);padding:8px 0;border-bottom:1px solid var(--rule);font-weight:300">BFT Consensus</li>
+          <li style="font-size:14px;color:var(--muted);padding:8px 0;border-bottom:1px solid var(--rule);font-weight:300">Mesh Sync</li>
+          <li style="font-size:14px;color:var(--muted);padding:8px 0;border-bottom:1px solid var(--rule);font-weight:300">Conflict Resolution</li>
+          <li style="font-size:14px;color:var(--muted);padding:8px 0;border-bottom:1px solid var(--rule);font-weight:300">Leader Election</li>
+          <li style="font-size:14px;color:var(--muted);padding:8px 0;font-weight:300">Fault Detection</li>
+        </ul>
+        <div style="font-family:var(--font-mono);font-size:11px;color:var(--navy);line-height:1.7">
+          N ≥ 3f+1<br>
+          Rotating leader
+        </div>
+      </div>
+    </div>
+
+    <p style="font-size:15px;color:var(--muted);line-height:1.7;max-width:680px;margin-top:32px;font-weight:300;font-style:italic">The data flows left to right: sensors ingest raw signals, estimation algorithms produce state, coordination protocols distribute that state across the mesh. No layer can skip ahead. No layer can call back. The modularity is a design constraint, not a limitation — it means each layer can be optimized, swapped, or parallelized independently.</p>
+  </div>
+</section>
+
+<!-- 06 / SPECS -->
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">06 / SPECS</span>
+      <h2>Measured on commodity hardware.</h2>
+    </div>
+    <p style="font-size:17px;color:var(--muted);line-height:1.7;max-width:680px;margin-bottom:32px;font-weight:300">All metrics measured on a single machine, no GPU acceleration, no FPGA. The 50Hz tick budget is the hard constraint — every optimization decision is governed by "does it fit in 200ms?"</p>
+    <table class="specs-table">
+      <thead><tr><th>Metric</th><th>Value</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Detection range</td><td><strong>5 km</strong></td><td>Depends on sensor modality</td></tr>
+        <tr><td>Response time</td><td><strong>&lt; 2s</strong></td><td>Detection to classification</td></tr>
+        <tr><td>Target capacity</td><td><strong>50 simultaneous</strong></td><td>Benchmark-limited, not algorithmic</td></tr>
+        <tr><td>Mesh protocol</td><td><strong>BFT consensus</strong></td><td>3-node fault tolerance</td></tr>
+        <tr><td>Sensor modalities</td><td><strong>5</strong></td><td>Optical, RF, acoustic, radar, IR</td></tr>
+        <tr><td>Tick rate</td><td><strong>50Hz</strong></td><td>200ms budget, 185ms used</td></tr>
+        <tr><td>UKF architecture</td><td><strong>47→32→32→15</strong></td><td>3,008 weights, custom Python</td></tr>
+        <tr><td>Agent count</td><td><strong>10,000</strong></td><td>8 factions, 9 behaviors</td></tr>
+        <tr><td>RMSE @ 10 targets</td><td><strong>4.2m</strong></td><td>Within 15m engagement threshold</td></tr>
+        <tr><td>Median latency</td><td><strong>1124ms</strong></td><td>P95 at 2103ms</td></tr>
+        <tr><td>Visualizations</td><td><strong>20 procedural</strong></td><td>14 data + 6 logic diagrams</td></tr>
+        <tr><td>Documentation</td><td><strong>11 files</strong></td><td>Math, architecture, safety</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 07 / EXPLORE -->
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">07 / EXPLORE</span>
+      <h2>Go deeper.</h2>
+    </div>
+    <div class="page-nav">
+      <a href="research.html" class="page-nav-card">
+        <div class="page-nav-num">PAGE 01</div>
+        <div class="page-nav-title">Research</div>
+        <div class="page-nav-desc">Four research questions at the intersection of control theory, distributed systems, and signal processing. With live canvas animations and honest limitations.</div>
+      </a>
+      <a href="systems.html" class="page-nav-card">
+        <div class="page-nav-num">PAGE 02</div>
+        <div class="page-nav-title">Systems</div>
+        <div class="page-nav-desc">Technical deep-dive into UKF, BFT consensus, spectral fusion, and mesh coordination. Specs tables, kernel tick budget, and 11 documentation files.</div>
+      </a>
+      <a href="logic.html" class="page-nav-card">
+        <div class="page-nav-num">PAGE 03</div>
+        <div class="page-nav-title">Logic</div>
+        <div class="page-nav-desc">Six diagrams decoding how AEGIS thinks — the pipeline, sigma points, BFT sequence, agent states, nonlinear stack, and kernel lifecycle.</div>
+      </a>
+      <a href="visualizations.html" class="page-nav-card">
+        <div class="page-nav-num">PAGE 04</div>
+        <div class="page-nav-title">Visualizations</div>
+        <div class="page-nav-desc">Filterable gallery of 14 procedural visualizations. Every image generated from the simulation engine — no mockups, no marketing renders.</div>
+      </a>
+      <a href="ethics.html" class="page-nav-card">
+        <div class="page-nav-num">PAGE 05</div>
+        <div class="page-nav-title">Ethics</div>
+        <div class="page-nav-desc">Research framework, not a weapon. Architectural boundaries, contribution policy, deployment requirements, and a personal statement.</div>
+      </a>
+      <a href="https://github.com/Vitalcheffe/Aegis" class="page-nav-card">
+        <div class="page-nav-num">EXT</div>
+        <div class="page-nav-title">GitHub ↗</div>
+        <div class="page-nav-desc">Full source code, 11 documentation files, commit history, and the simulation engine. Open source under MIT license.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-left">
+      <div class="footer-name">Amine Harch El Korane</div>
+      <div class="footer-tagline">Casablanca, Morocco · 2026</div>
+    </div>
+    <ul class="footer-links">
+      <li><a href="index.html">Overview</a></li>
+      <li><a href="research.html">Research</a></li>
+      <li><a href="systems.html">Systems</a></li>
+      <li><a href="logic.html">Logic</a></li>
+      <li><a href="visualizations.html">Visualizations</a></li>
+      <li><a href="ethics.html">Ethics</a></li>
+      <li><a href="https://github.com/Vitalcheffe/Aegis">GitHub ↗</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script src="assets/js/animations.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
