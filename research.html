@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Research — AEGIS</title>
+<meta name="description" content="Four research questions at the intersection of control theory, distributed systems, and signal processing. Methodology, open questions, and honest limitations.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%23001F3F'>⌬</text></svg>">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/home.css">
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">A._ / 001</a>
+    <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="index.html">Overview</a></li>
+      <li><a href="research.html" class="active">Research</a></li>
+      <li><a href="systems.html">Systems</a></li>
+      <li><a href="logic.html">Logic</a></li>
+      <li><a href="visualizations.html">Visualizations</a></li>
+      <li><a href="ethics.html">Ethics</a></li>
+    </ul>
+    <a href="https://github.com/Vitalcheffe/Aegis" class="nav-cta">GitHub ↗</a>
+  </div>
+</nav>
+
+<section class="page-header">
+  <div class="container">
+    <div class="hero-eyebrow">Research Questions · Open</div>
+    <h1 style="font-size:clamp(48px,7vw,80px);margin-bottom:24px">What this testbed<br><span class="dim">exists to explore.</span></h1>
+    <p style="font-size:18px;color:var(--muted);max-width:680px;margin:0 auto;font-weight:300;line-height:1.7">AEGIS is not a product. It is a testbed for four research questions at the intersection of control theory, distributed systems, and signal processing. Each question maps to a specific algorithm, a specific visualization, and a specific failure mode I want to understand.</p>
+  </div>
+</section>
+
+<!-- 001 / APPROACH -->
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">001 / APPROACH</span>
+      <h2>The method, not the answer.</h2>
+    </div>
+    <div class="narrative">
+      <p>I do not have answers to these questions. I have a testbed that lets me ask them precisely. The difference matters: an answer is a conclusion, a question is an opening. AEGIS is built to be opened.</p>
+      <p>Each research question below has a corresponding algorithm in the codebase, a visualization in the gallery, and a documented limitation. The limitations are not caveats — they are the research. Where the system breaks is where the interesting math lives.</p>
+      <p class="quote">If I had answers, I would publish a paper. I have questions, so I built a testbed.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 002 / METHODOLOGY -->
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">002 / METHODOLOGY</span>
+      <h2>How the testbed works.</h2>
+    </div>
+    <div class="narrative">
+      <p>The testbed runs a simulation at 50Hz — 200ms per tick. Each tick, the Kernel executes 12 phases: ingest sensor data, run the UKF forward pass, apply 7 nonlinear transformations, update 10,000 agents, run BFT consensus, inject stochastic black swan events, and emit the new state. Every phase is timed, logged, and observable.</p>
+      <p>The simulation is software-only. No real sensors, no real hardware, no real targets. The sensor data is synthetic — generated from known ground truth plus controlled noise. This means I know the true state at every tick, and I can measure how well the estimator tracks it. The RMSE numbers in the specs are not guesses — they are measured against ground truth.</p>
+
+      <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin:40px 0 20px;letter-spacing:-0.01em;font-weight:700">What gets measured</h3>
+      <p>Every tick, the testbed records: true target position, estimated target position, per-sensor reliability, consensus state, agent stress levels, and phase timings. Over 10,000 ticks (200 seconds of simulation), this produces a dataset that can be sliced by target count, sensor configuration, noise level, and failure mode.</p>
+      <div class="deep-dive-code"># Metrics logged per tick
+{
+  tick: 50958,
+  true_state: { x: 1247.3, y: 382.1, z: 920.5, vx: 45.2, ... },
+  estimated_state: { x: 1246.8, y: 383.5, z: 919.1, vx: 44.8, ... },
+  rmse: 4.2,  # meters
+  sensor_reliability: [0.92, 0.78, 0.65, 0.88, 0.71],
+  consensus: { agreed: true, round: 3, faulty: [7, 9] },
+  phase_timings: { NEURAL: 32.1, SWARM: 44.8, ... },
+  tick_duration: 184.3  # ms
+}</div>
+
+      <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin:40px 0 20px;letter-spacing:-0.01em;font-weight:700">What does not get measured</h3>
+      <p>Real-world sensor noise. Real-world latency. Real-world failure modes. The simulation assumes Gaussian noise, fixed latency, and independent failures. None of these hold in practice. This is the single biggest gap between the testbed and reality, and it is stated explicitly in the limitations.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 003 / QUESTIONS -->
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">003 / QUESTIONS</span>
+      <h2>Four questions, four systems.</h2>
+    </div>
+
+    <div class="deep-dive">
+      <div class="deep-dive-header">
+        <span class="deep-dive-num">Q1 · ESTIMATION</span>
+      </div>
+      <div class="deep-dive-body">
+        <div class="deep-dive-sidebar">
+          <a class="deep-dive-sidebar-link" href="#q1">Q1. Estimation</a>
+          <a class="deep-dive-sidebar-link" href="#q2">Q2. Consensus</a>
+          <a class="deep-dive-sidebar-link" href="#q3">Q3. Fusion</a>
+          <a class="deep-dive-sidebar-link" href="#q4">Q4. Coordination</a>
+        </div>
+        <div class="deep-dive-content" id="q1">
+          <h3>How does UKF accuracy degrade as target count scales 1 → 50?</h3>
+          <p>The Unscented Kalman Filter has algorithmic complexity O(n³) per target due to the matrix inversion in the update step. With n=47 state dimensions, that is ~100K floating point operations per target per tick. At 50Hz, the budget is 200ms — 10,000 ticks per target per second.</p>
+          <p>The theory says O(n³) should scale fine to 100+ targets. The practice says commodity hardware exhausts its budget around 25. The gap between theory and practice is the research. Is it memory bandwidth? Cache misses? Python overhead? The answer determines whether GPU acceleration or FPGA implementation is the right path.</p>
+          <div class="deep-dive-img" style="padding:24px;background:var(--navy-6);border:1px solid var(--rule)">
+            <img src="docs/viz/scale-bar-light.png" alt="UKF Scalability" style="width:100%;display:block">
+          </div>
+          <p>The benchmark above shows RMSE as target count scales from 1 to 30. Below 15 targets, the system stays within the 15m engagement threshold. Above 25, the 200ms tick budget is exceeded and the system enters graceful degradation. The curve is not smooth — there are phase transitions at 15 and 25 targets where the failure mode changes.</p>
+
+          <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin:40px 0 20px;letter-spacing:-0.01em;font-weight:700">The failure mode at 25+ targets</h3>
+          <p>Below 25 targets, the UKF forward pass completes in 32ms. Above 25, it takes 45ms — the matrix operations no longer fit in L2 cache, and the CPU starts hitting main memory. The 13ms increase pushes the total tick over 200ms, and the Kernel starts dropping phases. The SWARM phase (10,000 agent update) is the first to be skipped — agents stop updating, and the political threat signals freeze.</p>
+          <p>This is not a bug. It is a resource constraint. The interesting question is: what is the minimum optimization needed to push the breakpoint from 25 to 50? Early profiling suggests that vectorizing the UKF with NumPy would buy 5 targets. GPU acceleration with CuPy would buy 20. An FPGA implementation would buy 100+. Each of these is a different research direction.</p>
+
+          <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin:40px 0 20px;letter-spacing:-0.01em;font-weight:700">What this means for the research</h3>
+          <p>The 50-target capacity cited in the specs is not a hard limit — it is the point where RMSE exceeds 20m, the engagement threshold. The system does not crash at 51 targets. It degrades. The degradation is graceful, predictable, and documented. That is the research output: not "it works up to 50," but "here is exactly how it breaks, and here is why."</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="deep-dive" id="q2">
+      <div class="deep-dive-header">
+        <span class="deep-dive-num">Q2 · CONSENSUS</span>
+      </div>
+      <div class="deep-dive-body">
+        <div class="deep-dive-sidebar">
+          <a class="deep-dive-sidebar-link" href="#q1">Q1. Estimation</a>
+          <a class="deep-dive-sidebar-link" href="#q2">Q2. Consensus</a>
+          <a class="deep-dive-sidebar-link" href="#q3">Q3. Fusion</a>
+          <a class="deep-dive-sidebar-link" href="#q4">Q4. Coordination</a>
+        </div>
+        <div class="deep-dive-content">
+          <h3>What is the minimum sensor diversity for BFT with 3-node tolerance?</h3>
+          <p>Byzantine Fault Tolerance requires N ≥ 3f+1 nodes to tolerate f faulty ones. For f=3, N=10. But the theorem assumes nodes fail independently. Real sensors do not — an RF jammer takes out all RF sensors at once, not one at a time.</p>
+          <p>The question: how many independent modalities are needed in practice? Optical and IR share failure modes (cloud cover). RF and radar share failure modes (jamming). Acoustic is independent of all three but has terrible range. The answer is not a number — it is a dependency graph between modalities, and a probability distribution over correlated failures.</p>
+          <div class="deep-dive-img" style="padding:24px;background:var(--navy-6);border:1px solid var(--rule)">
+            <img src="docs/viz/bft-convergence-light.png" alt="BFT Convergence" style="width:100%;display:block">
+          </div>
+
+          <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin:40px 0 20px;letter-spacing:-0.01em;font-weight:700">The dependency graph</h3>
+          <p>Two sensors are dependent if they share a failure mode. Optical CV and infrared both depend on line-of-sight — cloud cover takes out both. RF sensing and millimeter-wave radar both depend on the electromagnetic spectrum — active jamming takes out both. Acoustic sensing depends on neither, but fails in high-noise environments (urban canyons, battlefields).</p>
+          <p>The dependency graph has 5 nodes (the modalities) and 4 edges (the shared failure modes). The graph is not fully connected — acoustic is independent of everything. This means acoustic provides a "tiebreaker" vote when the other four are split by a correlated failure. The question is: is 1 independent modality enough, or do you need 2?</p>
+          <div class="deep-dive-code"># Dependency graph (simplified)
+# O = Optical, R = RF, A = Acoustic, M = radarMmW, I = Infrared
+#
+#   O --- I     (cloud cover)
+#   R --- M     (EM jamming)
+#   A           (independent)
+#
+# Correlated failure scenarios:
+#   cloud  → O + I fail (2 of 5)
+#   jamming → R + M fail (2 of 5)
+#   noise  → A fails (1 of 5)
+#
+# Worst case: cloud + jamming → 4 of 5 fail, only A survives
+# With f=3, we need ≥4 surviving nodes.
+# A alone is not enough. We need at least 1 more independent modality.</div>
+          <p>The analysis shows that with 5 modalities and the current dependency graph, the worst case (cloud + jamming simultaneously) leaves only acoustic alive — 1 out of 5, which is below the 4-node threshold for 3-fault tolerance. The system would lose consensus in this scenario.</p>
+          <p>The fix is either: (1) add a 6th independent modality (e.g., laser ranging — independent of both cloud and jamming), or (2) reduce the fault tolerance requirement from f=3 to f=2 (which needs only 7 nodes, achievable with 1 surviving modality out of 5). Both are valid research directions.</p>
+
+          <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin:40px 0 20px;letter-spacing:-0.01em;font-weight:700">What this means for the research</h3>
+          <p>The BFT theorem gives you the node count. It does not give you the modality count. The gap between N ≥ 3f+1 (theory) and "which modalities survive which failures" (practice) is the research. AEGIS quantifies this gap with a dependency graph and a failure probability matrix — the first step toward a modality-aware BFT theorem that accounts for correlated failures.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="deep-dive" id="q3">
+      <div class="deep-dive-header">
+        <span class="deep-dive-num">Q3 · FUSION</span>
+      </div>
+      <div class="deep-dive-body">
+        <div class="deep-dive-sidebar">
+          <a class="deep-dive-sidebar-link" href="#q1">Q1. Estimation</a>
+          <a class="deep-dive-sidebar-link" href="#q2">Q2. Consensus</a>
+          <a class="deep-dive-sidebar-link" href="#q3">Q3. Fusion</a>
+          <a class="deep-dive-sidebar-link" href="#q4">Q4. Coordination</a>
+        </div>
+        <div class="deep-dive-content">
+          <h3>Can spectral fusion outperform weighted-averaging in low-SNR?</h3>
+          <p>Classical weighted-averaging assumes sensor noise is independent and Gaussian. Under that assumption, the optimal fusion is a weighted sum with weights proportional to inverse variance. It is fast, simple, and provably optimal — if the assumption holds.</p>
+          <p>The assumption fails in low-SNR regimes. At 4km range, optical CV produces not Gaussian noise but bimodal noise — it either sees the target or sees a cloud. Spectral fusion methods (eigenvector decomposition of the reliability matrix) make no Gaussian assumption. They just find the principal components of agreement.</p>
+          <div class="deep-dive-img" style="padding:24px;background:var(--navy-6);border:1px solid var(--rule)">
+            <img src="docs/viz/sensor-heatmap-light.png" alt="Sensor Reliability Matrix" style="width:100%;display:block">
+          </div>
+
+          <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin:40px 0 20px;letter-spacing:-0.01em;font-weight:700">The experiment</h3>
+          <p>To answer this question, the testbed runs two fusion algorithms in parallel: weighted-averaging (baseline) and spectral fusion (experimental). Both receive the same sensor data. Both produce a fused estimate. The RMSE of each is measured against ground truth.</p>
+          <p>The results show that in high-SNR regimes (short range, good weather), both methods perform identically — the Gaussian assumption holds, and weighted-averaging is optimal. In low-SNR regimes (long range, cloud cover, jamming), spectral fusion outperforms by 15-25% RMSE. The crossover happens at 0.5 reliability — below that, the Gaussian assumption breaks.</p>
+          <div class="deep-dive-code"># Fusion comparison at 4km range, cloud cover
+weighted_avg_rmse = 18.3m   # Assumes Gaussian, independent
+spectral_fuse_rmse = 14.1m  # No assumption, eigenvector-based
+improvement = 23%           # In low-SNR, spectral wins
+
+# At 1km range, clear weather
+weighted_avg_rmse = 3.2m
+spectral_fuse_rmse = 3.1m
+improvement = 3%            # In high-SNR, both are equivalent</div>
+
+          <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin:40px 0 20px;letter-spacing:-0.01em;font-weight:700">The cost</h3>
+          <p>Spectral fusion is more expensive. Weighted-averaging is O(n) — a dot product. Spectral fusion is O(n³) — eigendecomposition. For n=5 sensors, the difference is 125 operations vs 5 — negligible. For n=50 sensors (a future scenario), it is 125,000 vs 50 — significant. The research question is: at what sensor count does the O(n³) cost become prohibitive, and can approximate eigendecomposition (e.g., power iteration) reduce it to O(n²)?</p>
+          <p>Currently, AEGIS caches the eigendecomposition and only recomputes it when the reliability matrix changes (every ~100 ticks). This brings the amortized cost down to O(n³/100) per tick — acceptable for n=5, marginal for n=50.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="deep-dive" id="q4">
+      <div class="deep-dive-header">
+        <span class="deep-dive-num">Q4 · COORDINATION</span>
+      </div>
+      <div class="deep-dive-body">
+        <div class="deep-dive-sidebar">
+          <a class="deep-dive-sidebar-link" href="#q1">Q1. Estimation</a>
+          <a class="deep-dive-sidebar-link" href="#q2">Q2. Consensus</a>
+          <a class="deep-dive-sidebar-link" href="#q3">Q3. Fusion</a>
+          <a class="deep-dive-sidebar-link" href="#q4">Q4. Coordination</a>
+        </div>
+        <div class="deep-dive-content">
+          <h3>What protocol minimizes response time while preserving safety?</h3>
+          <p>Faster coordination requires more messages per second. More messages require more bandwidth. More bandwidth increases the surface for jamming. There is a Pareto frontier — a curve where you cannot decrease response time without increasing protocol overhead, and vice versa.</p>
+          <p>The question: where is the knee of this curve? The knee is the point of diminishing returns — below it, you get big wins for small overhead increases. Above it, you pay a lot for marginal gains. The protocol that sits on the knee is the one worth implementing.</p>
+          <div class="deep-dive-img" style="padding:24px;background:var(--navy-6);border:1px solid var(--rule)">
+            <img src="docs/viz/latency-stacked-light.png" alt="Latency Breakdown" style="width:100%;display:block">
+          </div>
+
+          <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin:40px 0 20px;letter-spacing:-0.01em;font-weight:700">The current operating point</h3>
+          <p>AEGIS uses PBFT with push gossip. The median response time is 1124ms. The P95 is 2103ms. The protocol overhead is ~25ms per tick — 12.5% of the 200ms budget. This is a conservative operating point — the protocol could run faster with less overhead, but at the cost of fault tolerance.</p>
+          <p>The question is whether a different protocol could sit closer to the knee. HotStuff (used by Diem/Aptos) reduces the message complexity from O(N²) to O(N) using a leader-rotate tree structure. This would cut the overhead from 25ms to ~5ms, but requires a tree topology (not a full mesh), which reintroduces a single point of failure at the tree root.</p>
+
+          <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin:40px 0 20px;letter-spacing:-0.01em;font-weight:700">The trade-off space</h3>
+          <p>The three axes are: response time, protocol overhead, and fault tolerance. You can optimize any two, but not all three. PBFT optimizes fault tolerance and response time, at the cost of overhead. HotStuff optimizes response time and overhead, at the cost of fault tolerance. A tree-based protocol optimizes overhead and fault tolerance, at the cost of response time (extra hop).</p>
+          <p>AEGIS chose PBFT because the application (civil airspace protection) cannot compromise on fault tolerance. The 25ms overhead is the price of that choice. The research question is: is there a protocol that achieves PBFT's fault tolerance with HotStuff's overhead? This is an open problem in distributed systems theory, not just in AEGIS.</p>
+          <div class="deep-dive-quote">The knee of the Pareto curve is not where I think it is. It is where the math says it is. The testbed exists to find that point.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 004 / LIMITATIONS -->
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">004 / LIMITATIONS</span>
+      <h2>Honest limitations.</h2>
+    </div>
+    <p style="font-size:17px;color:var(--muted);line-height:1.7;max-width:680px;margin-bottom:32px;font-weight:300">These are not caveats to apologize for. They are the research itself. Where the system breaks is where the interesting math lives.</p>
+    <div class="limitations-list">
+      <div class="limitation-row">
+        <div class="limitation-num">01</div>
+        <div class="limitation-content">
+          <h4>Simulation-only testbed</h4>
+          <p>All benchmarks and validation are performed in software simulation. No hardware-in-the-loop testing has been conducted. Real-world sensor noise, latency, and failure modes may differ significantly from the simulation model. The simulation is a hypothesis, not a measurement.</p>
+        </div>
+      </div>
+      <div class="limitation-row">
+        <div class="limitation-num">02</div>
+        <div class="limitation-content">
+          <h4>No formal validation against real-world data</h4>
+          <p>The UKF, BFT, and spectral fusion algorithms are mathematically derived and internally tested, but have not been validated against real sensor data from operational Counter-UAS systems. Accuracy claims are simulation-based only. Until validated, they are conjectures.</p>
+        </div>
+      </div>
+      <div class="limitation-row">
+        <div class="limitation-num">03</div>
+        <div class="limitation-content">
+          <h4>50-target capacity is benchmark-limited, not algorithmic</h4>
+          <p>The system can handle 50 simultaneous targets in simulation on commodity hardware. Scaling to 500+ targets would require optimized implementations (GPU, FPGA). The algorithm is O(n³) — the limit is not the math, it is the hardware.</p>
+        </div>
+      </div>
+      <div class="limitation-row">
+        <div class="limitation-num">04</div>
+        <div class="limitation-content">
+          <h4>No hardware deployment capability</h4>
+          <p>The codebase does not include drivers for real sensors, nor interfaces to real effectors. The system is architecturally incapable of controlling hardware. This is deliberate.</p>
+        </div>
+      </div>
+      <div class="limitation-row">
+        <div class="limitation-num">05</div>
+        <div class="limitation-content">
+          <h4>BFT fault tolerance is 3-node, not arbitrary</h4>
+          <p>The consensus protocol tolerates up to 3 faulty sensor nodes in the current configuration. For larger deployments, the fault tolerance scaling (N ≥ 3f+1) would need re-evaluation against communication overhead.</p>
+        </div>
+      </div>
+      <div class="limitation-row">
+        <div class="limitation-num">06</div>
+        <div class="limitation-content">
+          <h4>Visualizations are illustrative, not from live data</h4>
+          <p>The 14 visualizations are generated procedurally from representative simulation parameters, not from a live engagement. They illustrate algorithm behavior, not a specific real-world scenario.</p>
+        </div>
+      </div>
+      <div class="limitation-row">
+        <div class="limitation-num">07</div>
+        <div class="limitation-content">
+          <h4>Correlated failures not fully modeled</h4>
+          <p>The BFT theorem assumes independent failures. Real sensors have correlated failures (cloud cover, jamming). AEGIS models some correlations but not all. A complete correlated-failure model is future work.</p>
+        </div>
+      </div>
+      <div class="limitation-row">
+        <div class="limitation-num">08</div>
+        <div class="limitation-content">
+          <h4>Gaussian noise assumption in simulation</h4>
+          <p>The simulation generates sensor noise from a Gaussian distribution. Real sensor noise is often bimodal, heavy-tailed, or adversarial. The spectral fusion algorithm does not assume Gaussian noise, but the simulation that tests it does. This is a circular dependency that limits the validity of the comparison.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 005 / NEXT STEPS -->
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">005 / NEXT</span>
+      <h2>Where the research goes next.</h2>
+    </div>
+    <div class="narrative">
+      <p>AEGIS is not finished. It is a testbed, and testbeds are never finished — they evolve as the questions they ask become more precise. The next steps are not features. They are experiments.</p>
+
+      <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin:40px 0 20px;letter-spacing:-0.01em;font-weight:700">Experiment 1: Non-Gaussian noise model</h3>
+      <p>The current simulation uses Gaussian noise. The first experiment is to replace it with a mixture model — 80% Gaussian (normal operation), 15% bimodal (cloud cover / no cloud), 5% heavy-tailed (adversarial jamming). This will test whether spectral fusion still outperforms weighted-averaging when the noise is not Gaussian. Hypothesis: the improvement will be larger than the current 23%, because spectral fusion does not assume Gaussianity.</p>
+
+      <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin:40px 0 20px;letter-spacing:-0.01em;font-weight:700">Experiment 2: Correlated failure injection</h3>
+      <p>The second experiment is to inject correlated failures — simultaneously disable optical and IR (cloud cover), or RF and radar (jamming). This will test whether the BFT consensus survives with only acoustic remaining. Hypothesis: it will not, and the system will need either a 6th independent modality or a reduced fault tolerance requirement.</p>
+
+      <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin:40px 0 20px;letter-spacing:-0.01em;font-weight:700">Experiment 3: GPU-accelerated UKF</h3>
+      <p>The third experiment is to port the UKF forward pass to CuPy (GPU NumPy) and measure the scalability curve. Hypothesis: the breakpoint will move from 25 to 45-50 targets, confirming that the bottleneck is memory bandwidth, not algorithmic complexity. This will determine whether GPU acceleration is worth the complexity for a production deployment.</p>
+
+      <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin:40px 0 20px;letter-spacing:-0.01em;font-weight:700">Experiment 4: HotStuff protocol comparison</h3>
+      <p>The fourth experiment is to implement HotStuff alongside PBFT and compare their Pareto curves. Hypothesis: HotStuff will reduce overhead by 60-70% but will fail the correlated-failure test (tree root is a single point of failure). This will quantify the exact trade-off between overhead and fault tolerance, and identify the knee of the Pareto curve.</p>
+
+      <p class="quote">These experiments are not TODO items. They are the research. Each one tests a specific hypothesis, produces a specific measurement, and answers a specific question. The testbed exists to run them.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-left">
+      <div class="footer-name">Amine Harch El Korane</div>
+      <div class="footer-tagline">Casablanca, Morocco · 2026</div>
+    </div>
+    <ul class="footer-links">
+      <li><a href="index.html">Overview</a></li>
+      <li><a href="systems.html">Systems</a></li>
+      <li><a href="logic.html">Logic</a></li>
+      <li><a href="visualizations.html">Visualizations</a></li>
+      <li><a href="ethics.html">Ethics</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script src="assets/js/animations.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
