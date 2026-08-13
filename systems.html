@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Systems — AEGIS</title>
+<meta name="description" content="Technical deep-dive into the four core systems: UKF estimation, BFT consensus, spectral fusion, and mesh coordination. Code, math, and implementation notes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%23001F3F'>⌬</text></svg>">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/home.css">
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">A._ / 001</a>
+    <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="index.html">Overview</a></li>
+      <li><a href="research.html">Research</a></li>
+      <li><a href="systems.html" class="active">Systems</a></li>
+      <li><a href="logic.html">Logic</a></li>
+      <li><a href="visualizations.html">Visualizations</a></li>
+      <li><a href="ethics.html">Ethics</a></li>
+    </ul>
+    <a href="https://github.com/Vitalcheffe/Aegis" class="nav-cta">GitHub ↗</a>
+  </div>
+</nav>
+
+<section class="page-header">
+  <div class="container">
+    <div class="hero-eyebrow">Systems · Technical Deep-Dive</div>
+    <h1 style="font-size:clamp(48px,7vw,80px);margin-bottom:24px">Four systems.<br><span class="dim">One controller.</span></h1>
+    <p style="font-size:18px;color:var(--muted);max-width:680px;margin:0 auto;font-weight:300;line-height:1.7">Each system solves a specific problem in the multi-agent coordination stack. Each is documented to the level of math and code. No black boxes — every equation, every design decision, every trade-off is written down.</p>
+  </div>
+</section>
+
+<!-- SYSTEM 01: UKF -->
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">S.01 / ESTIMATION</span>
+      <h2>Unscented Kalman Filter</h2>
+    </div>
+
+    <div class="system-block">
+      <div class="system-visual">
+        <img src="docs/viz/ukf-trajectory-light.png" alt="UKF Trajectory">
+      </div>
+      <div>
+        <div class="system-tag">Core estimator · 50Hz tick</div>
+        <p class="system-desc">The UKF is the core state estimator. It propagates a set of <strong>sigma points</strong> through the nonlinear dynamics, then reconstructs the mean and covariance from the transformed points. Unlike the Extended Kalman Filter, it does not linearize — it samples.</p>
+        <p class="system-desc">The implementation is custom Python — no SciPy, no filterpy. 47 input dimensions, two hidden layers of 32 neurons each, 15 outputs. 3,008 learnable weights. ReLU activations, He initialization, SGD with momentum.</p>
+        <div class="system-specs">
+          <div class="spec-item"><div class="spec-val">47→32→32→15</div><div class="spec-lbl">Architecture</div></div>
+          <div class="spec-item"><div class="spec-val">3,008</div><div class="spec-lbl">Weights</div></div>
+          <div class="spec-item"><div class="spec-val">7</div><div class="spec-lbl">Sigma points</div></div>
+          <div class="spec-item"><div class="spec-val">4.2m</div><div class="spec-lbl">RMSE @ 10 targets</div></div>
+          <div class="spec-item"><div class="spec-val">600ms</div><div class="spec-lbl">Maneuver recovery</div></div>
+          <div class="spec-item"><div class="spec-val">32ms</div><div class="spec-lbl">Forward pass</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="narrative" style="margin-top:48px">
+      <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin-bottom:20px;letter-spacing:-0.01em;font-weight:700">Why not the Extended Kalman Filter?</h3>
+      <p>The EKF linearizes the dynamics around the current estimate. This works when the dynamics are roughly linear — small angles, slow maneuvers, gentle curves. It breaks completely when the target executes a high-g turn. The Jacobian computed at t=0 is wrong at t=0.1, and the filter diverges.</p>
+      <p>The UKF sidesteps this by not linearizing at all. It picks 2n+1 sigma points (where n is the state dimension), propagates each through the actual nonlinear function f(x), and reconstructs the mean and covariance from the transformed points. The math is derived from the unscented transform (Julier & Uhlmann, 1997) — the points are chosen deterministically to capture the mean and covariance exactly, up to third order for Gaussian inputs.</p>
+
+      <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin:40px 0 20px;letter-spacing:-0.01em;font-weight:700">The 9-state model</h3>
+      <p>The state vector tracks 9 dimensions per target: 3 position (x, y, z), 3 velocity (ẋ, ẏ, ż), and 3 acceleration (ẍ, ÿ, z̈). Position is observed directly by sensors. Velocity is inferred from position deltas. Acceleration is the hardest — it requires a second derivative, which amplifies noise. The UKF handles this by propagating uncertainty through the dynamics rather than differencing raw measurements.</p>
+      <div class="deep-dive-code">state = [x, y, z, ẋ, ẏ, ż, ẍ, ÿ, z̈]
+# 9 dimensions × 50 targets = 450 state values per tick
+# 7 sigma points per target = 350 forward passes per tick
+# At 50Hz: 17,500 forward passes per second</div>
+
+      <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin:40px 0 20px;letter-spacing:-0.01em;font-weight:700">Maneuver recovery</h3>
+      <p>When a target maneuvers, the true trajectory diverges from the predicted trajectory. The UKF's covariance widens — it knows it is uncertain. The recovery time is the duration between maneuver onset and the moment the covariance collapses back to its steady-state value. In AEGIS, this is 600ms — 30 ticks at 50Hz. During those 30 ticks, the system relies more on measurements than on predictions, and the sigma points spread wider to cover the possible trajectory space.</p>
+      <div class="deep-dive-quote">If the recovery time exceeds the prediction horizon (1.8s), the system loses track. 600ms is well within budget. This is why the 50Hz tick rate is not arbitrary — it is the Nyquist rate for the worst-case maneuver dynamics.</div>
+
+      <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin:40px 0 20px;letter-spacing:-0.01em;font-weight:700">Implementation</h3>
+      <p>The UKF is implemented in <code style="font-family:var(--font-mono);color:var(--navy)">neural-network.ts</code> — a custom MLP with forward pass, backprop, and pretraining from closed-form economic formulas. No TensorFlow, no PyTorch. The network is pre-trained on synthetic samples generated by the formulas in <code style="font-family:var(--font-mono);color:var(--navy)">formulas.ts</code> (Okun's law, Phillips curve, HDI geometric mean, fiscal accounting identities), then fine-tuned online as new causal edges arrive from the NLP extraction pipeline.</p>
+      <p>Source: <a href="https://github.com/Vitalcheffe/Aegis/blob/main/AEGIS_UKF_MATH.md" style="color:var(--navy);text-decoration:underline">AEGIS_UKF_MATH.md</a> — full derivation, sigma point selection, weight formulas, and implementation notes.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SYSTEM 02: BFT -->
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">S.02 / CONSENSUS</span>
+      <h2>Byzantine Fault Tolerant Consensus</h2>
+    </div>
+
+    <div class="system-block reverse">
+      <div class="system-visual">
+        <img src="docs/viz/bft-convergence-light.png" alt="BFT Convergence">
+      </div>
+      <div>
+        <div class="system-tag">Distributed agreement · 10 nodes</div>
+        <p class="system-desc">When multiple sensors disagree, the system uses a Byzantine Fault Tolerant consensus protocol — a variant of Practical Byzantine Fault Tolerance (PBFT). The protocol tolerates up to <strong>f faulty nodes in a network of N ≥ 3f + 1 nodes</strong>. For AEGIS, N=10 and f=3.</p>
+        <p class="system-desc">Three phases: pre-prepare (leader proposes), prepare (nodes verify), commit (nodes sign). The leader rotates every 100 ticks to distribute load and prevent targeted jamming. Faulty nodes are detected by cross-validation.</p>
+        <div class="system-specs">
+          <div class="spec-item"><div class="spec-val">N=10, f=3</div><div class="spec-lbl">Network topology</div></div>
+          <div class="spec-item"><div class="spec-val">R20</div><div class="spec-lbl">Convergence round</div></div>
+          <div class="spec-item"><div class="spec-val">100 ticks</div><div class="spec-lbl">Leader rotation</div></div>
+          <div class="spec-item"><div class="spec-val">3σ</div><div class="spec-lbl">Fault detection</div></div>
+          <div class="spec-item"><div class="spec-val">PBFT</div><div class="spec-lbl">Variant</div></div>
+          <div class="spec-item"><div class="spec-val">~14ms</div><div class="spec-lbl">Per-round overhead</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="narrative" style="margin-top:48px">
+      <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin-bottom:20px;letter-spacing:-0.01em;font-weight:700">The Byzantine Generals Problem</h3>
+      <p>The foundational paper is Lamport, Shostak, and Pease (1982). The problem: a group of generals must agree on a common battle plan. Some generals are traitors — they may send conflicting messages to different recipients. How many loyal generals are needed to guarantee consensus, and what protocol achieves it?</p>
+      <p>The answer: N ≥ 3f + 1, where f is the number of traitors. For f=3 faulty nodes, you need at least 10 total nodes. AEGIS uses exactly 10 — the minimum for 3-fault tolerance. This is not over-engineering. It is the mathematical floor.</p>
+
+      <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin:40px 0 20px;letter-spacing:-0.01em;font-weight:700">Why PBFT and not newer protocols?</h3>
+      <p>There are newer BFT protocols — Tendermint, HotStuff, DiemBFT. They are faster, more scalable, and more communication-efficient. But they are designed for blockchain contexts: many nodes, asynchronous networks, adversarial actors. AEGIS has 10 nodes, a synchronous 50Hz tick, and cooperative (not adversarial) actors. PBFT is simpler, well-understood, and has been battle-tested in distributed systems for 25 years. The protocol overhead is fixed — it does not grow with target count. For AEGIS's operating point, PBFT is the right tool.</p>
+
+      <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin:40px 0 20px;letter-spacing:-0.01em;font-weight:700">Fault detection via 3σ cross-validation</h3>
+      <p>Each node sends its estimate to all peers every tick. Each node computes the mean and standard deviation of all received estimates. If a node's estimate deviates from the mean by more than 3σ, it is flagged as potentially faulty. Three consecutive flags exclude the node from consensus for 100 ticks.</p>
+      <div class="deep-dive-code"># Pseudocode — fault detection
+for each node N in network:
+    estimates = [E for E in all_estimates if E.source != N]
+    mu = mean(estimates)
+    sigma = std(estimates)
+    if abs(N.estimate - mu) > 3 * sigma:
+        N.flag_count += 1
+    else:
+        N.flag_count = max(0, N.flag_count - 1)
+    if N.flag_count >= 3:
+        N.excluded = True  # 100-tick timeout</div>
+      <p>This is Median Absolute Deviation (MAD) applied to a sliding window. It catches sensor failures (hardware glitch), Byzantine behavior (intentional deception), and correlated errors (jamming). The 3σ threshold gives a 0.3% false positive rate per tick — roughly 1 false exclusion every 333 ticks, or every 6.6 seconds at 50Hz. The 100-tick timeout (2 seconds) is long enough for a transient fault to clear, short enough to reintegrate a recovered node quickly.</p>
+
+      <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin:40px 0 20px;letter-spacing:-0.01em;font-weight:700">Leader rotation</h3>
+      <p>The leader proposes the state for each round. A static leader is a single point of failure — jam the leader, and the network stalls. AEGIS rotates the leader every 100 ticks (2 seconds). The rotation is deterministic — node i is leader during ticks [100i, 100(i+1)). This means any node knows who the leader is at any time, without a leader-election protocol. The cost: if the designated leader is faulty, that round is wasted. With 3 faulty nodes out of 10, 30% of rounds are wasted. At 50Hz, this means 15 wasted rounds per second — still well within the convergence budget.</p>
+      <p>Source: <a href="https://github.com/Vitalcheffe/Aegis/blob/main/AEGIS_ARCHITECTURE.md" style="color:var(--navy);text-decoration:underline">AEGIS_ARCHITECTURE.md</a> — full protocol specification, message formats, and timeout handling.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SYSTEM 03: SPECTRAL FUSION -->
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">S.03 / FUSION</span>
+      <h2>Spectral Multi-Modal Fusion</h2>
+    </div>
+
+    <div class="system-block">
+      <div class="system-visual">
+        <img src="docs/viz/sensor-heatmap-light.png" alt="Sensor Fusion Matrix">
+      </div>
+      <div>
+        <div class="system-tag">5 modalities · 6 range buckets</div>
+        <p class="system-desc">The system fuses 5 sensor modalities: optical CV, RF sensing, acoustic analysis, millimeter-wave radar, and infrared. Each modality has a different reliability profile — <strong>optical dominates at short range, radar at long range</strong>. No single sensor covers the full envelope.</p>
+        <p class="system-desc">Spectral fusion combines these by computing the eigenvectors of the reliability matrix and weighting each sensor's contribution by its eigenvalue in the current range bucket. More expressive than weighted-averaging because it captures correlations.</p>
+        <div class="system-specs">
+          <div class="spec-item"><div class="spec-val">5</div><div class="spec-lbl">Sensor modalities</div></div>
+          <div class="spec-item"><div class="spec-val">6</div><div class="spec-lbl">Range buckets</div></div>
+          <div class="spec-item"><div class="spec-val">5×6</div><div class="spec-lbl">Reliability matrix</div></div>
+          <div class="spec-item"><div class="spec-val">Eigen</div><div class="spec-lbl">Decomposition</div></div>
+          <div class="spec-item"><div class="spec-val">84%</div><div class="spec-lbl">Of theoretical max</div></div>
+          <div class="spec-item"><div class="spec-val">12ms</div><div class="spec-lbl">Fusion pass</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="narrative" style="margin-top:48px">
+      <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin-bottom:20px;letter-spacing:-0.01em;font-weight:700">The complementary coverage problem</h3>
+      <p>Each sensor modality has a reliability profile that varies with range. Optical CV is excellent at 100m (0.95 reliability) and useless at 5km (0.08). Radar is the inverse — weak close, strong far. Acoustic is good at short range but degrades with distance due to atmospheric absorption. IR is moderate across all ranges but never excellent. RF is best at medium range.</p>
+      <p>No single sensor covers the full 5km envelope with acceptable reliability. But the combination does — at any range, at least 2 modalities have reliability above 0.5. The question is how to combine them optimally.</p>
+
+      <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin:40px 0 20px;letter-spacing:-0.01em;font-weight:700">Why not weighted-averaging?</h3>
+      <p>The classical approach is inverse-variance weighting: each sensor gets a weight proportional to 1/σ², where σ is its noise standard deviation. This is provably optimal under two assumptions: (1) sensor noise is Gaussian, and (2) sensor noises are independent.</p>
+      <p>Both assumptions fail in practice. At 4km range, optical CV does not produce Gaussian noise — it produces bimodal noise (it either sees the target or sees a cloud). And optical and IR are not independent — cloud cover degrades both simultaneously. Weighted-averaging treats them as independent and over-counts their agreement.</p>
+      <p>Spectral fusion avoids this by decomposing the reliability matrix into its principal components. The eigenvectors capture correlated failure modes — when optical and IR fail together, that shows up as a single principal component, not as two independent weights. The eigenvalues tell you how much each component contributes to the overall estimate.</p>
+
+      <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin:40px 0 20px;letter-spacing:-0.01em;font-weight:700">The reliability matrix</h3>
+      <p>The 5×6 reliability matrix is the input to the spectral decomposition. Each cell [i][j] is the reliability of sensor i at range bucket j, measured empirically from simulation. The matrix is updated online as new data arrives — if a sensor's actual performance deviates from its baseline, the matrix adapts.</p>
+      <div class="deep-dive-code">R = [
+  [0.95, 0.88, 0.72, 0.45, 0.20, 0.08],  # Optical CV
+  [0.30, 0.55, 0.78, 0.85, 0.82, 0.75],  # RF
+  [0.85, 0.70, 0.50, 0.30, 0.15, 0.05],  # Acoustic
+  [0.20, 0.40, 0.65, 0.82, 0.92, 0.95],  # Radar (mmW)
+  [0.80, 0.75, 0.60, 0.40, 0.25, 0.12],  # Infrared
+]
+# Eigendecomposition: R = V * Λ * V^T
+# Weights for range bucket j: w_j = V * Λ^(-1) * V^T * r_j
+# Where r_j is the reliability vector at range j</div>
+      <p>The eigendecomposition is computed once per tick (12ms) and cached. The per-target fusion is a matrix-vector multiply — O(n²) where n=5. This is fast enough to run at 50Hz with 50 targets.</p>
+
+      <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin:40px 0 20px;letter-spacing:-0.01em;font-weight:700">84% of theoretical maximum</h3>
+      <p>The theoretical maximum assumes perfect sensor complementarity — no correlated failures, no range-dependent degradation. AEGIS achieves 84% of this maximum on the fusion axis. The gap is the cost of real-world correlated failures (cloud cover, jamming, atmospheric conditions). Closing this gap would require more sensor modalities — the current 5 do not fully decorrelate the failure modes.</p>
+      <p>Source: <a href="https://github.com/Vitalcheffe/Aegis/blob/main/AEGIS_SPECTRAL_FUSION.md" style="color:var(--navy);text-decoration:underline">AEGIS_SPECTRAL_FUSION.md</a> — full math, eigendecomposition derivation, and comparison with weighted-averaging.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SYSTEM 04: MESH -->
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">S.04 / COORDINATION</span>
+      <h2>Mesh Coordination Protocol</h2>
+    </div>
+
+    <div class="system-block reverse">
+      <div class="system-visual">
+        <img src="docs/viz/mesh-topology-light.png" alt="Mesh Topology">
+      </div>
+      <div>
+        <div class="system-tag">Full mesh · O(N²) edges</div>
+        <p class="system-desc">The sensing agents form a <strong>full mesh network</strong> — every node can communicate with every other. This is expensive in bandwidth (O(N²) edges) but eliminates single points of failure. There is no central coordinator to jam.</p>
+        <p class="system-desc">The coordination protocol handles four concerns: consensus (agree on state), leader election (rotate the proposer role), conflict resolution (when two nodes propose different states), and fault detection (identify and isolate Byzantine nodes).</p>
+        <div class="system-specs">
+          <div class="spec-item"><div class="spec-val">Full mesh</div><div class="spec-lbl">Topology</div></div>
+          <div class="spec-item"><div class="spec-val">100 ticks</div><div class="spec-lbl">Leader rotation</div></div>
+          <div class="spec-item"><div class="spec-val">3</div><div class="spec-lbl">Faulty nodes tolerated</div></div>
+          <div class="spec-item"><div class="spec-val">Gossip</div><div class="spec-lbl">Broadcast model</div></div>
+          <div class="spec-item"><div class="spec-val">~25ms</div><div class="spec-lbl">Overhead @ 10 nodes</div></div>
+          <div class="spec-item"><div class="spec-val">O(N²)</div><div class="spec-lbl">Edge count</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="narrative" style="margin-top:48px">
+      <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin-bottom:20px;letter-spacing:-0.01em;font-weight:700">Why full mesh and not star or ring?</h3>
+      <p>A star topology has a central hub — jam the hub, and the network is dead. A ring topology has no hub but is fragile — break one link, and the ring is split. A full mesh has no single point of failure. Every node can reach every other node directly. Jam one link, and the network routes around it. Jam a node, and the network excludes it.</p>
+      <p>The cost is bandwidth. A full mesh with N nodes has N(N-1)/2 edges. For N=10, that is 45 edges — 45 messages per broadcast. At 50Hz, that is 2,250 messages per second. This is acceptable for a research testbed on a local network. For a production deployment with 100+ nodes, a hierarchical mesh (clusters + inter-cluster backbone) would be needed.</p>
+
+      <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin:40px 0 20px;letter-spacing:-0.01em;font-weight:700">Gossip-based broadcast</h3>
+      <p>Each node broadcasts its state to all peers every tick. This is a "push" gossip model — every node pushes its state to everyone, every tick. There is also a "pull" model where nodes request state from peers on demand. AEGIS uses push because it is simpler and lower-latency — every node has the full network state at every tick, with no request overhead.</p>
+      <p>The trade-off is bandwidth. Push gossip sends N-1 messages per node per tick. Pull gossip sends 1 request and receives N-1 responses — same total, but with an extra round-trip. At 50Hz, the extra round-trip is unacceptable.</p>
+
+      <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin:40px 0 20px;letter-spacing:-0.01em;font-weight:700">Conflict resolution</h3>
+      <p>When two nodes propose different states (e.g., different target positions), the conflict is resolved by weighted voting. Each node's vote is weighted by its historical accuracy — nodes that have been correct in the past get more weight. The weighted median of all proposals becomes the consensus state.</p>
+      <div class="deep-dive-code"># Conflict resolution
+proposals = [(node_id, estimate, weight) for each node]
+# Sort by estimate value
+proposals.sort(key=lambda p: p[1])
+# Compute weighted median
+total_weight = sum(p[2] for p in proposals)
+cumulative = 0
+for node_id, estimate, weight in proposals:
+    cumulative += weight
+    if cumulative >= total_weight / 2:
+        consensus = estimate
+        break</div>
+      <p>The weighted median is more robust than the weighted mean — it is insensitive to outliers. A faulty node proposing an extreme value cannot drag the consensus away from the cluster. This is the same insight behind Median Absolute Deviation (MAD) used in fault detection.</p>
+
+      <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin:40px 0 20px;letter-spacing:-0.01em;font-weight:700">Scaling beyond 10 nodes</h3>
+      <p>The current implementation handles 10 nodes at 50Hz. The bottleneck is not the protocol — it is the bandwidth. Each message is ~200 bytes (state vector + metadata). At 10 nodes, that is 45 × 200 = 9KB per tick, 450KB/s. On a 1Gbps network, this is negligible.</p>
+      <p>At 100 nodes, the edge count is 4,950 — 990KB per tick, 49.5MB/s. Still feasible on a wired network, but marginal on wireless. At 1000 nodes, you need hierarchical clustering — groups of 10-20 nodes with intra-cluster full mesh and inter-cluster backbone. The protocol is designed to support this, but the implementation does not yet include it.</p>
+      <p>Source: <a href="https://github.com/Vitalcheffe/Aegis/blob/main/AEGIS_ARCHITECTURE.md" style="color:var(--navy);text-decoration:underline">AEGIS_ARCHITECTURE.md</a> — full topology specification, message formats, and scaling analysis.</p>
+    </div>
+  </div>
+</section>
+
+<!-- KERNEL -->
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">005 / KERNEL</span>
+      <h2>The simulation runs as an OS.</h2>
+    </div>
+    <p style="font-size:17px;color:var(--muted);line-height:1.7;max-width:680px;margin-bottom:32px;font-weight:300">AEGIS is formalized as a Kernel that runs 12 phases every 200ms tick. Each phase has a time budget. The total budget is 185ms, leaving 15ms headroom for jitter. SWARM (10,000 agent update) is the bottleneck.</p>
+    <img src="docs/viz/tick-budget-light.png" alt="Tick Budget" style="width:100%;border:1px solid var(--rule);margin-bottom:48px">
+
+    <div class="narrative">
+      <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin-bottom:20px;letter-spacing:-0.01em;font-weight:700">Why a Kernel and not a loop?</h3>
+      <p>A loop is a sequence of function calls. A Kernel is an operating system — it has phases, subsystems, a syscall surface, and observable state. The difference matters when the system grows. A loop of 50 function calls becomes unmaintainable. A Kernel with 12 registered phases stays structured — each phase knows its inputs, outputs, and budget, and can be tested in isolation.</p>
+      <p>The AEGIS Kernel exposes a syscall surface: <code style="font-family:var(--font-mono);color:var(--navy)">read_state</code>, <code style="font-family:var(--font-mono);color:var(--navy)">set_lever</code>, <code style="font-family:var(--font-mono);color:var(--navy)">get_phase</code>, <code style="font-family:var(--font-mono);color:var(--navy)">register_subsystem</code>, <code style="font-family:var(--font-mono);color:var(--navy)">disable_phase</code>. Subsystems register for phases and are called by the Kernel during their allocated slot. This is the same pattern used by RTOS (Real-Time Operating Systems) in aerospace and automotive.</p>
+
+      <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin:40px 0 20px;letter-spacing:-0.01em;font-weight:700">The 15ms headroom</h3>
+      <p>The 15ms headroom is not slack — it is the system's immune system. If any phase overruns (a spike in target count, a cascade of black swan events), the headroom absorbs it. When the headroom is consumed, the system enters graceful degradation: non-critical phases are skipped, tick rate drops to 25Hz, and the operator is alerted.</p>
+      <p>This is the same design principle used in flight control systems. You do not run at 100% capacity — you run at 92.5% (185/200) and keep the rest for contingencies. A system that runs at 100% has no margin for error. A system that runs at 92.5% absorbs the unexpected.</p>
+    </div>
+  </div>
+</section>
+
+<!-- DOCS -->
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">006 / DOCS</span>
+      <h2>Every algorithm, documented.</h2>
+    </div>
+    <p style="font-size:17px;color:var(--muted);line-height:1.7;max-width:680px;margin-bottom:32px;font-weight:300">The full mathematical formalism, computational architecture, validation framework, and limitations are documented across 11 markdown files. No black boxes — every equation, every design decision, every trade-off is written down.</p>
+    <div class="docs-grid">
+      <a href="https://github.com/Vitalcheffe/Aegis/blob/main/AEGIS_OVERVIEW.md" class="doc-card"><div class="doc-name">AEGIS_OVERVIEW.md</div><div class="doc-desc">System overview and architecture</div></a>
+      <a href="https://github.com/Vitalcheffe/Aegis/blob/main/AEGIS_UKF_MATH.md" class="doc-card"><div class="doc-name">AEGIS_UKF_MATH.md</div><div class="doc-desc">Unscented Kalman Filter derivation</div></a>
+      <a href="https://github.com/Vitalcheffe/Aegis/blob/main/AEGIS_SPECTRAL_FUSION.md" class="doc-card"><div class="doc-name">AEGIS_SPECTRAL_FUSION.md</div><div class="doc-desc">Multi-modal sensor fusion</div></a>
+      <a href="https://github.com/Vitalcheffe/Aegis/blob/main/AEGIS_ELASTIC_NET.md" class="doc-card"><div class="doc-name">AEGIS_ELASTIC_NET.md</div><div class="doc-desc">Elastic net regularization</div></a>
+      <a href="https://github.com/Vitalcheffe/Aegis/blob/main/AEGIS_ENERGY_BUDGET.md" class="doc-card"><div class="doc-name">AEGIS_ENERGY_BUDGET.md</div><div class="doc-desc">Energy-aware coordination</div></a>
+      <a href="https://github.com/Vitalcheffe/Aegis/blob/main/AEGIS_BENCHMARKS.md" class="doc-card"><div class="doc-name">AEGIS_BENCHMARKS.md</div><div class="doc-desc">Performance benchmarks</div></a>
+      <a href="https://github.com/Vitalcheffe/Aegis/blob/main/AEGIS_SIMULATION.md" class="doc-card"><div class="doc-name">AEGIS_SIMULATION.md</div><div class="doc-desc">Simulation environment</div></a>
+      <a href="https://github.com/Vitalcheffe/Aegis/blob/main/AEGIS_SAFETY.md" class="doc-card"><div class="doc-name">AEGIS_SAFETY.md</div><div class="doc-desc">Safety analysis and failure modes</div></a>
+      <a href="https://github.com/Vitalcheffe/Aegis/blob/main/AEGIS_DEPLOYMENT.md" class="doc-card"><div class="doc-name">AEGIS_DEPLOYMENT.md</div><div class="doc-desc">Deployment topology</div></a>
+      <a href="https://github.com/Vitalcheffe/Aegis/blob/main/AEGIS_ARCHITECTURE.md" class="doc-card"><div class="doc-name">AEGIS_ARCHITECTURE.md</div><div class="doc-desc">Component architecture</div></a>
+      <a href="https://github.com/Vitalcheffe/Aegis/blob/main/AEGIS_API.md" class="doc-card"><div class="doc-name">AEGIS_API.md</div><div class="doc-desc">Programmatic API reference</div></a>
+      <a href="docs/viz/gallery.html" class="doc-card"><div class="doc-name">gallery.html</div><div class="doc-desc">Visual gallery — all 14 visualizations</div></a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-left">
+      <div class="footer-name">Amine Harch El Korane</div>
+      <div class="footer-tagline">Casablanca, Morocco · 2026</div>
+    </div>
+    <ul class="footer-links">
+      <li><a href="index.html">Overview</a></li>
+      <li><a href="research.html">Research</a></li>
+      <li><a href="logic.html">Logic</a></li>
+      <li><a href="visualizations.html">Visualizations</a></li>
+      <li><a href="ethics.html">Ethics</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script src="assets/js/animations.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
