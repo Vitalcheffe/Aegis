@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Visualizations — AEGIS</title>
+<meta name="description" content="14 procedural visualizations covering UKF estimation, BFT consensus, sensor fusion, airflow dynamics, mesh topology, and system performance.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%23001F3F'>⌬</text></svg>">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">A._ / 001</a>
+    <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="index.html">Overview</a></li>
+      <li><a href="research.html">Research</a></li>
+      <li><a href="systems.html">Systems</a></li>
+      <li><a href="logic.html">Logic</a></li>
+      <li><a href="visualizations.html" class="active">Visualizations</a></li>
+      <li><a href="ethics.html">Ethics</a></li>
+    </ul>
+    <a href="https://github.com/Vitalcheffe/Aegis" class="nav-cta">GitHub ↗</a>
+  </div>
+</nav>
+
+<section class="page-header">
+  <div class="container">
+    <div class="hero-eyebrow">Visualizations · 14 Procedural</div>
+    <h1 style="font-size:clamp(48px,7vw,80px);margin-bottom:24px">The math,<br><span class="dim">made visible.</span></h1>
+    <p style="font-size:18px;color:var(--muted);max-width:680px;margin:0 auto;font-weight:300;line-height:1.7">Every visualization is generated procedurally from the simulation engine — no mockups, no marketing renders. Each shows a real algorithm running on real parameters.</p>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="container">
+    <div class="viz-filter">
+      <button class="filter-btn active" data-cat="all">All (14)</button>
+      <button class="filter-btn" data-cat="estimation">Estimation (2)</button>
+      <button class="filter-btn" data-cat="consensus">Consensus (2)</button>
+      <button class="filter-btn" data-cat="fusion">Fusion (2)</button>
+      <button class="filter-btn" data-cat="benchmark">Benchmark (2)</button>
+      <button class="filter-btn" data-cat="flow">Flow (1)</button>
+      <button class="filter-btn" data-cat="field">Field (1)</button>
+      <button class="filter-btn" data-cat="latency">Latency (2)</button>
+      <button class="filter-btn" data-cat="cfd">CFD (1)</button>
+      <button class="filter-btn" data-cat="dynamics">Dynamics (1)</button>
+    </div>
+
+    <div class="viz-gallery">
+
+      <div class="viz-card" data-cat="estimation">
+        <div class="viz-card-img"><img src="docs/viz/ukf-trajectory-light.png" alt="UKF Trajectory" loading="lazy"></div>
+        <div class="viz-card-info">
+          <div class="viz-card-tag">Estimation · UKF</div>
+          <div class="viz-card-title">UKF State Estimation · Live Trajectory</div>
+          <div class="viz-card-desc">True target position vs UKF estimate over 6 seconds, with 3σ covariance envelope. At t=4.0s the target executes a high-g maneuver — UKF briefly diverges, then re-converges in 600ms.</div>
+        </div>
+      </div>
+
+      <div class="viz-card" data-cat="estimation">
+        <div class="viz-card-img"><img src="docs/viz/prediction-scatter-light.png" alt="Prediction Scatter" loading="lazy"></div>
+        <div class="viz-card-info">
+          <div class="viz-card-tag">Estimation · Prediction</div>
+          <div class="viz-card-title">Trajectory Prediction Error vs Horizon</div>
+          <div class="viz-card-desc">500 trials showing RMSE growth with prediction horizon. Crossover at 1.8s — beyond this, error exceeds 20m engagement threshold. This is why Aegis re-plans every 200ms.</div>
+        </div>
+      </div>
+
+      <div class="viz-card" data-cat="consensus">
+        <div class="viz-card-img"><img src="docs/viz/bft-convergence-light.png" alt="BFT Convergence" loading="lazy"></div>
+        <div class="viz-card-info">
+          <div class="viz-card-tag">Consensus · BFT</div>
+          <div class="viz-card-title">BFT Consensus Convergence</div>
+          <div class="viz-card-desc">10-node network, 7 honest + 3 faulty. Honest nodes converge by round 20. Faulty nodes are detected by cross-validation and excluded from consensus.</div>
+        </div>
+      </div>
+
+      <div class="viz-card" data-cat="consensus">
+        <div class="viz-card-img"><img src="docs/viz/mesh-topology-light.png" alt="Mesh Topology" loading="lazy"></div>
+        <div class="viz-card-info">
+          <div class="viz-card-tag">Consensus · Topology</div>
+          <div class="viz-card-title">BFT Mesh Topology · 10-Node Network</div>
+          <div class="viz-card-desc">Full mesh with rotating leader. Three faulty nodes are isolated. Curves show active message flow during a consensus round.</div>
+        </div>
+      </div>
+
+      <div class="viz-card" data-cat="fusion">
+        <div class="viz-card-img"><img src="docs/viz/sensor-heatmap-light.png" alt="Sensor Heatmap" loading="lazy"></div>
+        <div class="viz-card-info">
+          <div class="viz-card-tag">Fusion · Heatmap</div>
+          <div class="viz-card-title">Sensor Reliability Matrix</div>
+          <div class="viz-card-desc">5 sensors × 6 range buckets reliability scores. Optical dominates short range, radar dominates long range. Complementary profiles enable BFT guarantees across the full 5 km envelope.</div>
+        </div>
+      </div>
+
+      <div class="viz-card" data-cat="fusion">
+        <div class="viz-card-img"><img src="docs/viz/performance-radar-light.png" alt="Performance Radar" loading="lazy"></div>
+        <div class="viz-card-info">
+          <div class="viz-card-tag">Fusion · Performance</div>
+          <div class="viz-card-title">Multi-Modal Performance Radar</div>
+          <div class="viz-card-desc">5-axis comparison: Aegis with fusion vs baseline vs theoretical limit. 78% of theoretical max on detection, 84% on fusion.</div>
+        </div>
+      </div>
+
+      <div class="viz-card" data-cat="benchmark">
+        <div class="viz-card-img"><img src="docs/viz/scale-bar-light.png" alt="Scalability" loading="lazy"></div>
+        <div class="viz-card-info">
+          <div class="viz-card-tag">Benchmark · Scale</div>
+          <div class="viz-card-title">UKF Accuracy vs Target Count</div>
+          <div class="viz-card-desc">RMSE as target count scales 1 to 30. Below 15 targets = within budget. Above 25 = non-linear degradation. 1000 trials per point.</div>
+        </div>
+      </div>
+
+      <div class="viz-card" data-cat="benchmark">
+        <div class="viz-card-img"><img src="docs/viz/tick-budget-light.png" alt="Tick Budget" loading="lazy"></div>
+        <div class="viz-card-info">
+          <div class="viz-card-tag">Benchmark · Kernel</div>
+          <div class="viz-card-title">Kernel Tick Budget · Phase Timing</div>
+          <div class="viz-card-desc">10-phase breakdown of a single 200ms tick. Total 185ms, 15ms headroom. SWARM (10K agents) is the bottleneck at 45ms — GPU acceleration target.</div>
+        </div>
+      </div>
+
+      <div class="viz-card" data-cat="flow">
+        <div class="viz-card-img"><img src="docs/viz/signal-sankey-light.png" alt="Signal Sankey" loading="lazy"></div>
+        <div class="viz-card-info">
+          <div class="viz-card-tag">Flow · Sankey</div>
+          <div class="viz-card-title">Sensor-to-Classification Flow</div>
+          <div class="viz-card-desc">11,915 signals through fusion and consensus layers to 4 classification outcomes. 7,124 threats classified, 3,879 low-confidence, 412 false positives rejected.</div>
+        </div>
+      </div>
+
+      <div class="viz-card" data-cat="field">
+        <div class="viz-card-img"><img src="docs/viz/vector-field-light.png" alt="Vector Field" loading="lazy"></div>
+        <div class="viz-card-info">
+          <div class="viz-card-tag">Field · Vector</div>
+          <div class="viz-card-title">Velocity Field · Drag Coefficient Gradient</div>
+          <div class="viz-card-desc">30×15 vector field (450 vectors) with source and sink singularities. Singularities are where the Jacobian loses rank — detecting them identifies maneuver onset.</div>
+        </div>
+      </div>
+
+      <div class="viz-card" data-cat="latency">
+        <div class="viz-card-img"><img src="docs/viz/latency-density-light.png" alt="Latency Density" loading="lazy"></div>
+        <div class="viz-card-info">
+          <div class="viz-card-tag">Latency · Distribution</div>
+          <div class="viz-card-title">End-to-End Response Latency</div>
+          <div class="viz-card-desc">Right-skewed log-normal distribution over 10,000 trials. Median 1124ms, P95 2103ms. P95 exceeds 2s budget, triggering graceful degradation.</div>
+        </div>
+      </div>
+
+      <div class="viz-card" data-cat="latency">
+        <div class="viz-card-img"><img src="docs/viz/latency-stacked-light.png" alt="Latency Stacked" loading="lazy"></div>
+        <div class="viz-card-info">
+          <div class="viz-card-tag">Latency · Profiling</div>
+          <div class="viz-card-title">Latency Breakdown by Phase</div>
+          <div class="viz-card-desc">4-phase stacked breakdown across target counts. Coordination grows non-linearly past 20 targets. 2000ms budget exceeded at 25+ targets.</div>
+        </div>
+      </div>
+
+      <div class="viz-card" data-cat="cfd">
+        <div class="viz-card-img"><img src="docs/viz/airflow-light.png" alt="Airflow" loading="lazy"></div>
+        <div class="viz-card-info">
+          <div class="viz-card-tag">CFD · Streamlines</div>
+          <div class="viz-card-title">Airflow Simulation · NACA Airfoil</div>
+          <div class="viz-card-desc">28 procedurally generated streamlines around a NACA airfoil at Re 1.2×10⁶. Color = velocity magnitude. Wake turbulence is the noise source UKF filters.</div>
+        </div>
+      </div>
+
+      <div class="viz-card" data-cat="dynamics">
+        <div class="viz-card-img"><img src="docs/viz/phase-portrait-light.png" alt="Phase Portrait" loading="lazy"></div>
+        <div class="viz-card-info">
+          <div class="viz-card-tag">Dynamics · Phase Space</div>
+          <div class="viz-card-title">Phase Portrait · Target Dynamics</div>
+          <div class="viz-card-desc">25 trajectories in position-velocity phase space. Stable attractor and saddle point. Maneuvers appear as jumps between trajectories.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">001 / METHOD</span>
+      <h2>Generated, not designed.</h2>
+    </div>
+    <div class="narrative">
+      <p>Every visualization on this page is generated procedurally from the simulation engine. There are no mockups, no marketing renders, no Photoshopped diagrams. Each visualization is a real algorithm running on real parameters, captured as a PNG.</p>
+      <p>The generation pipeline is HTML + CSS + SVG + JavaScript, rendered headless via Playwright at 1920×800. Each visualization has a dark and light variant, adaptive to the viewer's theme. The source HTML files are in <code style="font-family:var(--font-mono);color:var(--navy)">docs/viz/</code> — they are versioned, inspectable, and reproducible.</p>
+      <p class="quote">The visualization is not a picture of the system. The visualization is the system, rendered.</p>
+    </div>
+    <div style="text-align:center;margin-top:32px">
+      <a href="docs/viz/gallery.html" class="btn-primary">Open standalone gallery <span>→</span></a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-left">
+      <div class="footer-name">Amine Harch El Korane</div>
+      <div class="footer-tagline">Casablanca, Morocco · 2026</div>
+    </div>
+    <ul class="footer-links">
+      <li><a href="index.html">Overview</a></li>
+      <li><a href="research.html">Research</a></li>
+      <li><a href="systems.html">Systems</a></li>
+      <li><a href="logic.html">Logic</a></li>
+      <li><a href="ethics.html">Ethics</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script src="assets/js/animations.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
