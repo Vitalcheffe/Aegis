@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Ethics — AEGIS</title>
+<meta name="description" content="Research framework. Not a product. Not a weapon. The ethics and safety boundaries of AEGIS.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%23001F3F'>⌬</text></svg>">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">A._ / 001</a>
+    <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="index.html">Overview</a></li>
+      <li><a href="research.html">Research</a></li>
+      <li><a href="systems.html">Systems</a></li>
+      <li><a href="logic.html">Logic</a></li>
+      <li><a href="visualizations.html">Visualizations</a></li>
+      <li><a href="ethics.html" class="active">Ethics</a></li>
+    </ul>
+    <a href="https://github.com/Vitalcheffe/Aegis" class="nav-cta">GitHub ↗</a>
+  </div>
+</nav>
+
+<section class="page-header">
+  <div class="container">
+    <div class="hero-eyebrow">Ethics &amp; Safety · Non-negotiable</div>
+    <h1 style="font-size:clamp(48px,7vw,80px);margin-bottom:24px">Research framework.<br><span class="dim">Not a weapon.</span></h1>
+    <p style="font-size:18px;color:var(--muted);max-width:680px;margin:0 auto;font-weight:300;line-height:1.7">AEGIS is a research framework for the math of multi-agent estimation under uncertainty. It is not, and will never be, a deployable weapon system. The codebase is architecturally incapable of controlling hardware — this is deliberate.</p>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">001 / TRANSPARENCY</span>
+      <h2>Transparency is not optional.</h2>
+    </div>
+    <div class="narrative">
+      <p>I am 15 years old. I am building a research framework that touches on a domain — autonomous aerial coordination — that has obvious military applications. I cannot pretend those applications do not exist. I can only be explicit about what I am building, what I am not building, and where the line is.</p>
+      <p>The line is this: AEGIS researches the math of sensing and consensus. It does not research engagement. It does not research kinetics. It does not research autonomous targeting. The codebase is structured so that adding those capabilities would require a from-scratch rewrite — they cannot be bolted on.</p>
+      <p class="quote">If you are a researcher who wants to extend AEGIS into engagement logic, you will need to fork it and build that yourself. I will not merge that PR. This is not a policy — it is an architectural decision baked into the codebase.</p>
+      <p>This page documents, in full, what the codebase does and does not include. If you are reviewing AEGIS for academic, professional, or ethical reasons, this is the page to read first.</p>
+    </div>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">002 / BOUNDARIES</span>
+      <h2>What the codebase does and does not include.</h2>
+    </div>
+    <div class="ethics-grid">
+      <div class="ethics-col not">
+        <h3>Does NOT include</h3>
+        <ul class="ethics-list">
+          <li><strong>Kinetic effectors of any kind.</strong> No code controls physical actuators, no code computes engagement geometry, no code triggers any physical action.</li>
+          <li><strong>Autonomous engagement logic.</strong> No code decides to "engage" a target. Classification outputs are surfaced to a human operator interface — the human decides what to do.</li>
+          <li><strong>RF jamming hardware control.</strong> No code interfaces with RF transmitters. The system receives RF signals; it does not emit them.</li>
+          <li><strong>Sensor drivers for real hardware.</strong> No code reads from real cameras, RF receivers, acoustic arrays, or radar units. All sensors are simulated.</li>
+          <li><strong>Interfaces to real weapons.</strong> No code can send a command to any physical device. The system has no output layer capable of affecting the physical world.</li>
+          <li><strong>Any capability to act on the physical world.</strong> The system is read-only with respect to reality. It computes, it does not act.</li>
+        </ul>
+      </div>
+      <div class="ethics-col is">
+        <h3>DOES include</h3>
+        <ul class="ethics-list">
+          <li><strong>Detection, tracking, and classification algorithms.</strong> The math of state estimation, sensor fusion, and target identification — all documented, all inspectable.</li>
+          <li><strong>Coordination protocols between sensing agents.</strong> BFT consensus, mesh networking, leader election, fault detection — the distributed systems layer.</li>
+          <li><strong>Simulation environment for testing algorithms.</strong> A software-only simulation that generates synthetic sensor data and runs the full pipeline against it.</li>
+          <li><strong>Safety analysis documentation.</strong> AEGIS_SAFETY.md documents failure modes, edge cases, and the safety boundaries of the research.</li>
+          <li><strong>Full transparency.</strong> Every algorithm is documented to the level of math and code. Every design decision is written down. Every limitation is stated explicitly.</li>
+          <li><strong>Human-in-the-loop design.</strong> The operator interface surfaces classifications with confidence scores. The system never acts autonomously — it informs a human who decides.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">003 / CONTRIBUTIONS</span>
+      <h2>What I will and will not accept.</h2>
+    </div>
+    <div class="narrative">
+      <p>AEGIS is open source under MIT license. Anyone can fork it. But the main repository has a contribution policy that is enforced architecturally, not just socially.</p>
+      <p><strong>Pull requests I will accept:</strong> improvements to the UKF math, new consensus protocols, better spectral fusion methods, more visualizations, better documentation, performance optimizations, bug fixes, test coverage. Anything that advances the research questions.</p>
+      <p><strong>Pull requests I will decline:</strong> anything that adds kinetic capabilities, anything that interfaces with real hardware, anything that implements autonomous engagement logic, anything that could be used to harm people. This is not a flexible policy. The line is bright.</p>
+      <p>If you want to build a weapon system, you will need to do it without my code, my name, or my involvement. There are plenty of defense contractors who will pay you to do that work. I am not one of them, and AEGIS is not the place.</p>
+      <p class="quote">The math is interesting. The applications are not all interesting. I get to choose which applications my math serves.</p>
+    </div>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">004 / DEPLOYMENT</span>
+      <h2>If these algorithms were ever deployed.</h2>
+    </div>
+    <div class="narrative">
+      <p>I have no plans to deploy AEGIS. This is a research testbed, not a product roadmap. But if — hypothetically — these algorithms were ever deployed in an operational setting, the requirements would be:</p>
+      <p><strong>1. Independent safety review.</strong> A third-party audit of the algorithms, the implementation, and the failure modes. Not a self-review. Not a friendly review. An adversarial review by someone who wants to find the bug.</p>
+      <p><strong>2. Regulatory compliance.</strong> FAA Part 107 in the US, EASA regulations in Europe, equivalent in other jurisdictions. Counter-UAS is regulated; deployment without compliance is illegal.</p>
+      <p><strong>3. Human-in-the-loop oversight.</strong> No autonomous engagement. A human reviews every classification before any action is taken. The system informs; the human decides.</p>
+      <p><strong>4. Strict operational scope.</strong> Deployment only in civil airspace protection contexts — airports, stadiums, critical infrastructure. Not military. Not surveillance. Not law enforcement.</p>
+      <p>These requirements are not optional. They are the minimum bar for ethical deployment of sensing technology in shared airspace. AEGIS does not meet them — it is not deployed. The day it could meet them is the day the research is finished. We are not there.</p>
+    </div>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">005 / PERSONAL</span>
+      <h2>Why I built this, and what I will not build.</h2>
+    </div>
+    <div class="narrative">
+      <p>I built AEGIS because the math is beautiful. Multi-agent estimation under uncertainty is one of the hardest problems in control theory, and the tools to study it are not accessible to a 15-year-old in Casablanca. So I built my own tools.</p>
+      <p>I will not build a weapon. I will not build a system that autonomously decides to harm a person. I will not accept funding, mentorship, or collaboration that requires me to cross that line. This is not because I am morally superior — it is because I have looked at the math and I understand what it can do, and I have made a choice about what I want my work to do.</p>
+      <p>If you are a university, a research lab, or a company that shares this stance — that wants to advance the math of multi-agent coordination without advancing the technology of autonomous harm — I would like to hear from you. The research questions in AEGIS are open. They need more minds than mine.</p>
+      <p class="quote">The math is interesting. I get to choose what it serves.</p>
+    </div>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-index">006 / SAFETY</span>
+      <h2>Read the full safety analysis.</h2>
+    </div>
+    <p style="font-size:17px;color:var(--muted);line-height:1.7;max-width:680px;margin-bottom:32px;font-weight:300">The safety analysis is documented in detail in AEGIS_SAFETY.md. It covers failure modes, edge cases, the architectural boundaries that prevent weaponization, and the deployment requirements that would apply if the system were ever operationalized.</p>
+    <div style="text-align:center">
+      <a href="https://github.com/Vitalcheffe/Aegis/blob/main/AEGIS_SAFETY.md" class="btn-primary">Read AEGIS_SAFETY.md <span>→</span></a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-left">
+      <div class="footer-name">Amine Harch El Korane</div>
+      <div class="footer-tagline">Casablanca, Morocco · 2026</div>
+    </div>
+    <ul class="footer-links">
+      <li><a href="index.html">Overview</a></li>
+      <li><a href="research.html">Research</a></li>
+      <li><a href="systems.html">Systems</a></li>
+      <li><a href="logic.html">Logic</a></li>
+      <li><a href="visualizations.html">Visualizations</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script src="assets/js/animations.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
