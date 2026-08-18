@@ -1,92 +1,88 @@
-# Performance Benchmarks
+# AEGIS — Actual Benchmarks
 
-## AEGIS vs Traditional Air Defense Systems
+**Last updated:** August 18, 2026
+**Method:** Real test execution, not estimates.
 
-### Cost Comparison
+---
 
-| System | Unit Cost | Intercept Cost | Cost Ratio |
-|--------|-----------|----------------|------------|
-| AEGIS Drone | $4,200 | $4,200 | 1x |
-| Shahed-136 | $20,000 | $20,000 | 4.8x |
-| Iron Dome | - | $40,000-$100,000 | 9-24x |
-| PAC-3 | - | $4,000,000 | **952x** |
+## Test Suite
 
-**Break-even**: 19 Aegis drones = 1 Patriot missile
+| File | Tests | Assertions | Status |
+|------|-------|------------|--------|
+| `src/lib/ukf.test.ts` | 14 | 25 | ✓ All pass |
 
-### Interception Speed
+**How to verify:**
+```bash
+bun test src/lib/ukf.test.ts
+```
 
-| Threat | AEGIS | Iron Dome | PAC-3 |
-|--------|-------|-----------|-------|
-| Detection to Intercept | 54ms (7 ticks) | 2-5s | 3-8s |
-| Response Time | 1 tick (20ms) | 1-2s | 2-3s |
-| Reload Time | 0 (swarm self-heals) | 15-30s | 60+s |
+**Total:** 14 tests, 25 assertions, 1 test file.
 
-### Scalability
+> Previous versions of this file claimed "63 tests passing, Coverage: 87%
+> (fusion), 92% (ukf), 78% (swarm)." That was incorrect. There is no fusion
+> test suite and no swarm test suite. The actual count is 14 tests in one file.
 
-| Metric | AEGIS | Traditional System |
-|--------|-------|-----------------|
-| Units per battery | 500 drones | 1-4 launchers |
-| Points of failure | Distributed | Centralized |
-| Coverage area | 200km² | 50km² |
-| Simultaneous tracks | 50+ | 1-8 |
+---
 
-### Computational Performance
+## UKF Performance (from test suite)
 
-#### Single Tick Benchmarks (50 drones)
+The UKF test suite includes end-to-end convergence tests with synthetic data.
+These are the actual measured numbers from running the tests:
 
-| Operation | Time (ms) | % of Budget |
-|-----------|-----------|-------------|
-| Sensor Fusion | 1.2 | 6% |
-| UKF Prediction | 0.8 | 4% |
-| ElasticNet Forces | 1.1 | 6% |
-| Energy Check | 0.3 | 1% |
-| Safety Verification | 1.0 | 5% |
-| Command Broadcast | 0.9 | 5% |
-| **Total** | **6.3** | **32%** |
+### Convergence Test (50 steps, σ = 1m GPS noise)
 
-#### Scaling Results
+| Metric | Value |
+|--------|-------|
+| Initial position error | ~10m (random initial state) |
+| Final position error (step 50) | < 2.0m |
+| Measurement RMSE (raw GPS) | ~0.97m (σ=1m × √(3/π) for 3D) |
+| Filter RMSE | ~0.52m |
+| Improvement vs raw measurement | 1.87× |
 
-| Drones | Tick Time | p99 | CPU Utilization |
-|--------|-----------|-----|-----------------|
-| 50 | 6ms | 14.35ms | 25% |
-| 100 | 12ms | 18ms | 45% |
-| 250 | 30ms | 35ms | 65% |
-| 500 | 60ms | 75ms | 85% |
+### Convergence Test (100 steps, σ = 1m GPS noise)
 
-### Test Results Summary
+| Metric | Value |
+|--------|-------|
+| Final position error (step 100) | ~0.43m |
+| Filter RMSE (steps 11-100) | ~0.47m |
+| Measurement RMSE | ~0.97m |
+| Improvement vs raw measurement | ~2.1× |
 
-- **Total tests**: 63 passing, 0 failing
-- **Coverage**: 87% (fusion), 92% (ukf), 78% (swarm)
-- **Integration**: Full swarm tested in simulation
-- **Hardware**: Flight tested on 5 prototypes
+---
 
-### Real-World Scenario Performance
+## What's NOT benchmarked
 
-#### Wave 1 - Shahed-136 (Straight trajectory)
-- Drones deployed: 5 (optimal from 50)
-- Intercept time: 7 ticks (54ms)
-- Accuracy: ±1.2m miss distance
+The following are NOT measured because the corresponding code does not exist:
 
-#### Wave 2 - Lancet-3 (Evasive)
-- Drones deployed: 8
-- Intercept time: 12 ticks (96ms)
-- Evasion handling: Successful
+- ❌ IMM (Interacting Multiple Model) switching performance — no IMM code
+- ❌ Multi-target tracking scalability — single-target only
+- ❌ BFT consensus overhead — no BFT code
+- ❌ Real-time execution budget (50Hz) — no real-time scheduler
+- ❌ Classification accuracy — no classifier
+- ❌ Cost-per-intercept — no cost model
+- ❌ Deployment statistics — never deployed
 
-#### Wave 3 - Mixed + Decoys
-- Drones deployed: 15
-- Time to classify: 4 ticks
-- Decoy rejection: 98%
+---
 
-### Resource Efficiency
+## Configuration
 
-| Resource | Usage | Available | Efficiency |
-|----------|-------|-----------|------------|
-| CPU (i7-12700K) | 85% at 500 drones | 100% | 85% |
-| RAM | 256MB | 32GB | 0.8% |
-| Network | 2.4 Mbps | 1 Gbps | 0.24% |
+```
+UKF parameters:
+  L (state dimension) = 9
+  alpha = 1e-3
+  beta = 2
+  kappa = 0
+  lambda = alpha^2 * (L + kappa) - L = -8.999991
+  sigma points = 2L + 1 = 19
 
-## References
+Motion model: constant acceleration
+  x' = x + v*dt + 0.5*a*dt^2
+  v' = v + a*dt
+  a' = a
 
-- Aegis performance verified on Intel i7-12700K, 32GB RAM
-- Benchmarks run with Python 3.11, NumPy 1.26
-- Simulation uses 1ms network latency assumption
+Measurement model: position only
+  z = [x, y, z]
+
+Process noise Q: diagonal (0.01*dt, 0.1*dt, 1.0*dt)
+Measurement noise R: diagonal (1.0, 1.0, 1.0) — σ = 1m per axis
+```
