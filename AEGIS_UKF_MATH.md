@@ -86,20 +86,29 @@ $$\hat{x}_{k|k} = \hat{x}_{k|k-1} + K_k(\mathbf{z}_k - \hat{z}_{k|k-1})$$
 
 $$P_{k|k} = P_{k|k-1} - K_k P_{zz} K_k^T$$
 
-## Performance Characteristics
+## Performance Characteristics (Measured)
 
-### Error Convergence
-- Initial error bound: ±50m
-- After 2 seconds: ±1.5m
-- Convergence rate: < 7 ticks for Shahed-136 interception
+### Error Convergence (Benchmark Results)
+
+Benchmark: 500 steps per noise level, 50-step warmup, 3D position error.
+Figure-8 trajectory with constant-acceleration motion model.
+
+| GPS Noise σ (m) | Filter RMSE (m) | Measurement RMSE (m) | Improvement |
+|-----------------|------------------|-----------------------|-------------|
+| 0.1 | 0.064 | 0.099 | 1.56x |
+| 0.5 | 0.284 | 0.502 | 1.76x |
+| 1 | 0.508 | 1.013 | 2x |
+| 2 | 0.838 | 1.99 | 2.37x |
+| 5 | 2.154 | 5.02 | 2.33x |
+
+**Key findings:**
+- Filter ALWAYS beats raw measurement (improvement: 1.56x to 2.37x)
+- At σ=1m GPS noise: filter RMSE = 0.508m (sub-meter)
+- At σ=5m GPS noise: filter RMSE = 2.154m (still useful)
+- Full benchmark: `data/ukf_validation.json`
+- Reproduce: `node src/lib/ukf_benchmark.js`
 
 ### Computational Complexity
-- Sigma points: 19 per iteration
-- Matrix operations: $(2L+1) \times O(9^2)$ for state propagation
-- Total per tick: ~0.8ms on target hardware
-
-## References
-
-1. Julier, S. J., & Uhlmann, J. K. (1997). "A new extension of the Kalman filter to nonlinear systems."
-2. Wan, E. A., & Van Der Merwe, R. (2000). "The unscented Kalman filter for nonlinear estimation."
-3. Simon, D. (2006). "Optimal State Estimation: Kalman, H Infinity, and Nonlinear Approaches."
+- Sigma points: 19 per iteration (2L+1 for L=9)
+- Matrix operations: (2L+1) x O(9^2) for state propagation
+- All matrix operations in pure TypeScript (no external linear algebra library)
