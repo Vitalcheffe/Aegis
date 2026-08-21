@@ -133,7 +133,7 @@ export function ctTransition(x: number[], dt: number): number[] {
   return [x_new, y_new, vx_new, vy_new, omega, x[5], x[6]];
 }
 
-export function ctMeasurement(x: number[]): number[] { return [x[0], x[1]]; }
+export function ctMeasurement(x: number[]): number[] { return [x[0], x[1], 0]; /* 3D: z=0 for xy-plane motion */ }
 
 export function ctDefaultQ(dt: number): number[][] {
   const Q = zeros(7, 7);
@@ -145,7 +145,8 @@ export function ctDefaultQ(dt: number): number[][] {
 }
 
 export function ctDefaultR(): number[][] {
-  const R = zeros(2, 2); R[0][0] = 1.0; R[1][1] = 1.0; return R;
+  // 3x3 (z=0 plane, but 3D for IMM compatibility)
+  const R = zeros(3, 3); R[0][0] = 1.0; R[1][1] = 1.0; R[2][2] = 1.0; return R;
 }
 
 // ============================================================================

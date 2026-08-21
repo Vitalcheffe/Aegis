@@ -5,7 +5,7 @@
 import {
   cvTransition, cvMeasurement, cvDefaultQ,
   caTransition, caMeasurement, caDefaultQ,
-  ctTransition, ctMeasurement, ctDefaultQ,
+  ctTransition, ctMeasurement, ctDefaultQ, ctDefaultR,
   cvInitialState, ctInitialState,
   motionModels,
   CV_DIM, CA_DIM, CT_DIM,
@@ -114,9 +114,9 @@ describe('Coordinated Turn (CT) model', () => {
     expect(Math.abs(x[1])).toBeLessThan(0.5);  // y near 0
   });
 
-  test('measurement returns 2D position', () => {
+  test('measurement returns 3D position (z=0 for xy-plane)', () => {
     const z = ctMeasurement([3, 4, 1, 0, 0.5, 0, 0]);
-    expect(z).toEqual([3, 4]);
+    expect(z).toEqual([3, 4, 0]);
   });
 
   test('process noise is 7×7 diagonal', () => {
@@ -124,6 +124,15 @@ describe('Coordinated Turn (CT) model', () => {
     expect(Q.length).toBe(7);
     expect(Q[0].length).toBe(7);
     expect(Q[4][4]).toBeGreaterThan(0);  // omega noise
+  });
+
+  test('measurement noise R is 3×3 (3D for IMM compatibility)', () => {
+    const R = ctDefaultR();
+    expect(R.length).toBe(3);
+    expect(R[0].length).toBe(3);
+    expect(R[0][0]).toBe(1.0);
+    expect(R[1][1]).toBe(1.0);
+    expect(R[2][2]).toBe(1.0);
   });
 });
 
