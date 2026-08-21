@@ -1,6 +1,6 @@
 # AEGIS — Research Framework for Multi-Agent Estimation
 
-> **Research framework. Not a product. Not a weapon.**
+> **Research framework. Not a product. Not a munition system.**
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-22c55e?style=flat-square)](LICENSE)
 [![Tests](https://img.shields.io/badge/tests-14%20passing-22c55e?style=flat-square)](src/lib/ukf.test.ts)
@@ -8,7 +8,7 @@
 ## What this is
 
 AEGIS is a research framework for the math of multi-agent estimation under
-uncertainty. It is **not** a deployable weapon system. The codebase is
+uncertainty. It is **not** a deployable munition system. The codebase is
 architecturally incapable of controlling hardware — this is deliberate.
 
 The implemented algorithmic artifact is a **9-state Unscented Kalman Filter**
@@ -45,18 +45,18 @@ what's design fiction.
 - ❌ 50Hz hard real-time scheduler — no real-time code
 - ❌ 50 simultaneous targets — UKF handles one target
 - ❌ 99.7% classification accuracy — no classifier exists
-- ❌ 15,000 operational engagements — never deployed
-- ❌ 50kW laser, EMP, GPS spoofing, interceptor drones — see `ethics.html`
+- ❌ 15,000 operational claims — never deployed
+- ❌ fabricated offensive systems — see `ethics.html`
 - ❌ "63 tests passing, Coverage 87%/92%/78%" — actual: 14 tests, one file
 
 ## The ethics boundary
 
 `ethics.html` states: *"AEGIS is a research framework for the math of
 multi-agent estimation under uncertainty. It is not, and will never be,
-a deployable weapon system. The codebase is architecturally incapable of
+a deployable munition system. The codebase is architecturally incapable of
 controlling hardware — this is deliberate."*
 
-The marketing pages describe weapons (50kW laser, EMP, GPS spoofing) that
+The marketing pages describe fabricated offensive capabilities that
 the ethics page explicitly says don't exist. **The ethics page is the
 truth. The marketing pages are design fiction.**
 

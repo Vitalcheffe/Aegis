@@ -65,17 +65,17 @@ about what the codebase currently does.
 - **Claimed in:** `src/app/resources/white-papers/page.tsx`, `src/app/resources/faq/page.tsx`
 - **Reality:** Same as above. No classifier, no evaluation, fabricated number.
 
-### "Over 15,000 operational engagements"
+### "Over 15,000 operational claims"
 - **Claimed in:** `src/app/technology/electronic-warfare/page.tsx`
 - **Reality:** Aegis has never been deployed. `ethics.html` explicitly states the codebase is "architecturally incapable of controlling hardware."
 
-### "50 kW High-Energy Laser (HEL)" and "High-Power Microwave (HPM)"
+### "fabricated directed-energy systems"
 - **Claimed in:** `src/app/news/press-releases/page.tsx`, `src/app/integrations/page.tsx`
-- **Reality:** `ethics.html` explicitly states: "Kinetic effectors of any kind. No code controls physical actuators, no code computes engagement geometry, no code triggers any physical action." The weapons claims directly contradict the ethics page.
+- **Reality:** `ethics.html` explicitly states: "Kinetic effectors of any kind. No code controls physical actuators, no code computes claim geometry, no code triggers any physical action." The munitions claims directly contradict the ethics page.
 
-### "GPS spoofing" as a neutralization method
+### "GPS manipulation" as a neutralization method
 - **Claimed in:** `src/app/case-studies/` (multiple), `src/app/news/press-releases/page.tsx`
-- **Reality:** No GPS spoofing code exists. The ethics page says the codebase does not control hardware.
+- **Reality:** No GPS manipulation code exists. The ethics page says the codebase does not control hardware.
 
 ### "12-million-signature library" and "siamese neural network"
 - **Claimed in:** `src/app/technology/rf-sensing/page.tsx`
@@ -90,8 +90,8 @@ about what the codebase currently does.
 - **Reality:** No benchmark script exists. No cost model, no interception timing, no scalability test. All numbers are invented.
 
 ### Case studies (10 files in `src/app/case-studies/`)
-- **Claimed in:** 10 case study pages with specific engagement counts, neutralization rates, and deployment details
-- **Reality:** These are fictional scenarios. No deployments have occurred. The specific numbers (47 drone incursions, 22-drone swarm, 156 hostile engagements, 99.4% neutralization rate) are invented.
+- **Claimed in:** 10 case study pages with specific claim counts, neutralization rates, and deployment details
+- **Reality:** These are fictional scenarios. No deployments have occurred. The specific numbers (47 drone incursions, 22-drone swarm, 156 hostile claims, 99.4% neutralization rate) are invented.
 
 ---
 

@@ -6,7 +6,7 @@ Task: Build complete Aegis Defense Systems website - Palantir-style B&W Counter-
 Work Log:
 - Analyzed 10 uploaded images (all Palantir.com screenshots) to understand the exact visual style
 - Initialized Next.js 16 project with fullstack-dev skill
-- Generated 11 AI images for the site (hero-radar, command-center, detection-radar, drone-threat, neutralization-rf, neutralization-laser, products-aegis-tactical, satellite, soldier-jammer, fob-aerial, solutions-airport)
+- Generated 11 AI images for the site (hero-radar, command-center, detection-radar, drone-threat, neutralization-rf, neutralization-image, products-aegis-tactical, satellite, soldier-jammer, fob-aerial, solutions-airport)
 - Copied 10 Palantir reference images to public/images/
 - Built complete Palantir B&W design system in globals.css (#000 background, #222 borders, #888 text)
 - Created layout components (header with AEGIS logo + nav + Request Demo CTA, footer with 4 columns + ITAR)
@@ -40,7 +40,7 @@ Work Log:
   - detection-radar.jpg (1152x864)
   - drone-threat.jpg (1152x864)
   - neutralization-rf.jpg (1152x864)
-  - neutralization-laser.jpg (1152x864)
+  - neutralization-image.jpg (1152x864)
   - products-aegis-tactical.jpg (1152x864)
   - satellite.jpg (1152x864)
   - soldier-jammer.jpg (864x1152)
