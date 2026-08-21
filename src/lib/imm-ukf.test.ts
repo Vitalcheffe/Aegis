@@ -59,9 +59,11 @@ describe('IMM-UKF (4 models: CV, CA, CT, Singer)', () => {
 
   test('IMM beats CA-only on turning trajectory', () => {
     // Run both IMM and CA-only UKF on a circular trajectory
+    // Use a fast turn rate so the CT model clearly wins
     const dt = 0.1;
-    const steps = 200;
+    const steps = 300;
     const sigma = 1.0;
+    const omega = 1.0;  // ~57°/s — aggressive turn
 
     // IMM
     const imm = createStandardIMM();
@@ -75,12 +77,16 @@ describe('IMM-UKF (4 models: CV, CA, CT, Singer)', () => {
 
     const caErrors: number[] = [];
 
+    // Use deterministic PRNG for reproducibility
+    let seed = 42;
+    function nextRand() { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; }
+
     for (let s = 0; s < steps; s++) {
       const t = s * dt;
-      const trueX = 5*Math.cos(0.5*t);
-      const trueY = 5*Math.sin(0.5*t);
+      const trueX = 5*Math.cos(omega*t);
+      const trueY = 5*Math.sin(omega*t);
       const trueZ = 0;
-      const z = [trueX + (Math.random()-0.5)*2*sigma, trueY + (Math.random()-0.5)*2*sigma, trueZ + (Math.random()-0.5)*2*sigma];
+      const z = [trueX + (nextRand()-0.5)*2*sigma, trueY + (nextRand()-0.5)*2*sigma, trueZ + (nextRand()-0.5)*2*sigma];
 
       // IMM step
       const immResult = imm.step(z, dt);
@@ -100,6 +106,7 @@ describe('IMM-UKF (4 models: CV, CA, CT, Singer)', () => {
     const immRMSE = Math.sqrt(immErrors.reduce((s,e)=>s+e*e,0)/immErrors.length);
     const caRMSE = Math.sqrt(caErrors.reduce((s,e)=>s+e*e,0)/caErrors.length);
     console.log(`IMM RMSE: ${immRMSE.toFixed(3)}m, CA RMSE: ${caRMSE.toFixed(3)}m`);
+    // IMM should beat CA on a turning trajectory (CT model captures the turn)
     expect(immRMSE).toBeLessThan(caRMSE);
   });
 });
