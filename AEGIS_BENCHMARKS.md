@@ -9,80 +9,63 @@
 
 | File | Tests | Assertions | Status |
 |------|-------|------------|--------|
-| `src/lib/ukf.test.ts` | 14 | 25 | ✓ All pass |
+| `src/lib/ukf.test.ts` | 14 | 219 | ✓ All pass |
+| `src/lib/models/motion-models.test.ts` | 16 | 39 | ✓ All pass |
+| `src/lib/audit/reliability-tests.test.ts` | 8 | 14 | ✓ All pass |
 
 **How to verify:**
 ```bash
-bun test src/lib/ukf.test.ts
+bun test src/lib/ukf.test.ts src/lib/models/motion-models.test.ts src/lib/audit/reliability-tests.test.ts
 ```
 
-**Total:** 14 tests, 25 assertions, 1 test file.
-
-> Previous versions of this file claimed "63 tests passing, Coverage: 87%
-> (fusion), 92% (ukf), 78% (swarm)." That was incorrect. There is no fusion
-> test suite and no swarm test suite. The actual count is 14 tests in one file.
+**Total:** 38 tests, 272 assertions, 3 test files.
 
 ---
 
-## UKF Performance (from test suite)
+## UKF Performance (from benchmark)
 
-The UKF test suite includes end-to-end convergence tests with synthetic data.
-These are the actual measured numbers from running the tests:
+### RMSE vs Measurement Noise (5 levels, 500 steps each)
 
-### Convergence Test (50 steps, σ = 1m GPS noise)
+| GPS Noise σ (m) | Filter RMSE (m) | Measurement RMSE (m) | Improvement |
+|-----------------|------------------|-----------------------|-------------|
+| 0.1 | 0.064 | 0.099 | 1.56× |
+| 0.5 | 0.284 | 0.502 | 1.76× |
+| 1.0 | 0.508 | 1.013 | 2.00× |
+| 2.0 | 0.838 | 1.990 | 2.37× |
+| 5.0 | 2.154 | 5.020 | 2.33× |
 
-| Metric | Value |
-|--------|-------|
-| Initial position error | ~10m (random initial state) |
-| Final position error (step 50) | < 2.0m |
-| Measurement RMSE (raw GPS) | ~0.97m (σ=1m × √(3/π) for 3D) |
-| Filter RMSE | ~0.52m |
-| Improvement vs raw measurement | 1.87× |
+**Reproduce:** `node src/lib/ukf_benchmark.js`
 
-### Convergence Test (100 steps, σ = 1m GPS noise)
+### Reliability Metrics (from audit/reliability-tests.ts)
 
-| Metric | Value |
-|--------|-------|
-| Final position error (step 100) | ~0.43m |
-| Filter RMSE (steps 11-100) | ~0.47m |
-| Measurement RMSE | ~0.97m |
-| Improvement vs raw measurement | ~2.1× |
+| Test | Result | Meaning |
+|------|--------|---------|
+| Pass^k (k=10) | 1.0000 | Perfectly deterministic — same input always produces same output |
+| Outlier (5% at 20m) | Diverged | No outlier rejection — honest limitation |
+| Perturbation (10%) | 1.00× degradation | Stable under small measurement bias |
+
+**Reproduce:** `node src/lib/audit/reliability-tests.ts`
 
 ---
 
-## What's NOT benchmarked
+## Motion Models
 
-The following are NOT measured because the corresponding code does not exist:
+| Model | State Dim | Use Case | Status |
+|-------|-----------|----------|--------|
+| CV (Constant Velocity) | 6 | Straight-line targets | ✓ Implemented + tested |
+| CA (Constant Acceleration) | 9 | Accelerating targets | ✓ Implemented + tested (default in ukf.ts) |
+| CT (Coordinated Turn) | 7 | Turning targets (2D) | ✓ Implemented + tested |
 
-- ❌ IMM (Interacting Multiple Model) switching performance — no IMM code
+**Note:** These are individual models. An IMM-UKF that switches between them is NOT yet implemented. The IMM is the next planned feature.
+
+---
+
+## What's NOT benchmarked (honest)
+
+- ❌ IMM switching performance — no IMM code yet
 - ❌ Multi-target tracking scalability — single-target only
 - ❌ BFT consensus overhead — no BFT code
 - ❌ Real-time execution budget (50Hz) — no real-time scheduler
 - ❌ Classification accuracy — no classifier
 - ❌ Cost-per-intercept — no cost model
 - ❌ Deployment statistics — never deployed
-
----
-
-## Configuration
-
-```
-UKF parameters:
-  L (state dimension) = 9
-  alpha = 1e-3
-  beta = 2
-  kappa = 0
-  lambda = alpha^2 * (L + kappa) - L = -8.999991
-  sigma points = 2L + 1 = 19
-
-Motion model: constant acceleration
-  x' = x + v*dt + 0.5*a*dt^2
-  v' = v + a*dt
-  a' = a
-
-Measurement model: position only
-  z = [x, y, z]
-
-Process noise Q: diagonal (0.01*dt, 0.1*dt, 1.0*dt)
-Measurement noise R: diagonal (1.0, 1.0, 1.0) — σ = 1m per axis
-```
