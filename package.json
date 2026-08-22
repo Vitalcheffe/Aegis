@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "private": true,
   "scripts": {
-    "build": "tsc -p tsconfig.check.json && echo BUILD_OK",
+    "build": "tsc -p tsconfig.json && echo BUILD_OK",
     "test": "bun test src/lib/",
     "benchmark": "node src/lib/ukf_benchmark.js",
     "reliability": "node src/lib/audit/reliability-tests.ts"

@@ -176,3 +176,82 @@ describe('Gated UKF — Outlier Robustness (A16)', () => {
     expect(result.finalState.x.every(v => Number.isFinite(v))).toBe(true);
   });
 });
+
+describe('Gated UKF — Rejection Rate Invariant', () => {
+  const dt = 0.1;
+  const Q = defaultProcessNoise(dt);
+  const R = defaultMeasurementNoise();
+  const sigma = 1.0;
+
+  function makePRNG(seed: number) {
+    let s = seed;
+    return () => { s = (s * 1103515245 + 12345) & 0x7fffffff; return s / 0x7fffffff; };
+  }
+
+  test('5% outliers: rejection rate is 5% ± 2% (not over-rejecting)', () => {
+    const rng = makePRNG(42);
+    const steps = 200;
+    let state = initialState();
+    let rejected = 0;
+    
+    for (let s = 0; s < steps; s++) {
+      const t = s * dt;
+      const trueX = 8 * Math.sin(0.4 * t);
+      const trueY = 4 + 2 * Math.cos(0.4 * t);
+      const trueZ = 8 * Math.sin(0.8 * t);
+      
+      let z = [
+        trueX + (rng() - 0.5) * 2 * sigma,
+        trueY + (rng() - 0.5) * 2 * sigma,
+        trueZ + (rng() - 0.5) * 2 * sigma,
+      ];
+      
+      if (rng() < 0.05) {
+        z = [z[0] + 20, z[1] - 15, z[2] + 25];
+      }
+      
+      const result = gatedUKFStep(state, z, dt, Q, R);
+      state = result.state;
+      if (!result.accepted) rejected++;
+    }
+    
+    const rejectionRate = rejected / steps;
+    console.log(`  Outlier rejection rate: ${(rejectionRate * 100).toFixed(1)}% (expected 5% ± 2%)`);
+    console.log(`  Rejected: ${rejected}/${steps}`);
+    
+    // Gate: rejection rate should be 3-8% (outliers rejected, good data accepted)
+    expect(rejectionRate).toBeGreaterThan(0.03);
+    expect(rejectionRate).toBeLessThanOrEqual(0.08);
+  });
+
+  test('0% outliers (clean data): rejection rate < 2%', () => {
+    const rng = makePRNG(100);
+    const steps = 200;
+    let state = initialState();
+    let rejected = 0;
+    
+    for (let s = 0; s < steps; s++) {
+      const t = s * dt;
+      const trueX = 8 * Math.sin(0.4 * t);
+      const trueY = 4 + 2 * Math.cos(0.4 * t);
+      const trueZ = 8 * Math.sin(0.8 * t);
+      
+      const z = [
+        trueX + (rng() - 0.5) * 2 * sigma,
+        trueY + (rng() - 0.5) * 2 * sigma,
+        trueZ + (rng() - 0.5) * 2 * sigma,
+      ];
+      
+      const result = gatedUKFStep(state, z, dt, Q, R);
+      state = result.state;
+      if (!result.accepted) rejected++;
+    }
+    
+    const rejectionRate = rejected / steps;
+    console.log(`  Clean data rejection rate: ${(rejectionRate * 100).toFixed(1)}% (expected < 2%)`);
+    console.log(`  Rejected: ${rejected}/${steps}`);
+    
+    // Gate: < 2% rejection on clean data (filter isn't over-gating)
+    expect(rejectionRate).toBeLessThan(0.02);
+  });
+});

@@ -1,0 +1,31 @@
+{
+  "timestamp": "2026-08-22T00:30:23.046Z",
+  "machine": "linux x64",
+  "runtime": "bun 1.3.14",
+  "warmup": 100,
+  "iterations": 1000,
+  "a12": {
+    "with_allocation": 0.095083044,
+    "amortized": 0.04441725499999984,
+    "threshold": 1,
+    "pass": true
+  },
+  "a13": {
+    "with_constructor": 0.5572105060000001,
+    "amortized": 0.42920684900000017,
+    "threshold": 5,
+    "pass": true
+  },
+  "a14": {
+    "total": 2.099600711,
+    "per_target": 0.04199201422,
+    "threshold": 20,
+    "pass": true
+  },
+  "cross_check": {
+    "fifty_times_a12": 2.2208627499999922,
+    "a14_total": 2.099600711,
+    "ratio": 0.9453986794096156,
+    "consistent": true
+  }
+}
