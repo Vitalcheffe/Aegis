@@ -1,7 +1,7 @@
 // Type declarations for bun test globals + Node.js globals
 declare function describe(name: string, fn: () => void): void;
 declare function test(name: string, fn: () => void | Promise<void>): void;
-declare function expect<T>(actual: T): { toBe(expected: T): void; toBeCloseTo(expected: number, precision?: number): void; toBeGreaterThan(expected: number): void; toBeGreaterThanOrEqual(expected: number): void; toBeLessThan(expected: number): void; toBeLessThanOrEqual(expected: number): void; toEqual(expected: any): void; toBeDefined(): void; toContain(expected: any): void; toBeTruthy(): void; toBeFalsy(): void; not: any; };
+declare function expect<T>(actual: T): { toBe(expected: T): void; toBeCloseTo(expected: number, precision?: number): void; toBeGreaterThan(expected: number): void; toBeGreaterThanOrEqual(expected: number): void; toBeLessThan(expected: number): void; toBeLessThanOrEqual(expected: number): void; toEqual(expected: any): void; toBeDefined(): void; toBeUndefined(): void; toContain(expected: any): void; toBeTruthy(): void; toBeFalsy(): void; not: any; };
 declare const Bun: { version: string };
 declare const performance: { now(): number };
 declare function require(id: string): any; 
