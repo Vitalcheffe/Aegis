@@ -1,0 +1,30 @@
+{
+  "timestamp": "2026-08-22T00:13:13.843Z",
+  "machine": "linux x64",
+  "runtime": "bun 1.3.14",
+  "warmup": 100,
+  "iterations": 1000,
+  "results": [
+    {
+      "gate": "A12",
+      "name": "UKF single update",
+      "avgMs": 0.073780642,
+      "threshold": 1,
+      "pass": true
+    },
+    {
+      "gate": "A13",
+      "name": "IMM complete cycle",
+      "avgMs": 0.5551336659999999,
+      "threshold": 5,
+      "pass": true
+    },
+    {
+      "gate": "A14",
+      "name": "50 targets UKF update",
+      "avgMs": 2.135282811,
+      "threshold": 20,
+      "pass": true
+    }
+  ]
+}
