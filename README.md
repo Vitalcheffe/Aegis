@@ -1,6 +1,6 @@
 # AEGIS — Autonomous Sensing Framework
 
-[![Tests](https://img.shields.io/badge/tests-117%20passing-22c55e?style=flat-square)](src/lib/)
+[![Tests](https://img.shields.io/badge/tests-passing-22c55e?style=flat-square)](src/lib/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-22c55e?style=flat-square)](LICENSE)
 
 > Research framework. Not a product. Not a weapon.
