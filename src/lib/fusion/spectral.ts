@@ -1,26 +1,7 @@
-/**
- * Spectral Multi-Modal Sensor Fusion
- *
- * Uses eigendecomposition of a reliability matrix to find the optimal
- * weighting of sensors across distance regimes. Unlike simple inverse-
- * variance weighting, spectral fusion captures cross-sensor correlations
- * (e.g., optical and IR both degrade under cloud cover).
- *
- * Algorithm:
- *   1. Build reliability matrix R (sensors × distance bins)
- *   2. Compute principal eigenvector via power iteration
- *   3. Weight sensors by the eigenvector (captures correlation structure)
- *   4. Fuse measurements using spectral weights
- *
- * Reference:
- *   Niroui, F. et al. (2020). "Spectral Fusion: Multi-Modal Sensor
- *   Fusion via Eigendecomposition." (Conceptual — not a real paper,
- *   this is an original implementation of the idea.)
- */
+// Spectral fusion — full covariance with power iteration
+// TODO: power iteration converges slowly on rank-deficient R
 
-// ============================================================================
 // Types
-// ============================================================================
 
 export interface SensorReading {
   sensorId: number;
@@ -36,9 +17,7 @@ export interface FusionResult {
   method: 'spectral' | 'weighted_average';
 }
 
-// ============================================================================
 // Power Iteration for principal eigenvector
-// ============================================================================
 
 export function powerIteration(
   matrix: number[][],
@@ -87,9 +66,7 @@ export function powerIteration(
   return { eigenvalue, eigenvector: v };
 }
 
-// ============================================================================
 // Spectral Fusion
-// ============================================================================
 
 export class SpectralFusion {
   private nSensors: number;

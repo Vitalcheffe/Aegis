@@ -1,35 +1,7 @@
-/**
- * Unscented Kalman Filter (UKF) — Merwe-scaled sigma points.
- *
- * Implements the 9-state UKF specified in AEGIS_UKF_MATH.md:
- *   x = [x, y, z, vx, vy, vz, ax, ay, az]
- *
- * State transition: constant-acceleration model
- *   x_k+1 = x_k + v_k*dt + 0.5*a_k*dt²
- *   v_k+1 = v_k + a_k*dt
- *   a_k+1 = a_k  (constant — acceleration is the random walk)
- *
- * Measurement model: position-only (GPS-like)
- *   z_k = [x, y, z]  (3D position)
- *
- * Sigma points: Merwe-scaled with α=1e-3, κ=0, β=2
- *   λ = α²(L+κ) - L
- *   2L+1 sigma points (19 for L=9)
- *
- * This is a runnable implementation — not documentation. It is exported
- * and unit-tested. The math matches the closed-form spec; the only
- * numerical shortcuts are Cholesky-based square roots (standard).
- *
- * Reference:
- *   Wan, E. A. and Van Der Merwe, R. (2000). "The unscented Kalman
- *   filter for nonlinear estimation." AS-SPCOM 2000.
- *   Merwe, R. et al. (2004). "Sigma-Point Kalman Filters for Integrated
- *   Navigation." Proceedings of ION GPS 2004.
- */
+// 9-state UKF with Merwe sigma points
+// TODO: Cholesky fails on singular P — need jitter
 
-// ============================================================================
 // Types
-// ============================================================================
 
 export type Matrix = number[][];        // row-major: M[row][col]
 export type Vector = number[];           // 1-D
@@ -45,9 +17,7 @@ export type SigmaPoints = {
   Wc: Vector;            // covariance weights, length 2L+1
 };
 
-// ============================================================================
 // UKF configuration
-// ============================================================================
 
 export const UKF_CONFIG = {
   L: 9,                  // state dimension
@@ -61,9 +31,7 @@ export function computeLambda(L: number, alpha: number, kappa: number): number {
   return alpha * alpha * (L + kappa) - L;
 }
 
-// ============================================================================
 // Matrix helpers (no external dep — pure TypeScript)
-// ============================================================================
 
 export function zeros(rows: number, cols: number = rows): Matrix {
   return Array.from({ length: rows }, () => new Array(cols).fill(0));
@@ -187,9 +155,7 @@ export function cholesky(A: Matrix): Matrix {
   return L;
 }
 
-// ============================================================================
 // Sigma point generation
-// ============================================================================
 
 /**
  * Generate Merwe-scaled sigma points for state (x, P).
@@ -252,9 +218,7 @@ export function generateSigmaPoints(
   return { points, Wm, Wc };
 }
 
-// ============================================================================
 // State transition and measurement functions
-// ============================================================================
 
 /**
  * Constant-acceleration state transition.
@@ -289,9 +253,7 @@ export function measurementFunction(x: Vector): Vector {
   return [x[0], x[1], x[2]];
 }
 
-// ============================================================================
 // UKF predict and update steps
-// ============================================================================
 
 /**
  * UKF predict step.
@@ -452,9 +414,7 @@ function matrixInverse3x3(M: Matrix): Matrix {
   ];
 }
 
-// ============================================================================
 // Full UKF step (predict + update)
-// ============================================================================
 
 export function ukfStep(
   state: State,
@@ -468,9 +428,7 @@ export function ukfStep(
   return updated;
 }
 
-// ============================================================================
 // Default process and measurement noise
-// ============================================================================
 
 /**
  * Default process noise Q for the 9-state CA model.
@@ -497,9 +455,7 @@ export function defaultMeasurementNoise(): Matrix {
   return R;
 }
 
-// ============================================================================
 // Initial state
-// ============================================================================
 
 export function initialState(): State {
   const x: Vector = new Array(9).fill(0);

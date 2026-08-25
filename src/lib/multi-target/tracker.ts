@@ -1,21 +1,9 @@
-/**
- * Multi-Target Tracker with GNN (Global Nearest Neighbor) Association
- *
- * Tracks multiple targets simultaneously using:
- *   - UKF per target for state estimation
- *   - Mahalanobis distance for measurement-to-track association
- *   - Greedy sorted assignment (cost matrix sorted, lowest cost first)
- *   - Track birth: 2 consecutive unassociated measurements → new track
- *   - Track death: 8 steps without association → track deleted
- *
- * Reference: Bar-Shalom et al. (2001), Chapter 6 (Data Association)
- */
+// GNN multi-target tracker with birth/death
+// TODO: GNN not optimal for >10 targets — consider JPDA
 
 import { ukfStep, initialState, defaultProcessNoise, defaultMeasurementNoise, State } from '../ukf';
 
-// ============================================================================
 // Types
-// ============================================================================
 
 export interface Track {
   id: number;
@@ -41,9 +29,7 @@ export interface TrackerResult {
   idSwitches: number;
 }
 
-// ============================================================================
 // Tracker
-// ============================================================================
 
 export class MultiTargetTracker {
   private tracks: Map<number, Track> = new Map();

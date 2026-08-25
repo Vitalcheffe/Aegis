@@ -1,16 +1,4 @@
-/**
- * Motion Models — ALL 9-state (homogeneous for IMM compatibility)
- *
- * Four motion models, all using the same 9-state vector:
- *   x = [x, y, z, vx, vy, vz, ax, ay, az]
- *
- * 1. CV (Constant Velocity): acceleration = 0, velocity random walk
- * 2. CA (Constant Acceleration): acceleration random walk (default in ukf.ts)
- * 3. CT (Coordinated Turn): acceleration derived from turn rate
- * 4. Singer: acceleration decays exponentially (a' = a*exp(-dt/τ))
- *
- * By using homogeneous dimensions, the IMM mixing is numerically stable.
- */
+// Motion models — CV, CA, CT, Singer (all 9-state)
 
 export type MotionModel = 'CV' | 'CA' | 'CT' | 'Singer';
 
@@ -18,9 +6,7 @@ export const STATE_DIM = 9;
 
 export const stateNames = ['x', 'y', 'z', 'vx', 'vy', 'vz', 'ax', 'ay', 'az'];
 
-// ============================================================================
 // CV: Constant Velocity (9-state, acceleration = 0)
-// ============================================================================
 
 export function cvTransition(x: number[], dt: number): number[] {
   return [
@@ -39,9 +25,7 @@ export function cvDefaultQ(dt: number): number[][] {
   return Q;
 }
 
-// ============================================================================
 // CA: Constant Acceleration (9-state, already in ukf.ts)
-// ============================================================================
 
 export function caTransition(x: number[], dt: number): number[] {
   const nx = new Array(9).fill(0);
@@ -69,9 +53,7 @@ export function caDefaultQ(dt: number): number[][] {
   return Q;
 }
 
-// ============================================================================
 // CT: Coordinated Turn (9-state, turn rate stored as cross-axial acceleration)
-// ============================================================================
 
 export function ctTransition(x: number[], dt: number): number[] {
   // Derive turn rate from acceleration cross-product
@@ -111,10 +93,8 @@ export function ctDefaultQ(dt: number): number[][] {
   return Q;
 }
 
-// ============================================================================
 // Singer: Exponentially Correlated Acceleration
 // a' = a * exp(-dt/τ) + w, where w ~ N(0, σ²_a * (1 - exp(-2dt/τ)))
-// ============================================================================
 
 const SINGER_TAU = 10.0;  // correlation time (seconds)
 const SINGER_SIGMA_A = 3.0;  // acceleration std (m/s²)
@@ -154,9 +134,7 @@ export function singerDefaultQ(dt: number): number[][] {
   return Q;
 }
 
-// ============================================================================
 // Common measurement noise (all models use 3D position)
-// ============================================================================
 
 export function defaultR(): number[][] {
   const R = zeros(3, 3);
@@ -164,9 +142,7 @@ export function defaultR(): number[][] {
   return R;
 }
 
-// ============================================================================
 // Matrix helpers
-// ============================================================================
 
 function zeros(r: number, c: number = r): number[][] {
   return Array.from({ length: r }, () => new Array(c).fill(0));
@@ -178,9 +154,7 @@ function identity(n: number): number[][] {
   return M;
 }
 
-// ============================================================================
 // Model registry
-// ============================================================================
 
 export interface MotionModelSpec {
   name: MotionModel;

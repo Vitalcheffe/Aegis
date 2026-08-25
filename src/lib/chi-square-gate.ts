@@ -1,21 +1,5 @@
-/**
- * Chi-Square Innovation Gate for Outlier Rejection
- *
- * Before each measurement update, compute the innovation:
- *   ν = z - h(x̂_pred)
- * and its covariance:
- *   S = H P Hᵀ + R  (approximated via sigma points in UKF)
- *
- * Gate test:
- *   d² = νᵀ S⁻¹ ν  (squared Mahalanobis distance)
- *   If d² ≤ χ²(m, 95%) → accept measurement, perform update
- *   If d² > χ²(m, 95%) → reject measurement, predict only
- *
- * For 3 DoF (3D position measurement): χ²(3, 0.95) = 7.815
- * For 5 DoF (position + bearing + range-rate): χ²(5, 0.95) = 11.070
- *
- * Reference: Bar-Shalom et al. (2001), Chapter 1, Section 1.4
- */
+// chi-square gate — reject measurements outside 95% confidence
+// TODO: only 95% confidence supported, extend to 99%
 
 // Chi-square critical values at 95% confidence
 const CHI2_95: Record<number, number> = {

@@ -1,4 +1,5 @@
 /**
+// TODO: IMM mixing weights can NaN on extreme turns
  * IMM-UKF with homogeneous 9-state models (CV, CA, CT, Singer)
  * All models share the same state dimension → no cross-dimension projection needed.
  */

@@ -1,14 +1,4 @@
-/**
- * Multiple Measurement Models
- *
- * 1. Position: h(x) = [x, y, z]
- * 2. Bearing-only: h(x) = [atan2(y, x)]  (azimuth from sensor at origin)
- * 3. Range-rate: h(x) = (x·vx + y·vy) / sqrt(x² + y²)
- * 4. Combined: h(x) = [x, y, z, bearing, range_rate]  (5D)
- *
- * The UKF handles nonlinear measurement functions natively via sigma points
- * — no Jacobian needed.
- */
+// Measurement models — position, bearing, range-rate
 
 export function positionMeasurement(x: number[]): number[] {
   return [x[0], x[1], x[2]];

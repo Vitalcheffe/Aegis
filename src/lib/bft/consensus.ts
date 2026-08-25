@@ -1,26 +1,6 @@
-/**
- * Byzantine Fault Tolerant Consensus — Simplified PBFT
- *
- * 10 nodes, 3 Byzantine (that send random/wrong values).
- * Protocol: pre-prepare → prepare → commit
- *
- * Leader broadcasts a proposed value (pre-prepare).
- * Each node sends its measurement to all others (prepare phase).
- * If ≥ 2f+1 nodes agree (7 out of 10, f=3), consensus is reached.
- * Byzantine nodes are detected via 3σ cross-validation: if a node's
- * value deviates from the median by > 3σ for 3 consecutive rounds,
- * it is flagged and excluded for 100 ticks.
- *
- * Leader rotation: deterministic, every 100 ticks.
- *
- * References:
- *   Castro, M., & Liskov, B. (1999). "Practical Byzantine Fault
- *   Tolerance." OSDI '99.
- */
+// BFT consensus — simplified PBFT, 10 nodes, 3 byzantine
 
-// ============================================================================
 // Types
-// ============================================================================
 
 export interface Node {
   id: number;
@@ -40,9 +20,7 @@ export interface ConsensusResult {
   converged: boolean;
 }
 
-// ============================================================================
 // PBFT Consensus
-// ============================================================================
 
 export class BFTConsensus {
   private nodes: Node[];

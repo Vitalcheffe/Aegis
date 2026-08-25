@@ -40,9 +40,7 @@ export interface PerturbationResult {
   stable: boolean;            // degradation < 1.5x threshold
 }
 
-// ============================================================================
 // Pass^k Consistency Test
-// ============================================================================
 
 export function testPassKConsistency(
   k: number = 10,
@@ -136,9 +134,7 @@ export function testPassKConsistency(
   };
 }
 
-// ============================================================================
 // Outlier Robustness Test
-// ============================================================================
 
 export function testOutlierRobustness(
   steps: number = 200,
@@ -202,9 +198,7 @@ export function testOutlierRobustness(
   };
 }
 
-// ============================================================================
 // Semantic Perturbation Test
-// ============================================================================
 
 export function testSemanticPerturbation(
   steps: number = 200,
@@ -282,9 +276,7 @@ export function testSemanticPerturbation(
   };
 }
 
-// ============================================================================
 // Run all reliability tests
-// ============================================================================
 
 export function runAllReliabilityTests() {
   console.log('AEGIS UKF — Reliability Test Suite');
