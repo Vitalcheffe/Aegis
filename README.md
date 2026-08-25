@@ -1,5 +1,8 @@
 # AEGIS — Autonomous Sensing Framework
 
+[![Tests](https://github.com/Vitalcheffe/Aegis/actions/workflows/tests.yml/badge.svg)](https://github.com/Vitalcheffe/Aegis/actions/workflows/tests.yml)
+
+
 [![Tests](https://img.shields.io/badge/tests-passing-22c55e?style=flat-square)](src/lib/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-22c55e?style=flat-square)](LICENSE)
 
