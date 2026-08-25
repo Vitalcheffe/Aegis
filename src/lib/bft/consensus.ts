@@ -47,10 +47,8 @@ export class BFTConsensus {
     }
   }
 
-  /**
-   * Run one consensus round with the given true value.
-   * Byzantine nodes send random values.
-   */
+  // Run one consensus round with the given true value.
+// Byzantine nodes send random values.
   round(trueValue: number, tick: number, rng: () => number): ConsensusResult {
     this.tick = tick;
 
@@ -133,9 +131,7 @@ export class BFTConsensus {
     };
   }
 
-  /**
-   * Run multiple rounds until consensus converges.
-   */
+  // Run multiple rounds until consensus converges.
   runUntilConvergence(
     trueValue: number,
     startTick: number,

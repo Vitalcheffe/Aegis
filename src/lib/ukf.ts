@@ -157,20 +157,16 @@ export function cholesky(A: Matrix): Matrix {
 
 // Sigma point generation
 
-/**
- * Generate Merwe-scaled sigma points for state (x, P).
- *
- * Returns 2L+1 sigma points and their weights:
- *   χ[0]   = x
- *   χ[i]   = x + (√((L+λ)P))_i     for i = 1..L
- *   χ[i+L] = x - (√((L+λ)P))_i     for i = 1..L
- *
- * Weights:
- *   Wm[0] = λ / (L+λ)
- *   Wm[i] = 1 / (2(L+λ))           for i = 1..2L
- *   Wc[0] = λ / (L+λ) + (1 - α² + β)
- *   Wc[i] = 1 / (2(L+λ))           for i = 1..2L
- */
+// Generate Merwe-scaled sigma points for state (x, P).
+// Returns 2L+1 sigma points and their weights:
+// χ[0]   = x
+// χ[i]   = x + (√((L+λ)P))_i     for i = 1..L
+// χ[i+L] = x - (√((L+λ)P))_i     for i = 1..L
+// Weights:
+// Wm[0] = λ / (L+λ)
+// Wm[i] = 1 / (2(L+λ))           for i = 1..2L
+// Wc[0] = λ / (L+λ) + (1 - α² + β)
+// Wc[i] = 1 / (2(L+λ))           for i = 1..2L
 export function generateSigmaPoints(
   x: Vector,
   P: Matrix,
@@ -220,14 +216,11 @@ export function generateSigmaPoints(
 
 // State transition and measurement functions
 
-/**
- * Constant-acceleration state transition.
- *   x_k+1 = x_k + v_k*dt + 0.5*a_k*dt²
- *   v_k+1 = v_k + a_k*dt
- *   a_k+1 = a_k  (constant)
- *
- * State layout: [x, y, z, vx, vy, vz, ax, ay, az]
- */
+// Constant-acceleration state transition.
+// x_k+1 = x_k + v_k*dt + 0.5*a_k*dt²
+// v_k+1 = v_k + a_k*dt
+// a_k+1 = a_k  (constant)
+// State layout: [x, y, z, vx, vy, vz, ax, ay, az]
 export function stateTransition(x: Vector, dt: number): Vector {
   const newX: Vector = new Array(9).fill(0);
   // Position: x + v*dt + 0.5*a*dt²
@@ -245,26 +238,21 @@ export function stateTransition(x: Vector, dt: number): Vector {
   return newX;
 }
 
-/**
- * Measurement function: position-only observation.
- *   z = [x, y, z]  (first 3 components of state)
- */
+// Measurement function: position-only observation.
+// z = [x, y, z]  (first 3 components of state)
 export function measurementFunction(x: Vector): Vector {
   return [x[0], x[1], x[2]];
 }
 
 // UKF predict and update steps
 
-/**
- * UKF predict step.
- *
- * 1. Generate sigma points from current state (x, P)
- * 2. Propagate each through state transition: χ_k+1 = f(χ_k, dt)
- * 3. Compute predicted mean: x_pred = Σ Wm[i] * χ_k+1[i]
- * 4. Compute predicted covariance:
- *      P_pred = Σ Wc[i] * (χ_k+1[i] - x_pred) * (χ_k+1[i] - x_pred)^T
- *    + Q (process noise)
- */
+// UKF predict step.
+// 1. Generate sigma points from current state (x, P)
+// 2. Propagate each through state transition: χ_k+1 = f(χ_k, dt)
+// 3. Compute predicted mean: x_pred = Σ Wm[i] * χ_k+1[i]
+// 4. Compute predicted covariance:
+// P_pred = Σ Wc[i] * (χ_k+1[i] - x_pred) * (χ_k+1[i] - x_pred)^T
+// + Q (process noise)
 export function ukfPredict(
   state: State,
   dt: number,
@@ -305,20 +293,17 @@ export function ukfPredict(
   return { x: x_pred, P: P_with_noise };
 }
 
-/**
- * UKF update step.
- *
- * 1. Generate sigma points from predicted state
- * 2. Propagate through measurement function: ζ_k = h(χ_k)
- * 3. Predicted measurement: z_pred = Σ Wm[i] * ζ_k[i]
- * 4. Innovation covariance:
- *      S = Σ Wc[i] * (ζ_k[i] - z_pred) * (ζ_k[i] - z_pred)^T + R
- * 5. Cross-covariance:
- *      Pxz = Σ Wc[i] * (χ_k[i] - x_pred) * (ζ_k[i] - z_pred)^T
- * 6. Kalman gain: K = Pxz * S^-1
- * 7. State update: x = x_pred + K * (z - z_pred)
- *    Covariance update: P = P_pred - K * S * K^T
- */
+// UKF update step.
+// 1. Generate sigma points from predicted state
+// 2. Propagate through measurement function: ζ_k = h(χ_k)
+// 3. Predicted measurement: z_pred = Σ Wm[i] * ζ_k[i]
+// 4. Innovation covariance:
+// S = Σ Wc[i] * (ζ_k[i] - z_pred) * (ζ_k[i] - z_pred)^T + R
+// 5. Cross-covariance:
+// Pxz = Σ Wc[i] * (χ_k[i] - x_pred) * (ζ_k[i] - z_pred)^T
+// 6. Kalman gain: K = Pxz * S^-1
+// 7. State update: x = x_pred + K * (z - z_pred)
+// Covariance update: P = P_pred - K * S * K^T
 export function ukfUpdate(
   state: State,
   z: Vector,
@@ -430,10 +415,8 @@ export function ukfStep(
 
 // Default process and measurement noise
 
-/**
- * Default process noise Q for the 9-state CA model.
- * Tuned for UAV-class dynamics: position σ ~ 0.1m, velocity σ ~ 0.1m/s.
- */
+// Default process noise Q for the 9-state CA model.
+// Tuned for UAV-class dynamics: position σ ~ 0.1m, velocity σ ~ 0.1m/s.
 export function defaultProcessNoise(dt: number): Matrix {
   const Q = zeros(9, 9);
   // Position noise (small)
@@ -445,10 +428,8 @@ export function defaultProcessNoise(dt: number): Matrix {
   return Q;
 }
 
-/**
- * Default measurement noise R for GPS-class position observations.
- * σ = 1m per axis (consumer GPS accuracy).
- */
+// Default measurement noise R for GPS-class position observations.
+// σ = 1m per axis (consumer GPS accuracy).
 export function defaultMeasurementNoise(): Matrix {
   const R = zeros(3, 3);
   for (let i = 0; i < 3; i++) R[i][i] = 1.0; // 1m σ

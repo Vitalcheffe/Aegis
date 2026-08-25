@@ -22,10 +22,8 @@ export function chi2Critical(dof: number, confidence: number = 0.95): number {
   return CHI2_95[dof] || 7.815;
 }
 
-/**
- * Compute squared Mahalanobis distance: d² = νᵀ S⁻¹ ν
- * This is the normalized innovation squared (NIS).
- */
+// Compute squared Mahalanobis distance: d² = νᵀ S⁻¹ ν
+// This is the normalized innovation squared (NIS).
 export function mahalanobisDistance(
   innovation: number[],
   S: number[][]
@@ -65,12 +63,9 @@ export function mahalanobisDistance(
   return d2;
 }
 
-/**
- * Gate decision: should the measurement be accepted?
- *
- * Returns true if the measurement passes the gate (accept),
- * false if it should be rejected (outlier).
- */
+// Gate decision: should the measurement be accepted?
+// Returns true if the measurement passes the gate (accept),
+// false if it should be rejected (outlier).
 export function gateMeasurement(
   innovation: number[],
   S: number[][],

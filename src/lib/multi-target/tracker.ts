@@ -47,10 +47,8 @@ export class MultiTargetTracker {
     this.R = R || defaultMeasurementNoise();
   }
 
-  /**
-   * Process a set of measurements for the current step.
-   * Returns assignment results and updated tracks.
-   */
+  // Process a set of measurements for the current step.
+// Returns assignment results and updated tracks.
   step(measurements: number[][], currentStep: number): TrackerResult {
     // 1. Predict all alive tracks forward (predict-only, no measurement update)
     for (const track of this.tracks.values()) {
@@ -115,10 +113,8 @@ export class MultiTargetTracker {
     };
   }
 
-  /**
-   * GNN association using Mahalanobis distance.
-   * Greedy: sort all (track, measurement) pairs by distance, assign lowest first.
-   */
+  // GNN association using Mahalanobis distance.
+// Greedy: sort all (track, measurement) pairs by distance, assign lowest first.
   private associate(tracks: Track[], measurements: number[][], currentStep: number): AssociationResult {
     const assignments: Array<{ trackId: number; measurement: number[]; distance: number }> = [];
     const assignedTracks = new Set<number>();
@@ -165,11 +161,9 @@ export class MultiTargetTracker {
     return { assignments, unassignedMeasurements, unassignedTracks };
   }
 
-  /**
-   * Compute Mahalanobis distance between track state and measurement.
-   * d² = (z - h(x̂))ᵀ S⁻¹ (z - h(x̂))
-   * where S = H P Hᵀ + R (approximated by position diagonal + R)
-   */
+  // Compute Mahalanobis distance between track state and measurement.
+// d² = (z - h(x̂))ᵀ S⁻¹ (z - h(x̂))
+// where S = H P Hᵀ + R (approximated by position diagonal + R)
   private mahalanobisDistance(state: State, measurement: number[]): number {
     const innov = [
       measurement[0] - state.x[0],
@@ -193,10 +187,8 @@ export class MultiTargetTracker {
     return d2;
   }
 
-  /**
-   * Handle unassigned measurement — potentially start a new track.
-   * Birth: 2 consecutive unassociated measurements in same region → new track.
-   */
+  // Handle unassigned measurement — potentially start a new track.
+// Birth: 2 consecutive unassociated measurements in same region → new track.
   private handleUnassignedMeasurement(measurement: number[], currentStep: number): void {
     // Check if this measurement is close to any pending birth
     let found = false;
@@ -249,11 +241,9 @@ export class MultiTargetTracker {
     }
   }
 
-  /**
-   * Predict-only step (no measurement update).
-   * Uses the UKF predict step with a dummy measurement that's far away
-   * (so the gate rejects it and only prediction happens).
-   */
+  // Predict-only step (no measurement update).
+// Uses the UKF predict step with a dummy measurement that's far away
+// (so the gate rejects it and only prediction happens).
   private predictOnly(state: State): State {
     // Simple prediction: advance state using CA model, inflate covariance
     const dt = this.dt;
@@ -276,23 +266,17 @@ export class MultiTargetTracker {
     return newState;
   }
 
-  /**
-   * Get all alive, confirmed tracks.
-   */
+  // Get all alive, confirmed tracks.
   getActiveTracks(): Track[] {
     return Array.from(this.tracks.values()).filter(t => t.alive && t.confirmed);
   }
 
-  /**
-   * Get track by ID.
-   */
+  // Get track by ID.
   getTrack(id: number): Track | undefined {
     return this.tracks.get(id);
   }
 
-  /**
-   * Get total ID switches (tracks that switched their associated true target).
-   */
+  // Get total ID switches (tracks that switched their associated true target).
   getIdSwitches(): number {
     return this.idSwitches;
   }

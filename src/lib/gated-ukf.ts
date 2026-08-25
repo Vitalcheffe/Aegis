@@ -83,9 +83,7 @@ export function gatedUKFStep(
   }
 }
 
-/**
- * Run gated UKF for multiple steps, tracking total rejected measurements.
- */
+// Run gated UKF for multiple steps, tracking total rejected measurements.
 export function runGatedUKF(
   initialState: State,
   measurements: number[][],

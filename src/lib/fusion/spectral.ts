@@ -90,19 +90,15 @@ export class SpectralFusion {
     this.baselineWeights = this.computeBaselineWeights();
   }
 
-  /**
-   * Set sensor reliability for a specific distance bin.
-   * reliability ∈ [0, 1] where 1 = perfectly reliable, 0 = useless.
-   */
+  // Set sensor reliability for a specific distance bin.
+// reliability ∈ [0, 1] where 1 = perfectly reliable, 0 = useless.
   setReliability(sensorId: number, binId: number, reliability: number): void {
     this.reliabilityMatrix[sensorId][binId] = reliability;
     this.spectralWeights = this.computeSpectralWeights();
     this.baselineWeights = this.computeBaselineWeights();
   }
 
-  /**
-   * Set correlated degradation (e.g., cloud cover degrades optical + IR together).
-   */
+  // Set correlated degradation (e.g., cloud cover degrades optical + IR together).
   setCorrelatedDegradation(sensorIds: number[], binId: number, factor: number): void {
     for (const s of sensorIds) {
       this.reliabilityMatrix[s][binId] *= factor;
@@ -111,13 +107,11 @@ export class SpectralFusion {
     this.baselineWeights = this.computeBaselineWeights();
   }
 
-  /**
-   * Compute spectral weights via power iteration on reliability matrix.
-   * The principal eigenvector captures the correlation structure.
-   * Sensors that are correlated (both degrade together) get DOWN-weighted
-   * more than independent sensors, because they provide less independent
-   * information.
-   */
+  // Compute spectral weights via power iteration on reliability matrix.
+// The principal eigenvector captures the correlation structure.
+// Sensors that are correlated (both degrade together) get DOWN-weighted
+// more than independent sensors, because they provide less independent
+// information.
   private computeSpectralWeights(): number[][] {
     // Build sensor × sensor correlation matrix
     // High off-diagonal = sensors are correlated → less independent info
@@ -171,9 +165,7 @@ export class SpectralFusion {
     return weights;
   }
 
-  /**
-   * Baseline: inverse-variance weighted average (ignores correlation).
-   */
+  // Baseline: inverse-variance weighted average (ignores correlation).
   private computeBaselineWeights(): number[][] {
     const weights: number[][] = [];
     for (let b = 0; b < this.nBins; b++) {
@@ -193,12 +185,10 @@ export class SpectralFusion {
     return weights;
   }
 
-  /**
-   * Fuse sensor readings using spectral weights.
-   * Explicitly accounts for correlated noise: when sensors are correlated,
-   * their combined variance is inflated, and the spectral method down-weights
-   * them more aggressively than the baseline (which assumes independence).
-   */
+  // Fuse sensor readings using spectral weights.
+// Explicitly accounts for correlated noise: when sensors are correlated,
+// their combined variance is inflated, and the spectral method down-weights
+// them more aggressively than the baseline (which assumes independence).
   fuseSpectral(readings: SensorReading[]): FusionResult {
     const binId = readings[0].distanceBin;
     
@@ -261,9 +251,7 @@ export class SpectralFusion {
     };
   }
   
-  /**
-   * Solve Ax = b using Gaussian elimination (for small matrices).
-   */
+  // Solve Ax = b using Gaussian elimination (for small matrices).
   private solveLinearSystem(A: number[][], b: number[]): number[] {
     const n = A.length;
     // Augmented matrix
@@ -304,9 +292,7 @@ export class SpectralFusion {
     return x;
   }
 
-  /**
-   * Fuse sensor readings using baseline (inverse-variance) weights.
-   */
+  // Fuse sensor readings using baseline (inverse-variance) weights.
   fuseBaseline(readings: SensorReading[]): FusionResult {
     const binId = readings[0].distanceBin;
     const weights = this.baselineWeights[binId] || new Array(this.nSensors).fill(1 / this.nSensors);
