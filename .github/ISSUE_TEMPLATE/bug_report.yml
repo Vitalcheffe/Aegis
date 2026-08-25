@@ -1,0 +1,11 @@
+name: Bug report
+description: Report a bug in Aegis
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the bug and how to reproduce it
+    validations:
+      required: true
