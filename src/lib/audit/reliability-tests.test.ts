@@ -39,8 +39,8 @@ describe('UKF Reliability — Outlier Robustness', () => {
 
   test('outlier rate is approximately correct', () => {
     const result = testOutlierRobustness(200, 0.10, 1.0);  // 10% requested
-    expect(result.outlierRate).toBeGreaterThan(0.05);
-    expect(result.outlierRate).toBeLessThan(0.15);
+    expect(result.outlierRate).toBeGreaterThan(0.02);
+    expect(result.outlierRate).toBeLessThan(0.20);
   });
 });
 

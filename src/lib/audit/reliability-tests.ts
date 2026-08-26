@@ -152,6 +152,13 @@ export function testOutlierRobustness(
   let maxError = 0;
   let outlierCount = 0;
 
+  // Seeded LCG for deterministic tests
+  let seed = 42;
+  const rng = () => {
+    seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+    return seed / 0x7fffffff;
+  };
+
   for (let s = 0; s < steps; s++) {
     // Advance truth
     const t = s * dt;
@@ -161,13 +168,13 @@ export function testOutlierRobustness(
 
     // Generate measurement
     let z = [
-      trueState[0] + (Math.random() - 0.5) * 2 * noiseSigma,
-      trueState[1] + (Math.random() - 0.5) * 2 * noiseSigma,
-      trueState[2] + (Math.random() - 0.5) * 2 * noiseSigma,
+      trueState[0] + (rng() - 0.5) * 2 * noiseSigma,
+      trueState[1] + (rng() - 0.5) * 2 * noiseSigma,
+      trueState[2] + (rng() - 0.5) * 2 * noiseSigma,
     ];
 
     // Inject outlier (measurement off by 20m)
-    if (Math.random() < outlierRate) {
+    if (rng() < outlierRate) {
       z = [z[0] + 20, z[1] - 15, z[2] + 25];
       outlierCount++;
     }
