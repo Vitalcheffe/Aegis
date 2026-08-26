@@ -6,7 +6,7 @@
 [![Tests](https://img.shields.io/badge/tests-passing-22c55e?style=flat-square)](src/lib/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-22c55e?style=flat-square)](LICENSE)
 
-> Research framework. Not a product. Not a weapon.
+> Research framework. Not a product. Not a weapon
 
 AEGIS is a research framework for the math of multi-agent estimation under uncertainty. It is architecturally incapable of controlling hardware — this is deliberate.
 
