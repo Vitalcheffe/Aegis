@@ -38,7 +38,7 @@
     <h1>AEG<span class="dim">IS</span></h1>
     <p class="hero-title">Multi-Agent Aerial Coordination — Research Testbed</p>
     <p class="hero-bio">
-      A research framework for real-time multi-agent coordination, sensor fusion, and trajectory prediction in contested aerial environments. <strong>Not a product. Not a weapon. A testbed for the math.</strong> Built at 15, in Casablanca, to explore the math behind cooperative estimation under uncertainty — UKF, BFT consensus, spectral fusion, 50Hz hard real-time.
+      A research framework for real-time multi-agent coordination, sensor fusion, and trajectory prediction in uncertain environments. <strong>Not a product. Not a weapon. A testbed for the math.</strong> Built at 15, in Casablanca, to explore the math behind cooperative estimation under uncertainty — UKF, BFT consensus, spectral fusion, 50Hz hard real-time.
     </p>
     <div class="hero-cta">
       <a href="#systems" class="btn-primary">Explore the systems <span>↓</span></a>
@@ -178,7 +178,7 @@
         </div>
         <div class="deep-dive-content">
           <h3>The cost asymmetry is inverted</h3>
-          <p>I built AEGIS at 15, in Casablanca, after reading about the cost asymmetry in modern air defense: a <strong>$20,000 commercial drone can require a $2 million interceptor</strong> to bring down. The economics are inverted — the attacker spends less, the defender spends more. This is not sustainable for civil airspace protection at scale.</p>
+          <p>I built AEGIS at 15, in Casablanca, after reading about the cost asymmetry in modern aerial estimation: a <strong>$20,000 commercial drone can require a $2 million interceptor</strong> to bring down. The economics are inverted — the attacker spends less, the defender spends more. This is not sustainable for airspace monitoring at scale.</p>
           <p>The interesting math is not in the interceptor. It is in the sensing and coordination layer — how do you fuse noisy data from optical, RF, and acoustic sensors in real time, when individual sensors are unreliable and the threat count is high? How do you maintain estimation accuracy when sensors disagree (Byzantine failure mode)? How do you coordinate multiple sensing agents without a central coordinator that can be jammed?</p>
           <div class="deep-dive-quote">AEGIS is my attempt to build a research testbed for these questions. The UKF handles nonlinear state estimation. BFT consensus handles sensor disagreement. Spectral fusion handles multi-modal combination. The 50Hz real-time budget handles the engineering constraint.</div>
           <p>The trade-off — no formal validation against real-world data, simulation-only testbed, no hardware deployment — is stated explicitly in the limitations. This is not a finished system. It is a question, made executable.</p>
@@ -360,7 +360,7 @@ total_score = (spatial × 0.18) + (temporal × 0.16) + (semantic × 0.18)
         <tr><td>Tick rate</td><td><strong>50Hz</strong></td><td>200ms budget, 185ms used</td></tr>
         <tr><td>UKF architecture</td><td><strong>47→32→32→15</strong></td><td>3,008 weights, custom Python</td></tr>
         <tr><td>Agent count</td><td><strong>10,000</strong></td><td>8 factions, 9 behaviors</td></tr>
-        <tr><td>RMSE @ 10 targets</td><td><strong>4.2m</strong></td><td>Within 15m engagement threshold</td></tr>
+        <tr><td>RMSE @ 10 targets</td><td><strong>4.2m</strong></td><td>Within 15m accuracy threshold</td></tr>
         <tr><td>Median latency</td><td><strong>1124ms</strong></td><td>P95 at 2103ms</td></tr>
         <tr><td>Visualizations</td><td><strong>20 procedural</strong></td><td>14 data + 6 logic diagrams</td></tr>
         <tr><td>Documentation</td><td><strong>11 files</strong></td><td>Math, architecture, safety</td></tr>

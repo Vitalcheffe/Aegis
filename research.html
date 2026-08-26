@@ -110,14 +110,14 @@
           <div class="deep-dive-img" style="padding:24px;background:var(--navy-6);border:1px solid var(--rule)">
             <img src="docs/viz/scale-bar-light.png" alt="UKF Scalability" style="width:100%;display:block">
           </div>
-          <p>The benchmark above shows RMSE as target count scales from 1 to 30. Below 15 targets, the system stays within the 15m engagement threshold. Above 25, the 200ms tick budget is exceeded and the system enters graceful degradation. The curve is not smooth — there are phase transitions at 15 and 25 targets where the failure mode changes.</p>
+          <p>The benchmark above shows RMSE as target count scales from 1 to 30. Below 15 targets, the system stays within the 15m accuracy threshold. Above 25, the 200ms tick budget is exceeded and the system enters graceful degradation. The curve is not smooth — there are phase transitions at 15 and 25 targets where the failure mode changes.</p>
 
           <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin:40px 0 20px;letter-spacing:-0.01em;font-weight:700">The failure mode at 25+ targets</h3>
           <p>Below 25 targets, the UKF forward pass completes in 32ms. Above 25, it takes 45ms — the matrix operations no longer fit in L2 cache, and the CPU starts hitting main memory. The 13ms increase pushes the total tick over 200ms, and the Kernel starts dropping phases. The SWARM phase (10,000 agent update) is the first to be skipped — agents stop updating, and the political threat signals freeze.</p>
           <p>This is not a bug. It is a resource constraint. The interesting question is: what is the minimum optimization needed to push the breakpoint from 25 to 50? Early profiling suggests that vectorizing the UKF with NumPy would buy 5 targets. GPU acceleration with CuPy would buy 20. An FPGA implementation would buy 100+. Each of these is a different research direction.</p>
 
           <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin:40px 0 20px;letter-spacing:-0.01em;font-weight:700">What this means for the research</h3>
-          <p>The 50-target capacity cited in the specs is not a hard limit — it is the point where RMSE exceeds 20m, the engagement threshold. The system does not crash at 51 targets. It degrades. The degradation is graceful, predictable, and documented. That is the research output: not "it works up to 50," but "here is exactly how it breaks, and here is why."</p>
+          <p>The 50-target capacity cited in the specs is not a hard limit — it is the point where RMSE exceeds 20m, the accuracy threshold. The system does not crash at 51 targets. It degrades. The degradation is graceful, predictable, and documented. That is the research output: not "it works up to 50," but "here is exactly how it breaks, and here is why."</p>
         </div>
       </div>
     </div>
@@ -232,7 +232,7 @@ improvement = 3%            # In high-SNR, both are equivalent</div>
 
           <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin:40px 0 20px;letter-spacing:-0.01em;font-weight:700">The trade-off space</h3>
           <p>The three axes are: response time, protocol overhead, and fault tolerance. You can optimize any two, but not all three. PBFT optimizes fault tolerance and response time, at the cost of overhead. HotStuff optimizes response time and overhead, at the cost of fault tolerance. A tree-based protocol optimizes overhead and fault tolerance, at the cost of response time (extra hop).</p>
-          <p>AEGIS chose PBFT because the application (civil airspace protection) cannot compromise on fault tolerance. The 25ms overhead is the price of that choice. The research question is: is there a protocol that achieves PBFT's fault tolerance with HotStuff's overhead? This is an open problem in distributed systems theory, not just in AEGIS.</p>
+          <p>AEGIS chose PBFT because the application (airspace monitoring) cannot compromise on fault tolerance. The 25ms overhead is the price of that choice. The research question is: is there a protocol that achieves PBFT's fault tolerance with HotStuff's overhead? This is an open problem in distributed systems theory, not just in AEGIS.</p>
           <div class="deep-dive-quote">The knee of the Pareto curve is not where I think it is. It is where the math says it is. The testbed exists to find that point.</div>
         </div>
       </div>
@@ -288,7 +288,7 @@ improvement = 3%            # In high-SNR, both are equivalent</div>
         <div class="limitation-num">06</div>
         <div class="limitation-content">
           <h4>Visualizations are illustrative, not from live data</h4>
-          <p>The 14 visualizations are generated procedurally from representative simulation parameters, not from a live engagement. They illustrate algorithm behavior, not a specific real-world scenario.</p>
+          <p>The 14 visualizations are generated procedurally from representative simulation parameters, not from a live accuracy. They illustrate algorithm behavior, not a specific real-world scenario.</p>
         </div>
       </div>
       <div class="limitation-row">
